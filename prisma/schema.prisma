@@ -11,3 +11,39 @@ generator client {
 datasource db {
   provider = "sqlite"
 }
+
+model User {
+  id             Int      @id @default(autoincrement())
+  name           String
+  email          String   @unique
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+  supabaseUserId String   @unique
+}
+
+enum RecordType {
+  SIMPLE
+  DETAIL
+}
+
+enum TimeZone {
+  MORNING
+  AFTERNOON
+  EVENING
+  NIGHT
+  ALL_DAY
+}
+
+model Record {
+  id            Int        @id @default(autoincrement())
+  recordAt      DateTime   @map("record_at")
+  createdAt     DateTime   @default(now()) @map("created_at")
+  updatedAt     DateTime   @updatedAt @map("updated_at")
+  recordType    RecordType @map("record_type")
+  content       String
+  userId        Int        @map("user_id")
+  severityLevel Int?       @map("severity_level")
+  timeZone      TimeZone?  @map("time_zone")
+  treatment     String?
+  nextVisit     DateTime?  @map("next_visit")
+}
