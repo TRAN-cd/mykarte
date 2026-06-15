@@ -12,6 +12,7 @@ datasource db {
   provider = "sqlite"
 }
 
+// ユーザー情報
 model User {
   id             Int      @id @default(autoincrement())
   name           String
@@ -21,11 +22,13 @@ model User {
   supabaseUserId String   @unique
 }
 
+// 記録の種類
 enum RecordType {
   SIMPLE
   DETAIL
 }
 
+// 時間帯
 enum TimeZone {
   MORNING
   AFTERNOON
@@ -34,6 +37,7 @@ enum TimeZone {
   ALL_DAY
 }
 
+// 記録
 model Record {
   id            Int        @id @default(autoincrement())
   recordAt      DateTime   @map("record_at")
@@ -46,4 +50,42 @@ model Record {
   timeZone      TimeZone?  @map("time_zone")
   treatment     String?
   nextVisit     DateTime?  @map("next_visit")
+}
+
+// カテゴリー
+model Category {
+  id            Int        @id @default(autoincrement())
+  name          String
+  createdAt     DateTime   @default(now()) @map("created_at")
+  updatedAt     DateTime   @updatedAt @map("updated_at")
+  userId        Int        
+}
+
+// 記録、カテゴリーの中間テーブル
+model RecordCategory {
+  id            Int        @id @default(autoincrement())
+  createdAt     DateTime   @default(now()) @map("created_at")
+  updatedAt     DateTime   @updatedAt @map("updated_at")
+  recordId      Int        @map("record_id")
+  categoryId    Int        @map("category_id")
+}
+
+// AI要約
+model AiSummary {
+  id            Int        @id @default(autoincrement())
+  content       String
+  createdAt     DateTime   @default(now()) @map("created_at")
+  userId        Int        @map("user_id")
+  startDate     DateTime   @map("start_date")
+  endDate       DateTime   @map("end_date")   
+}
+
+// お問い合わせ内容
+model Contact {
+  id            Int        @id @default(autoincrement())
+  name          String
+  email         String     
+  content       String
+  createdAt     DateTime   @default(now()) @map("created_at")
+  userId        Int?       @map("user_id")
 }
