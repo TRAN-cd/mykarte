@@ -21,6 +21,11 @@ model User {
   updatedAt      DateTime @updatedAt @map("updated_at")
   supabaseUserId String   @unique @map("supabase_user_id")
 
+  records        Record[]
+  categories     Category[]
+  aiSummaries    AiSummary[]
+  contact        Contact?
+
   @@map("users")
 }
 
@@ -47,11 +52,15 @@ model Record {
   updatedAt     DateTime   @updatedAt @map("updated_at")
   recordType    RecordType @map("record_type")
   content       String
-  userId        Int        @map("user_id")
   severityLevel Int?       @map("severity_level")
   timeZone      TimeZone?  @map("time_zone")
   treatment     String?
   nextVisit     DateTime?  @map("next_visit")
+
+  userId        Int        @map("user_id")
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  recordCategories RecordCategory[]
 
   @@map("records")
 }
@@ -62,7 +71,13 @@ model Category {
   name          String
   createdAt     DateTime   @default(now()) @map("created_at")
   updatedAt     DateTime   @updatedAt @map("updated_at")
+
+  deletedAt     DateTime?  @map("deleted_at")
+
   userId        Int        @map("user_id")    
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  records       RecordCategory[]
 
   @@map("categories")
 }
@@ -72,8 +87,11 @@ model RecordCategory {
   id            Int        @id @default(autoincrement())
   createdAt     DateTime   @default(now()) @map("created_at")
   updatedAt     DateTime   @updatedAt @map("updated_at")
+
   recordId      Int        @map("record_id")
   categoryId    Int        @map("category_id")
+  record        Record     @relation(fields: [recordId], references: [id], onDelete: Cascade)
+  categories    Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
   @@map("record_categories")
 }
@@ -83,9 +101,11 @@ model AiSummary {
   id            Int        @id @default(autoincrement())
   content       String
   createdAt     DateTime   @default(now()) @map("created_at")
-  userId        Int        @map("user_id")
   startDate     DateTime   @map("start_date")
   endDate       DateTime   @map("end_date")
+
+  userId        Int        @map("user_id")
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("ai_summaries")
 }
@@ -97,7 +117,9 @@ model Contact {
   email         String     
   content       String
   createdAt     DateTime   @default(now()) @map("created_at")
+
   userId        Int?       @map("user_id")
+  user          User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@map("contacts")
 }
