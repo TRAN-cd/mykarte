@@ -91,7 +91,7 @@ model RecordCategory {
   recordId      Int        @map("record_id")
   categoryId    Int        @map("category_id")
   record        Record     @relation(fields: [recordId], references: [id], onDelete: Cascade)
-  categories    Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categories    Category   @relation(fields: [categoryId], references: [id], onDelete: Restrict)
 
   @@map("record_categories")
 }
