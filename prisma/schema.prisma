@@ -1,0 +1,125 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ユーザー情報
+model User {
+  id             Int      @id @default(autoincrement())
+  name           String
+  email          String   @unique
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+  supabaseUserId String   @unique @map("supabase_user_id")
+
+  records        Record[]
+  categories     Category[]
+  aiSummaries    AiSummary[]
+  contact        Contact[]
+
+  @@map("users")
+}
+
+// 記録の種類
+enum RecordType {
+  SIMPLE
+  DETAIL
+}
+
+// 時間帯
+enum TimeZone {
+  MORNING
+  AFTERNOON
+  EVENING
+  NIGHT
+  ALL_DAY
+}
+
+// 記録
+model Record {
+  id            Int        @id @default(autoincrement())
+  recordAt      DateTime   @map("record_at")
+  createdAt     DateTime   @default(now()) @map("created_at")
+  updatedAt     DateTime   @updatedAt @map("updated_at")
+  recordType    RecordType @map("record_type")
+  content       String
+  severityLevel Int?       @map("severity_level")
+  timeZone      TimeZone?  @map("time_zone")
+  treatment     String?
+  nextVisit     DateTime?  @map("next_visit")
+
+  userId        Int        @map("user_id")
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  recordCategories RecordCategory[]
+
+  @@map("records")
+}
+
+// カテゴリー
+model Category {
+  id            Int        @id @default(autoincrement())
+  name          String
+  createdAt     DateTime   @default(now()) @map("created_at")
+  updatedAt     DateTime   @updatedAt @map("updated_at")
+
+  deletedAt     DateTime?  @map("deleted_at")
+
+  userId        Int        @map("user_id")    
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  records       RecordCategory[]
+
+  @@map("categories")
+}
+
+// 記録、カテゴリーの中間テーブル
+model RecordCategory {
+  id            Int        @id @default(autoincrement())
+  createdAt     DateTime   @default(now()) @map("created_at")
+  updatedAt     DateTime   @updatedAt @map("updated_at")
+
+  recordId      Int        @map("record_id")
+  categoryId    Int        @map("category_id")
+  record        Record     @relation(fields: [recordId], references: [id], onDelete: Cascade)
+  categories    Category   @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  @@map("record_categories")
+}
+
+// AI要約
+model AiSummary {
+  id            Int        @id @default(autoincrement())
+  content       String
+  createdAt     DateTime   @default(now()) @map("created_at")
+  startDate     DateTime   @map("start_date")
+  endDate       DateTime   @map("end_date")
+
+  userId        Int        @map("user_id")
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("ai_summaries")
+}
+
+// お問い合わせ内容
+model Contact {
+  id            Int        @id @default(autoincrement())
+  name          String
+  email         String     
+  content       String
+  createdAt     DateTime   @default(now()) @map("created_at")
+
+  userId        Int?       @map("user_id")
+  user          User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("contacts")
+}
