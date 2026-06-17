@@ -24,7 +24,7 @@ model User {
   records        Record[]
   categories     Category[]
   aiSummaries    AiSummary[]
-  contact        Contact?
+  contact        Contact[]
 
   @@map("users")
 }
