@@ -22,9 +22,16 @@
 body {
   color: var(--color-text);
   font-family: var(--font-jp), sans-serif;
-  background: url(/images/shared/bg.png) no-repeat center / contain;
+  background: url(/images/shared/bg.png) no-repeat center / cover;
 }
 
-.font-jakarta {
+.font-en {
   font-family: var(--font-en), var(--font-jp),sans-serif;
+}
+
+@layer components {
+  /* common */
+  .y-middle {
+    @apply left-1/2 -translate-x-1/2;
+  }
 }
