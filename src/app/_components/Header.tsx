@@ -8,9 +8,9 @@ export default function Header(){
 
   return(
     <header className="fixed top-8 y-middle max-w-290 w-full flex items-center justify-between bg-white py-3 pl-9 pr-4 rounded-[15px]">
-      <Link href="/">
-        <h1><Image src="/images/shared/logo.svg" width={106} height={34} alt="myカルテ"/></h1>
-      </Link>
+      <h1>
+        <Link href="/"><Image src="/images/shared/logo.svg" width={106} height={34} alt="myカルテ"/></Link>
+      </h1>
       <div className="nav-wrap flex items-center gap-7">
         <nav className="nav-menu">
           <ul className="flex items-center gap-2">

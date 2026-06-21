@@ -34,4 +34,8 @@ body {
   .y-middle {
     @apply left-1/2 -translate-x-1/2;
   }
+
+  .link-hover {
+    @apply hover:opacity-80 duration-700;
+  }
 }
