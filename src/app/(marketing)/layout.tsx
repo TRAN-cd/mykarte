@@ -31,7 +31,7 @@ export default function RootLayout({
       lang="ja"
       className={`${jpFont.variable} ${enFont.variable} h-full antialiased`}
     >
-      <body className="flex flex-col min-h-screen">
+      <body className="flex flex-col min-h-screen bg-gradient-to-r from-[#D6F2E5] to-[#E8F8F0] ">
         <Header />
         <main className="flex-1 flex pt-24">
           {children}
