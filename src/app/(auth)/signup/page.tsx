@@ -2,12 +2,14 @@
 
 import { supabase } from "@/app/_libs/supabase";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 
 export default function Page(){
   const [email, setEmail] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const router = useRouter()
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -18,7 +20,7 @@ export default function Page(){
       email,
       options: {
         shouldCreateUser: true,
-        emailRedirectTo: `http://localhost:3000/signup/email_verification`, 
+        // emailRedirectTo: `http://localhost:3000/signup/email_verification`, 
       },
     })
 
@@ -26,8 +28,9 @@ export default function Page(){
       console.log(error)
       alert('登録に失敗しました。')
     } else {
+      sessionStorage.setItem('email', email)
       setEmail('')
-      alert('認証用コードを送信しました。')
+      router.push('/signup/email_verification/')
     }
     setIsSubmitting(false)
   }
@@ -75,7 +78,7 @@ export default function Page(){
         </form>
 
 
-        <Link href="/login" className="text-center text-(--color-primary) text-xs">すでにお持ちのアカウントでログインする</Link>
+        <Link href="/login" className="text-center text-(--color-primary) text-xs link-hover">すでにお持ちのアカウントでログインする</Link>
       </div>
     </div>
   )
