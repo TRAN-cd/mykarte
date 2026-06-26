@@ -30,8 +30,9 @@ export default function Page(){
 
     if (error) {
       console.log(error)
-      alert('認証コードが異なります')
+      alert('確認コードが異なります')
     } else {
+      sessionStorage.removeItem('email')
       router.push('/signup/passkey_setting/')
     }
     setIsSubmitting(false)

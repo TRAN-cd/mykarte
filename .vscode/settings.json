@@ -3,6 +3,7 @@
     "autoincrement",
     "datasource",
     "kiet",
+    "mykarte",
     "signup",
     "supabase",
     "tailwindcss"
