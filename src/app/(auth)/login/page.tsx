@@ -24,7 +24,6 @@ export default function Page() {
     })
 
     if (error) {
-      console.log(error)
       alert('メールアドレスまたはパスワードが間違っています。')
     } else {
       setEmail('')

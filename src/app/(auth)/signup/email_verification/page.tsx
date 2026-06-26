@@ -38,6 +38,27 @@ export default function Page(){
     setIsSubmitting(false)
   }
 
+  const handleReSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+
+    setIsSubmitting(true)
+
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        shouldCreateUser: true,
+      },
+    })
+
+    if (error) {
+      alert('再送信に失敗しました。しばらく時間をおいてから再度お試しください。')
+    } else {
+      alert('再送信しました。')
+    }
+
+    setIsSubmitting(false)
+  }
+
   return (
     <div className="flex items-center justify-center w-full">
       <div className="max-w-115.5 w-full mx-auto bg-white rounded-[10px] p-12 flex flex-col gap-6 border border-(--color-sub) card-shadow">
@@ -73,11 +94,17 @@ export default function Page(){
 
         <p className="text-center text-xs leading-relaxed">確認メールが届かない場合や誤って削除した場合は、<br />以下より再度送信してください。</p>
 
-        <div className="w-full">
-          <button className="w-full text-center text-(--color-primary) text-xs link-hover">
-            再送信する
-          </button>
-        </div>
+        <form onSubmit={handleReSubmit} className="flex flex-col gap-3">
+          <div className="w-full">
+            <button 
+              className="w-full text-center text-(--color-primary) text-xs link-hover"
+              type="submit"
+              disabled={isSubmitting}
+            >
+              再送信する
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   )

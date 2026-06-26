@@ -20,12 +20,10 @@ export default function Page(){
       email,
       options: {
         shouldCreateUser: true,
-        // emailRedirectTo: `http://localhost:3000/signup/email_verification`, 
       },
     })
 
     if (error) {
-      console.log(error)
       alert('登録に失敗しました。')
     } else {
       sessionStorage.setItem('email', email)

@@ -20,7 +20,6 @@ export default function Page(){
     })
 
     if (error) {
-      console.log(error)
       alert('エラーが発生しました。')
     } else {
       router.push('/mykarte/')
