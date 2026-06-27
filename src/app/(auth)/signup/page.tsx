@@ -1,40 +1,76 @@
 'use client'
 
 import { supabase } from "@/app/_libs/supabase";
-import { useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form"
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
+type Inputs = {
+  email: string;
+};
+
 
 export default function Page(){
-  const [email, setEmail] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const router = useRouter()
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
+  const defaultValues = {
+    email: ""
+  }
 
-    setIsSubmitting(true)
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: {
+      isDirty,
+      isValid,
+      isSubmitting,
+      errors,
+    },
+    reset,
+  } = useForm<Inputs>({
+    defaultValues,
+    mode: "all",
+  })
 
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        shouldCreateUser: true,
-      },
-    })
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email: data.email,
+        options: {
+          shouldCreateUser: true,
+        },
+      })
 
-    if (error) {
-      alert('登録に失敗しました。')
-    } else {
-      sessionStorage.setItem('email', email)
-      setEmail('')
-      router.push('/signup/email_verification/')
+      if (error) {
+        setError("root.serverError", {
+          type: "manual",
+          message: "しばらく時間をおいてから再度お試しください。"
+        })
+        return
+      }
+
+      sessionStorage.setItem('email', data.email);
+      reset();
+      router.push('/signup/email_verification/');
+    } catch (error) {
+      setError("root.serverError", {
+        type: "manual",
+        message: "登録に失敗しました。もう一度お試しください。"
+      })
     }
-    setIsSubmitting(false)
   }
 
   return (
-    <div className="flex items-center justify-center w-full">
+    <div className="flex flex-col gap-4 items-center justify-center w-full">
+
+      {isSubmitting && <p className="text-(--color-primary) text-xs border border-(--color-sub) bg-(--color-bg) max-w-115 w-full text-center p-3 rounded-[10px]">送信中</p>}
+        {errors.root?.serverError && (
+          <p className="text-(--color-danger) text-xs border border-(--color-danger) bg-(--color-danger-bg) max-w-115 w-full text-center p-3 rounded-[10px]">
+            {errors.root.serverError.message}
+          </p>
+        )}
+
       <div className="max-w-115.5 w-full mx-auto bg-white rounded-[10px] p-12 flex flex-col gap-6 border border-(--color-sub) card-shadow">
         <h2 className="text-center text-2xl font-bold">新規登録</h2>
         <p className="text-center text-[15px] leading-relaxed"><a href="/user_policy" className="text-(--color-link) border-b hover:border-transparent link-hover">利用規約</a>、<a href="/privacy" className="text-(--color-link) border-b hover:border-transparent link-hover">プライバシーポリシー</a>について同意の上、<br />以下のいずれかの方法でご登録ください。</p>
@@ -50,25 +86,32 @@ export default function Page(){
           <span className="bg-white px-3.75 relative z-1">またはメールアドレスで登録</span>
         </p>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
+
           <label htmlFor="email" className="text-[15px] font-bold">メールアドレス</label>
           <input 
             type="email"
-            name="email"
             id="email"
             placeholder="example@mykarte.com"
             className="input-form" 
-            required
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
-            disabled={isSubmitting} 
+
+            {...register("email",{
+              required: "メールアドレスが入力されていません。",
+              pattern: {
+                value: /[\w\.-]+@[\w\.-]+\.\w{2,4}/,
+                message: "正しいメールアドレス形式で入力してください"
+              }
+            })}
           />
+          {errors.email &&
+            <span className="text-(--color-danger) text-xs">{errors.email.message}</span>
+          }
 
           <div className="max-w-45 w-full mx-auto pt-3">
             <button 
-              className="text-center bg-(--color-primary) text-white text-xs font-medium w-full px-9 py-2 rounded-[5px] link-hover"
+              className="text-center bg-(--color-primary) text-white text-xs font-medium w-full px-9 py-2 rounded-[5px] link-hover disabled:opacity-50"
               type="submit"
-              disabled={isSubmitting}
+              disabled={!isDirty || !isValid || isSubmitting}
             >
               上記に同意して登録
             </button>
