@@ -2,52 +2,92 @@
 
 import { supabase } from "@/app/_libs/supabase";
 import { useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form"
 import { useRouter } from "next/navigation";
 
+type Inputs = {
+  password: string;
+};
+
 export default function Page(){
-  const [password, setPassword] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const [visible, setVisible] = useState(false)
   const router = useRouter()
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
+  const defaultValues = {
+    password: ""
+  }
 
-    setIsSubmitting(true)
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: {
+      isDirty,
+      isValid,
+      isSubmitting,
+      errors,
+    },
+  } = useForm<Inputs>({
+    defaultValues,
+    mode: "all"
+  })
 
-    const { error } = await supabase.auth.updateUser({
-      password,
-    })
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: data.password,
+      })
 
-    if (error) {
-      alert('エラーが発生しました。')
-    } else {
+      if (error) {
+        setError("root.serverError", {
+          type: "manual",
+          message: "パスワードは半角英数字・記号のみ 8字以上で設定してください。"
+        })
+        return
+      }
+
       router.push('/mykarte/')
+    } catch (error) {
+      setError("root.serverError", {
+        type: "manual",
+        message: "エラーが発生しました。再度お試しください。"
+      })
     }
-    setIsSubmitting(false)
   }
 
   return (
-    <div className="flex items-center justify-center w-full">
+    <div className="flex flex-col gap-4 items-center justify-center w-full">
+
+      {errors.root?.serverError && (
+        <p className="text-(--color-danger) text-xs border border-(--color-danger) bg-(--color-danger-bg) max-w-115 w-full text-center p-3 rounded-[10px]">
+            {errors.root.serverError.message}
+        </p>
+      )}
+
       <div className="max-w-115.5 w-full mx-auto bg-white rounded-[10px] p-12 flex flex-col gap-6 border border-(--color-sub) card-shadow">
         <h2 className="text-center text-2xl font-bold">パスワードを設定してください</h2>
         <p className="text-center text-[15px] leading-relaxed">パスワードを設定して登録を完了してください。</p>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
           <label htmlFor="password" className="text-[15px] font-bold">
-            パスワード(半角英字・記号のみ 8字以上)
+            パスワード(半角英数字・記号のみ 8字以上)
           </label>
           <input 
             type={visible ? 'text' : 'password'}
-            name="password"
             id="password"
             placeholder="••••••••"
             className="input-form" 
-            required
-            onChange={(e) => setPassword(e.target.value)}
-            value={password}
-            disabled={isSubmitting} 
+            {...register("password", {
+              required: "パスワードが入力されていません。",
+              pattern: {
+                value: /^[a-zA-Z0-9!-/:-@[-`{-~]{8,}$/,
+                message: "半角英数字・記号のみ 8字以上で入力してください。"
+              }
+            })}
           />
+          {errors.password &&
+            <span className="text-(--color-danger) text-xs">{errors.password.message}</span>
+          }
 
           <div className="flex justify-end items-center gap-2">
             <input 
@@ -63,9 +103,9 @@ export default function Page(){
 
           <div className="max-w-45 w-full mx-auto pt-3">
             <button 
-              className="text-center bg-(--color-primary) text-white text-xs font-medium w-full px-9 py-2 rounded-[5px] link-hover"
+              className="text-center bg-(--color-primary) text-white text-xs font-medium w-full px-9 py-2 rounded-[5px] link-hover disabled:opacity-50"
               type="submit"
-              disabled={isSubmitting}
+              disabled={!isDirty || !isValid || isSubmitting}
             >
               登録を完了する
             </button>

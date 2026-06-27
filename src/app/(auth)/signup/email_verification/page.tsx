@@ -20,7 +20,7 @@ export default function Page(){
 
   const defaultValues = {
     email: "",
-    code: ''
+    code: ""
   }
 
   const {
@@ -121,12 +121,11 @@ export default function Page(){
     <div className="flex flex-col gap-4 items-center justify-center w-full">
 
       {isSubmitting && <p className="text-(--color-primary) text-xs border border-(--color-sub) bg-(--color-bg) max-w-115 w-full text-center p-3 rounded-[10px]">送信中</p>}
-        {errors.root?.serverError && (
-          <p className="text-(--color-danger) text-xs border border-(--color-danger) bg-(--color-danger-bg) max-w-115 w-full text-center p-3 rounded-[10px]">
-            {errors.root.serverError.message}
-          </p>
-        )
-      }
+      {errors.root?.serverError && (
+        <p className="text-(--color-danger) text-xs border border-(--color-danger) bg-(--color-danger-bg) max-w-115 w-full text-center p-3 rounded-[10px]">
+          {errors.root.serverError.message}
+        </p>
+      )}
 
       <div className="max-w-115.5 w-full mx-auto bg-white rounded-[10px] p-12 flex flex-col gap-6 border border-(--color-sub) card-shadow">
         <h2 className="text-center text-2xl font-bold">確認コードを入力してください</h2>
@@ -144,10 +143,10 @@ export default function Page(){
             placeholder="00000000"
             className="input-form" 
             {...register("code", {
-              required: "確認コードが入力されていません",
+              required: "確認コードが入力されていません。",
               pattern: {
                 value: /^\d{8}$/,
-                message: "8桁の数字を入力してください"
+                message: "8桁の数字を入力してください。"
               }
             })}
           />
