@@ -3,6 +3,8 @@
 import { supabase } from "@/app/_libs/supabase";
 import { useForm, SubmitHandler } from "react-hook-form"
 import { useRouter } from "next/navigation";
+import { Input } from "@/app/_components/Input"
+import { AuthButton } from "@/app/_components/AuthButton";
 import Link from "next/link";
 
 type Inputs = {
@@ -86,15 +88,13 @@ export default function Page(){
         </p>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
-
-          <label htmlFor="email" className="text-[15px] font-bold">メールアドレス</label>
-          <input 
+          <Input
+            htmlFor="email"
+            title="メールアドレス"
             type="email"
             id="email"
             placeholder="example@mykarte.com"
-            className="input-form" 
-
-            {...register("email",{
+            registerProps={register("email",{
               required: "メールアドレスが入力されていません。",
               pattern: {
                 value: /[\w\.-]+@[\w\.-]+\.\w{2,4}/,
@@ -106,15 +106,10 @@ export default function Page(){
             <span className="text-(--color-danger) text-xs">{errors.email.message}</span>
           }
 
-          <div className="max-w-45 w-full mx-auto pt-3">
-            <button 
-              className="text-center bg-(--color-primary) text-white text-xs font-medium w-full px-9 py-2 rounded-[5px] link-hover disabled:opacity-50"
-              type="submit"
-              disabled={!isDirty || !isValid || isSubmitting}
-            >
-              上記に同意して登録
-            </button>
-          </div>
+          <AuthButton 
+            text="上記に同意して登録"
+            disabled={!isDirty || !isValid || isSubmitting}
+          />
         </form>
 
 

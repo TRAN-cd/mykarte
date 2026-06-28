@@ -4,6 +4,8 @@ import { supabase } from "@/app/_libs/supabase";
 import { useForm, SubmitHandler } from "react-hook-form"
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Input } from "@/app/_components/Input"
+import { AuthButton } from "@/app/_components/AuthButton";
 
 type Inputs = {
   email: string;
@@ -134,35 +136,29 @@ export default function Page(){
         </p>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
-
-          <label htmlFor="code" className="text-[15px] font-bold">確認コード</label>
-          <input 
+          <Input
+            htmlFor="code"
+            title="確認コード"
             type="text"
             id="code"
-            inputMode="numeric"
             placeholder="00000000"
-            className="input-form" 
-            {...register("code", {
+            registerProps={register("code",{
               required: "確認コードが入力されていません。",
               pattern: {
                 value: /^\d{8}$/,
                 message: "8桁の数字を入力してください。"
               }
             })}
+            inputMode="numeric"
           />
           {errors.code &&
             <span className="text-(--color-danger) text-xs">{errors.code.message}</span>
           }
 
-          <div className="max-w-45 w-full mx-auto pt-3">
-            <button 
-              className="text-center bg-(--color-primary) text-white text-xs font-medium w-full px-9 py-2 rounded-[5px] link-hover disabled:opacity-50"
-              type="submit"
-              disabled={!isDirty || !isValid || isSubmitting}
-            >
-              次へ
-            </button>
-          </div>
+          <AuthButton 
+            text="次へ"
+            disabled={!isDirty || !isValid || isSubmitting}
+          />
         </form>
 
         <p className="text-center text-xs leading-relaxed">確認メールが届かない場合や誤って削除した場合は、<br />以下より再度送信してください。</p>

@@ -56,8 +56,4 @@ button {
     @apply absolute w-full h-px left-0 top-1/2 -translate-y-1/2;
     background-color: rgba(28, 43, 36, 0.5);
   }
-
-  .input-form {
-    @apply border border-(--color-sub) rounded-[5px] px-3 py-2.5 text-xs;
-  }
 }

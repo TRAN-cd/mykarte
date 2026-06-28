@@ -4,6 +4,8 @@ import { supabase } from "@/app/_libs/supabase";
 import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form"
 import { useRouter } from "next/navigation";
+import { Input } from "@/app/_components/Input"
+import { AuthButton } from "@/app/_components/AuthButton";
 
 type Inputs = {
   password: string;
@@ -69,15 +71,13 @@ export default function Page(){
         <p className="text-center text-[15px] leading-relaxed">パスワードを設定して登録を完了してください。</p>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
-          <label htmlFor="password" className="text-[15px] font-bold">
-            パスワード(半角英数字・記号のみ 8字以上)
-          </label>
-          <input 
+          <Input
+            htmlFor="password"
+            title="パスワード(半角英数字・記号のみ 8字以上)"
             type={visible ? 'text' : 'password'}
             id="password"
             placeholder="••••••••"
-            className="input-form" 
-            {...register("password", {
+            registerProps={register("password",{
               required: "パスワードが入力されていません。",
               pattern: {
                 value: /^[a-zA-Z0-9!-/:-@[-`{-~]{8,}$/,
@@ -101,15 +101,10 @@ export default function Page(){
             <label htmlFor="checkbox" className="text-[10px]">パスワードを表示</label>
           </div>
 
-          <div className="max-w-45 w-full mx-auto pt-3">
-            <button 
-              className="text-center bg-(--color-primary) text-white text-xs font-medium w-full px-9 py-2 rounded-[5px] link-hover disabled:opacity-50"
-              type="submit"
-              disabled={!isDirty || !isValid || isSubmitting}
-            >
-              登録を完了する
-            </button>
-          </div>
+          <AuthButton 
+            text="登録を完了する"
+            disabled={!isDirty || !isValid || isSubmitting}
+          />
         </form>
       </div>
     </div>

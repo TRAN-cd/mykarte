@@ -4,6 +4,8 @@ import { supabase } from "@/app/_libs/supabase";
 import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form"
 import { useRouter } from "next/navigation";
+import { Input } from "@/app/_components/Input"
+import { AuthButton } from "@/app/_components/AuthButton";
 import Link from "next/link";
 
 type Inputs = {
@@ -80,17 +82,17 @@ export default function Page() {
         <p className="text-center text-[15px] leading-relaxed">登録したメールアドレスとパスワードをご入力の上、<br />【ログイン】ボタンを押してください。</p>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
-          <label htmlFor="email" className="text-[15px] font-bold">メールアドレス</label>
-          <input
+          <Input
+            htmlFor="email"
+            title="メールアドレス"
             type="email"
             id="email"
             placeholder="example@mykarte.com"
-            className="input-form"
-            {...register("email", {
+            registerProps={register("email",{
               required: "メールアドレスが入力されていません。",
               pattern: {
                 value: /[\w\.-]+@[\w\.-]+\.\w{2,4}/,
-                message: "正しいメールアドレス形式で入力してください"
+                message: "正しいメールアドレス形式で入力してください。"
               }
             })}
           />
@@ -98,15 +100,13 @@ export default function Page() {
             <span className="text-(--color-danger) text-xs">{errors.email.message}</span>
           }
 
-          <label htmlFor="password" className="text-[15px] font-bold">
-            パスワード(半角英数字・記号のみ 8字以上)
-          </label>
-          <input
+          <Input
+            htmlFor="password"
+            title="パスワード(半角英数字・記号のみ 8字以上)"
             type={visible ? 'text' : 'password'}
             id="password"
             placeholder="••••••••"
-            className="input-form"
-            {...register("password", {
+            registerProps={register("password",{
               required: "パスワードが入力されていません。",
               pattern: {
                 value: /^[a-zA-Z0-9!-/:-@[-`{-~]{8,}$/,
@@ -129,15 +129,10 @@ export default function Page() {
             <label htmlFor="checkbox" className="text-[10px]">パスワードを表示</label>
           </div>
 
-          <div className="max-w-45 w-full mx-auto pt-3">
-            <button
-              className="text-center bg-(--color-primary) text-white text-xs font-medium w-full px-9 py-2 rounded-[5px] link-hover disabled:opacity-50"
-              type="submit"
-              disabled={!isDirty || !isValid || isSubmitting}
-            >
-              ログイン
-            </button>
-          </div>
+          <AuthButton 
+            text="ログイン"
+            disabled={!isDirty || !isValid || isSubmitting}
+          />
         </form>
 
         <Link href="/forget_password" className="text-center text-(--color-link) text-xs link-hover">
