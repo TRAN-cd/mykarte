@@ -6,12 +6,13 @@ import { useForm, SubmitHandler } from "react-hook-form"
 import { useRouter } from "next/navigation";
 import { Input } from "@/app/_components/Input"
 import { AuthButton } from "@/app/_components/AuthButton";
+import { Card } from "@/app/_components/Card";
 
 type Inputs = {
   password: string;
 };
 
-export default function Page(){
+export default function Page() {
   const [visible, setVisible] = useState(false)
   const router = useRouter()
 
@@ -62,11 +63,11 @@ export default function Page(){
 
       {errors.root?.serverError && (
         <p className="text-(--color-danger) text-xs border border-(--color-danger) bg-(--color-danger-bg) max-w-115 w-full text-center p-3 rounded-[10px]">
-            {errors.root.serverError.message}
+          {errors.root.serverError.message}
         </p>
       )}
 
-      <div className="max-w-115.5 w-full mx-auto bg-white rounded-[10px] p-12 flex flex-col gap-6 border border-(--color-sub) card-shadow">
+      <Card>
         <h2 className="text-center text-2xl font-bold">パスワードを設定してください</h2>
         <p className="text-center text-[15px] leading-relaxed">パスワードを設定して登録を完了してください。</p>
 
@@ -77,7 +78,7 @@ export default function Page(){
             type={visible ? 'text' : 'password'}
             id="password"
             placeholder="••••••••"
-            registerProps={register("password",{
+            registerProps={register("password", {
               required: "パスワードが入力されていません。",
               pattern: {
                 value: /^[a-zA-Z0-9!-/:-@[-`{-~]{8,}$/,
@@ -90,8 +91,8 @@ export default function Page(){
           }
 
           <div className="flex justify-end items-center gap-2">
-            <input 
-              type="checkbox" 
+            <input
+              type="checkbox"
               name="checkbox"
               id="checkbox"
               checked={visible}
@@ -101,12 +102,12 @@ export default function Page(){
             <label htmlFor="checkbox" className="text-[10px]">パスワードを表示</label>
           </div>
 
-          <AuthButton 
+          <AuthButton
             text="登録を完了する"
             disabled={!isDirty || !isValid || isSubmitting}
           />
         </form>
-      </div>
+      </Card>
     </div>
   )
 }

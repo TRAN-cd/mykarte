@@ -9,7 +9,7 @@ export const AuthButton = ({
   return (
     <div className="max-w-45 w-full mx-auto pt-3">
       <button 
-        className="text-center bg-(--color-primary) text-white text-xs font-medium w-full px-9 py-2 rounded-[5px] link-hover disabled:opacity-50"
+        className="text-center bg-(--color-primary) text-white text-xs font-medium w-full px-9 py-2 rounded-[5px] hover:opacity-70 duration-300 disabled:opacity-50 cursor-pointer"
         type="submit"
         {...rest}
       >

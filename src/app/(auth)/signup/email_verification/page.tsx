@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/app/_components/Input"
 import { AuthButton } from "@/app/_components/AuthButton";
+import { Card } from "@/app/_components/Card";
 
 type Inputs = {
   email: string;
@@ -16,7 +17,7 @@ type ResendInputs = {
   email: string
 }
 
-export default function Page(){
+export default function Page() {
   const [successMessage, setSuccessMessage] = useState('')
   const router = useRouter()
 
@@ -84,7 +85,7 @@ export default function Page(){
       isSubmitting: isResendSubmitting,
     },
   } = useForm<ResendInputs>({
-    defaultValues: {email: ''},
+    defaultValues: { email: '' },
     mode: "all"
   })
 
@@ -107,7 +108,7 @@ export default function Page(){
           message: "しばらく時間をおいてから再度お試しください。"
         })
         return
-      } 
+      }
 
       setSuccessMessage('再送信しました。')
 
@@ -129,7 +130,7 @@ export default function Page(){
         </p>
       )}
 
-      <div className="max-w-115.5 w-full mx-auto bg-white rounded-[10px] p-12 flex flex-col gap-6 border border-(--color-sub) card-shadow">
+      <Card>
         <h2 className="text-center text-2xl font-bold">確認コードを入力してください</h2>
         <p className="text-center text-[15px] leading-relaxed">
           <span className="font-bold">{email}</span> に確認コードを<br />記載したメールを送信しました。<br />記載されている確認コードを入力してください。
@@ -142,7 +143,7 @@ export default function Page(){
             type="text"
             id="code"
             placeholder="00000000"
-            registerProps={register("code",{
+            registerProps={register("code", {
               required: "確認コードが入力されていません。",
               pattern: {
                 value: /^\d{8}$/,
@@ -155,7 +156,7 @@ export default function Page(){
             <span className="text-(--color-danger) text-xs">{errors.code.message}</span>
           }
 
-          <AuthButton 
+          <AuthButton
             text="次へ"
             disabled={!isDirty || !isValid || isSubmitting}
           />
@@ -165,8 +166,8 @@ export default function Page(){
 
         <form onSubmit={handleSubmitResend(onReSubmit)} className="flex flex-col gap-3">
           <div className="w-25 mx-auto">
-            <button 
-              className="w-full flex justify-center items-center text-(--color-primary) text-xs link-hover"
+            <button
+              className="w-full flex justify-center items-center text-(--color-primary) text-xs hover:opacity-70 duration-300 cursor-pointer"
               type="submit"
               disabled={isResendSubmitting}
             >
@@ -175,7 +176,7 @@ export default function Page(){
           </div>
           {successMessage && <p className="text-center text-xs p-2">{successMessage}</p>}
         </form>
-      </div>
+      </Card>
     </div>
   )
 }

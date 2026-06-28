@@ -6,7 +6,9 @@ import { useForm, SubmitHandler } from "react-hook-form"
 import { useRouter } from "next/navigation";
 import { Input } from "@/app/_components/Input"
 import { AuthButton } from "@/app/_components/AuthButton";
+import { DividerLine } from "@/app/_components/DividerLine";
 import Link from "next/link";
+import { Card } from "@/app/_components/Card";
 
 type Inputs = {
   email: string;
@@ -73,11 +75,11 @@ export default function Page() {
 
       {errors.root?.serverError && (
         <p className="text-(--color-danger) text-xs border border-(--color-danger) bg-(--color-danger-bg) max-w-115 w-full text-center p-3 rounded-[10px]">
-            {errors.root.serverError.message}
+          {errors.root.serverError.message}
         </p>
       )}
 
-      <div className="max-w-115.5 w-full mx-auto bg-white rounded-[10px] p-12 flex flex-col gap-6 border border-(--color-sub) card-shadow">
+      <Card>
         <h2 className="text-center text-2xl font-bold">ログイン</h2>
         <p className="text-center text-[15px] leading-relaxed">登録したメールアドレスとパスワードをご入力の上、<br />【ログイン】ボタンを押してください。</p>
 
@@ -88,7 +90,7 @@ export default function Page() {
             type="email"
             id="email"
             placeholder="example@mykarte.com"
-            registerProps={register("email",{
+            registerProps={register("email", {
               required: "メールアドレスが入力されていません。",
               pattern: {
                 value: /[\w\.-]+@[\w\.-]+\.\w{2,4}/,
@@ -106,7 +108,7 @@ export default function Page() {
             type={visible ? 'text' : 'password'}
             id="password"
             placeholder="••••••••"
-            registerProps={register("password",{
+            registerProps={register("password", {
               required: "パスワードが入力されていません。",
               pattern: {
                 value: /^[a-zA-Z0-9!-/:-@[-`{-~]{8,}$/,
@@ -129,33 +131,31 @@ export default function Page() {
             <label htmlFor="checkbox" className="text-[10px]">パスワードを表示</label>
           </div>
 
-          <AuthButton 
+          <AuthButton
             text="ログイン"
             disabled={!isDirty || !isValid || isSubmitting}
           />
         </form>
 
-        <Link href="/forget_password" className="text-center text-(--color-link) text-xs link-hover">
+        <Link href="/forget_password" className="text-center text-(--color-link) text-xs hover:opacity-70 duration-300">
           パスワードをお忘れの場合
         </Link>
 
-        <p className="text-center text-xs divider-line py-4">
-          <span className="bg-white px-3.75 relative z-1">他の方法でログインする</span>
-        </p>
+        <DividerLine text="他の方法でログインする" />
 
         <div className="flex items-center gap-6">
-          <div className="border border-(--color-sub) px-17.25 py-1.75 rounded-[30px] link-hover">
+          <div className="border border-(--color-sub) px-17.25 py-1.75 rounded-[30px] hover:opacity-70 duration-300">
             <img src="/icons/google.png" alt="googleアカウント" className="w-7.5 h-auto" />
           </div>
-          <div className="border border-(--color-sub) px-17.25 py-1.75 rounded-[30px] link-hover">
+          <div className="border border-(--color-sub) px-17.25 py-1.75 rounded-[30px] hover:opacity-70 duration-300">
             <img src="/icons/apple.png" alt="Appleアカウント" className="w-7.5 h-auto" />
           </div>
         </div>
 
-        <Link href="/signup" className="text-center text-(--color-primary) text-xs link-hover">
+        <Link href="/signup" className="text-center text-(--color-primary) text-xs hover:opacity-70 duration-300">
           myカルテ の新規登録はこちら
         </Link>
-      </div>
+      </Card>
     </div>
   )
 }

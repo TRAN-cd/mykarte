@@ -25,35 +25,6 @@ body {
   background: url(/images/shared/bg.png) no-repeat center / cover;
 }
 
-button {
-  cursor: pointer;
-}
-
 .font-en {
   font-family: var(--font-en), var(--font-jp),sans-serif;
-}
-
-@layer components {
-  /* common */
-  .y-middle {
-    @apply left-1/2 -translate-x-1/2;
-  }
-
-  .link-hover {
-    @apply hover:opacity-70 duration-300;
-  }
-
-  .card-shadow {
-    @apply shadow-[0px_10px_50px_0px_rgba(28,43,36,0.1)];
-  }
-
-  .divider-line {
-    @apply relative;
-  }
-
-  .divider-line::before {
-    content: "";
-    @apply absolute w-full h-px left-0 top-1/2 -translate-y-1/2;
-    background-color: rgba(28, 43, 36, 0.5);
-  }
 }
