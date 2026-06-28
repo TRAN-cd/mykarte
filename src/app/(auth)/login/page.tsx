@@ -43,10 +43,17 @@ export default function Page() {
       })
 
       if (error) {
-        setError("root.serverError", {
-          type: "manual",
-          message: "メールアドレスまたはパスワードが正しくありません。"
-        })
+        if (error.message.includes("Invalid login credentials")) {
+          setError("root.serverError", {
+            type: "manual",
+            message: "メールアドレスまたはパスワードが正しくありません。"
+          })
+        } else {
+          setError("root.serverError", {
+            type: "manual",
+            message: "エラーが発生しました。しばらく時間をおいて再度お試しください。"
+          })
+        }
         return
       }
 
@@ -54,7 +61,7 @@ export default function Page() {
     } catch (error) {
       setError("root.serverError", {
         type: "manual",
-        message: "エラーが発生しました。再度お試しください。"
+        message: "エラーが発生しました。しばらく時間をおいて再度お試しください。"
       })
     }
   }
