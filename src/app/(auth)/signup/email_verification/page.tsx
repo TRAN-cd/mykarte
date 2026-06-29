@@ -1,12 +1,13 @@
 'use client'
 
 import { supabase } from "@/app/_libs/supabase";
-import { useForm, SubmitHandler } from "react-hook-form"
+import { SubmitHandler } from "react-hook-form"
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/app/_components/Input"
 import { AuthButton } from "@/app/_components/AuthButton";
 import { Card } from "@/app/_components/Card";
+import { useAuthForm } from "@/app/_hooks/useAuthForm";
 
 type Inputs = {
   email: string;
@@ -21,26 +22,19 @@ export default function Page() {
   const [successMessage, setSuccessMessage] = useState('')
   const router = useRouter()
 
-  const defaultValues = {
-    email: "",
-    code: ""
-  }
-
   const {
     register,
     handleSubmit,
     setError,
     setValue,
     watch,
-    formState: {
-      isDirty,
-      isValid,
-      isSubmitting,
-      errors,
-    },
-  } = useForm<Inputs>({
-    defaultValues,
-    mode: "all"
+    isDirty,
+    isValid,
+    isSubmitting,
+    errors,
+  } = useAuthForm<Inputs>({
+    email: "",
+    code: ""
   })
 
   const email = watch('email')
@@ -81,13 +75,8 @@ export default function Page() {
     handleSubmit: handleSubmitResend,
     setError: setErrorResend,
     setValue: setValueResend,
-    formState: {
-      isSubmitting: isResendSubmitting,
-    },
-  } = useForm<ResendInputs>({
-    defaultValues: { email: '' },
-    mode: "all"
-  })
+    isSubmitting: isResendSubmitting,
+  } = useAuthForm<ResendInputs>({email: ""})
 
   useEffect(() => {
     setValueResend('email', sessionStorage.getItem('email') ?? '')

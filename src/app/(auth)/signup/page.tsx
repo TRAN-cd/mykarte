@@ -1,13 +1,14 @@
 'use client'
 
 import { supabase } from "@/app/_libs/supabase";
-import { useForm, SubmitHandler } from "react-hook-form"
+import { SubmitHandler } from "react-hook-form"
 import { useRouter } from "next/navigation";
 import { Input } from "@/app/_components/Input"
 import { AuthButton } from "@/app/_components/AuthButton";
 import Link from "next/link";
 import { DividerLine } from "@/app/_components/DividerLine";
 import { Card } from "@/app/_components/Card";
+import { useAuthForm } from "@/app/_hooks/useAuthForm";
 
 type Inputs = {
   email: string;
@@ -16,25 +17,16 @@ type Inputs = {
 export default function Page() {
   const router = useRouter()
 
-  const defaultValues = {
-    email: ""
-  }
-
   const {
     register,
     handleSubmit,
     setError,
-    formState: {
-      isDirty,
-      isValid,
-      isSubmitting,
-      errors,
-    },
+    isDirty,
+    isValid,
+    isSubmitting,
+    errors,
     reset,
-  } = useForm<Inputs>({
-    defaultValues,
-    mode: "all",
-  })
+  } = useAuthForm<Inputs>({email: ""})
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     try {

@@ -2,13 +2,14 @@
 
 import { supabase } from "@/app/_libs/supabase";
 import { useState } from "react";
-import { useForm, SubmitHandler } from "react-hook-form"
+import { SubmitHandler } from "react-hook-form"
 import { useRouter } from "next/navigation";
 import { Input } from "@/app/_components/Input"
 import { AuthButton } from "@/app/_components/AuthButton";
 import { DividerLine } from "@/app/_components/DividerLine";
 import Link from "next/link";
 import { Card } from "@/app/_components/Card";
+import { useAuthForm } from "@/app/_hooks/useAuthForm";
 
 type Inputs = {
   email: string;
@@ -19,24 +20,17 @@ export default function Page() {
   const [visible, setVisible] = useState(false)
   const router = useRouter()
 
-  const defaultValues = {
-    email: "",
-    password: ""
-  }
-
   const {
     register,
     handleSubmit,
     setError,
-    formState: {
-      isDirty,
-      isValid,
-      isSubmitting,
-      errors,
-    },
-  } = useForm<Inputs>({
-    defaultValues,
-    mode: "all"
+    isDirty,
+    isValid,
+    isSubmitting,
+    errors,
+  } = useAuthForm<Inputs>({
+    email: "",
+    password: ""
   })
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
