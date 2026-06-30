@@ -20,7 +20,7 @@ export default function Footer(){
           </li>
         </ul>
       </nav>
-      <small className="font-en text-sm font-semibold text-(--color-text)/70 p-2">&copy; 2026 tran ngoc kiet</small>
+      <small className="font-en text-sm font-semibold text-(--color-text)/70 p-2">&copy; 2026 mykarte</small>
     </footer>
   )
 }
