@@ -21,10 +21,12 @@ export default function Page() {
     register,
     handleSubmit,
     setError,
-    isDirty,
-    isValid,
-    isSubmitting,
-    errors,
+    formState: {
+      isDirty,
+      isValid,
+      isSubmitting,
+      errors,
+    }
   } = useAuthForm<Inputs>({password: ""})
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {

@@ -28,10 +28,12 @@ export default function Page() {
     setError,
     setValue,
     watch,
-    isDirty,
-    isValid,
-    isSubmitting,
-    errors,
+    formState: {
+      isDirty,
+      isValid,
+      isSubmitting,
+      errors,
+    }
   } = useAuthForm<Inputs>({
     email: "",
     code: ""
@@ -75,7 +77,9 @@ export default function Page() {
     handleSubmit: handleSubmitResend,
     setError: setErrorResend,
     setValue: setValueResend,
-    isSubmitting: isResendSubmitting,
+    formState: {
+      isSubmitting: isResendSubmitting,
+    }
   } = useAuthForm<ResendInputs>({email: ""})
 
   useEffect(() => {

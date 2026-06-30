@@ -24,10 +24,12 @@ export default function Page() {
     register,
     handleSubmit,
     setError,
-    isDirty,
-    isValid,
-    isSubmitting,
-    errors,
+    formState: {
+      isDirty,
+      isValid,
+      isSubmitting,
+      errors,
+    }
   } = useAuthForm<Inputs>({
     email: "",
     password: ""
