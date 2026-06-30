@@ -1,20 +1,7 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Noto_Sans_JP } from "next/font/google";
-import "./globals.css";
-import Header from "./_components/Header";
-import Footer from "./_components/Footer";
-
-const jpFont = Noto_Sans_JP({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-jp',
-})
-
-const enFont = Plus_Jakarta_Sans({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-en',
-})
+import "../globals.css";
+import Header from "../_components/Header";
+import Footer from "../_components/Footer";
 
 export const metadata: Metadata = {
   title: "myカルテ",
@@ -27,17 +14,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="ja"
-      className={`${jpFont.variable} ${enFont.variable} h-full antialiased`}
-    >
-      <body className="flex flex-col min-h-screen bg-gradient-to-r from-[#D6F2E5] to-[#E8F8F0] ">
-        <Header />
-        <main className="flex-1 flex pt-24">
-          {children}
-        </main>
-        <Footer />
-      </body>
-    </html>
+    <>    
+      <Header variant="floating"/>
+      <main className="flex-1 flex pt-16">
+        {children}
+      </main>
+      <Footer />
+    </>
   );
 }

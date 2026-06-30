@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Noto_Sans_JP } from "next/font/google";
 import "./globals.css";
-import Header from "./_components/Header";
-import Footer from "./_components/Footer";
 
 const jpFont = Noto_Sans_JP({
   subsets: ['latin'],
@@ -32,11 +30,7 @@ export default function RootLayout({
       className={`${jpFont.variable} ${enFont.variable} h-full antialiased`}
     >
       <body className="flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-1 flex pt-24">
-          {children}
-        </main>
-        <Footer />
+        {children}
       </body>
     </html>
   );

@@ -4,10 +4,17 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 
-export default function Header(){
+type Props = {
+  variant: "floating" | "fixed"
+}
+
+export default function Header({variant}: Props){
 
   return(
-    <header className="fixed top-8 y-middle max-w-290 w-full flex items-center justify-between bg-white py-3 pl-9 pr-4 rounded-[15px]">
+    // <header className="fixed top-8 y-middle max-w-290 w-full flex items-center justify-between bg-white py-3 pl-9 pr-4 rounded-[15px]">
+    <header className={variant === "floating" 
+      ? `fixed top-8 left-1/2 -translate-x-1/2 max-w-290 w-full flex items-center justify-between bg-white py-3 pl-9 pr-4 rounded-[15px]`
+      : `fixed top-0 w-full flex items-center justify-between bg-white py-3 pl-9 pr-4`}>
       <h1>
         <Link href="/"><Image src="/images/shared/logo.svg" width={106} height={34} alt="myカルテ"/></Link>
       </h1>
