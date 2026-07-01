@@ -22,10 +22,10 @@ export default function Header({variant}: Props){
         <nav className="nav-menu">
           <ul className="flex items-center gap-2">
             <li className="text-sm font-bold py-2 px-4 rounded-[5px] hover:bg-(--color-bg) duration-300"><Link href="#about"><span className="font-en">my</span>カルテとは</Link></li>
-            <li className="text-sm font-bold py-2 px-4 rounded-[5px] hover:bg-(--color-bg) duration-300"><Link href="#use">使い方</Link></li>
-            <li className="text-sm font-bold py-2 px-4 rounded-[5px] hover:bg-(--color-bg) duration-300"><Link href="#function">便利な機能</Link></li>
-            <li className="text-sm font-bold py-2 px-4 rounded-[5px] hover:bg-(--color-bg) duration-300"><Link href="#scene">活用シーン</Link></li>
-            <li className="text-sm font-bold py-2 px-4 rounded-[5px] hover:bg-(--color-bg) duration-300"><Link href="#faq">よくあるご質問</Link></li>
+            <li className="text-sm font-bold py-2 px-4 rounded-[5px] hover:bg-(--color-bg) duration-300"><Link href="/#use">使い方</Link></li>
+            <li className="text-sm font-bold py-2 px-4 rounded-[5px] hover:bg-(--color-bg) duration-300"><Link href="/#function">便利な機能</Link></li>
+            <li className="text-sm font-bold py-2 px-4 rounded-[5px] hover:bg-(--color-bg) duration-300"><Link href="/#scene">活用シーン</Link></li>
+            <li className="text-sm font-bold py-2 px-4 rounded-[5px] hover:bg-(--color-bg) duration-300"><Link href="/#faq">よくあるご質問</Link></li>
           </ul>
         </nav>
         <ul className="auth-actions flex items-center gap-4">
