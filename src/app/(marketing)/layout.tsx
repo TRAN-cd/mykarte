@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <>    
-      <Header variant="floating"/>
+      <Header variant="fixed"/>
       <main className="flex-1 flex pt-16">
         {children}
       </main>
