@@ -6,8 +6,8 @@ import Link from "next/link"
 export default function Page() {
 
   return (
-    <div className="flex flex-col max-w-208 w-full mx-auto pt-25">
-      <section>
+    <div className="flex flex-col max-w-208 w-full mx-auto pt-25 px-5">
+      <section className="relative z-2">
         <div className="lead">
           <h2 className="text-2xl font-bold pb-3">プライバシーポリシー</h2>
           <p className="text-(--color-sub) text-[13px] pb-12">制定日：2026年6月5日</p>
@@ -29,13 +29,13 @@ export default function Page() {
             <Link href="#article-8">第8条　個人情報の利用停止等</Link>
             <Link href="#article-9">第9条　Cookie等の技術の利用</Link>
             <Link href="#article-10">第10条　プライバシーポリシーの変更</Link>
-            <Link href="#article-11">第11条　お問い合わせ窓口</Link>
+            <Link href="#article-11">お問い合わせ窓口</Link>
           </div>
         </div>
       </section>
 
-      <div className="flex flex-col gap-9">
-        <section id="article-1">
+      <div className="relative z-1 flex flex-col gap-9 mb-25">
+        <section id="article-1" className="pt-25 -mt-25">
           <div className="flex items-center gap-3 pb-3 border-b border-(--color-primary)">
             <p className="font-en text-xs text-(--color-primary) bg-(--color-bg) w-6 h-6 flex justify-center items-center rounded-[50%]">1</p>
             <h3>個人情報</h3>
@@ -44,7 +44,7 @@ export default function Page() {
             <p className="leading-7">「個人情報」とは、個人情報の保護に関する法律（以下「個人情報保護法」といいます。）にいう「個人情報」を指すものとし、生存する個人に関する情報であって、当該情報に含まれる氏名、生年月日、住所、電話番号、連絡先その他の記述等により特定の個人を識別できる情報及び容貌、指紋、声紋にかかるデータ、及び健康保険証の保険者番号などの当該情報単体から特定の個人を識別できる情報（個人識別情報）を指します。</p>
           </div>
         </section>
-        <section id="article-2">
+        <section id="article-2" className="pt-25 -mt-25">
           <div className="flex items-center gap-3 pb-3 border-b border-(--color-primary)">
             <p className="font-en text-xs text-(--color-primary) bg-(--color-bg) w-6 h-6 flex justify-center items-center rounded-[50%]">2</p>
             <h3>個人情報の収集方法</h3>
@@ -59,7 +59,7 @@ export default function Page() {
             </ul>
           </div>
         </section>
-        <section id="article-3">
+        <section id="article-3" className="pt-25 -mt-25">
           <div className="flex items-center gap-3 pb-3 border-b border-(--color-primary)">
             <p className="font-en text-xs text-(--color-primary) bg-(--color-bg) w-6 h-6 flex justify-center items-center rounded-[50%]">3</p>
             <h3>個人情報を収集・利用する目的</h3>
@@ -75,7 +75,7 @@ export default function Page() {
             </ul>
           </div>
         </section>
-        <section id="article-4">
+        <section id="article-4" className="pt-25 -mt-25">
           <div className="flex items-center gap-3 pb-3 border-b border-(--color-primary)">
             <p className="font-en text-xs text-(--color-primary) bg-(--color-bg) w-6 h-6 flex justify-center items-center rounded-[50%]">4</p>
             <h3>利用目的の変更</h3>
@@ -87,7 +87,7 @@ export default function Page() {
             </ul>
           </div>
         </section>
-        <section id="article-5">
+        <section id="article-5" className="pt-25 -mt-25">
           <div className="flex items-center gap-3 pb-3 border-b border-(--color-primary)">
             <p className="font-en text-xs text-(--color-primary) bg-(--color-bg) w-6 h-6 flex justify-center items-center rounded-[50%]">5</p>
             <h3>個人情報の第三者提供</h3>
@@ -133,7 +133,7 @@ export default function Page() {
             </div>
           </div>
         </section>
-        <section id="article-6">
+        <section id="article-6" className="pt-25 -mt-25">
           <div className="flex items-center gap-3 pb-3 border-b border-(--color-primary)">
             <p className="font-en text-xs text-(--color-primary) bg-(--color-bg) w-6 h-6 flex justify-center items-center rounded-[50%]">6</p>
             <h3>個人情報の開示</h3>
@@ -150,7 +150,7 @@ export default function Page() {
             <p className="leading-7 pl-[2em] indent-[-2em]">２．前項の定めにかかわらず、履歴情報および特性情報などの個人情報以外の情報については、原則として開示いたしません。</p>
           </div>
         </section>
-        <section id="article-7">
+        <section id="article-7" className="pt-25 -mt-25">
           <div className="flex items-center gap-3 pb-3 border-b border-(--color-primary)">
             <p className="font-en text-xs text-(--color-primary) bg-(--color-bg) w-6 h-6 flex justify-center items-center rounded-[50%]">7</p>
             <h3>個人情報の訂正および削除</h3>
@@ -161,7 +161,7 @@ export default function Page() {
             <p className="leading-7 pl-[2em] indent-[-2em]">３．当社は、前項の規定に基づき訂正等を行った場合、または訂正等を行わない旨の決定をしたときは遅滞なく、これをユーザーに通知します。</p>
           </div>
         </section>
-        <section id="article-8">
+        <section id="article-8" className="pt-25 -mt-25">
           <div className="flex items-center gap-3 pb-3 border-b border-(--color-primary)">
             <p className="font-en text-xs text-(--color-primary) bg-(--color-bg) w-6 h-6 flex justify-center items-center rounded-[50%]">8</p>
             <h3>個人情報の利用停止等</h3>
@@ -172,7 +172,7 @@ export default function Page() {
             <p className="leading-7 pl-[2em] indent-[-2em]">３．当社は、前項の規定に基づき利用停止等を行った場合、または利用停止等を行わない旨の決定をしたときは、遅滞なく、これをユーザーに通知します。</p>
           </div>
         </section>
-        <section id="article-9">
+        <section id="article-9" className="pt-25 -mt-25">
           <div className="flex items-center gap-3 pb-3 border-b border-(--color-primary)">
             <p className="font-en text-xs text-(--color-primary) bg-(--color-bg) w-6 h-6 flex justify-center items-center rounded-[50%]">9</p>
             <h3>Cookie（クッキー）その他の技術の利用</h3>
@@ -184,7 +184,7 @@ export default function Page() {
             </div>
           </div>
         </section>
-        <section id="article-10">
+        <section id="article-10" className="pt-25 -mt-25">
           <div className="flex items-center gap-3 pb-3 border-b border-(--color-primary)">
             <p className="font-en text-xs text-(--color-primary) bg-(--color-bg) w-6 h-6 flex justify-center items-center rounded-[50%]">10</p>
             <h3>プライバシーポリシーの変更</h3>
@@ -194,15 +194,35 @@ export default function Page() {
             <p className="leading-7 pl-[2em] indent-[-2em]">２．当社が別途定める場合を除いて、変更後のプライバシーポリシーは、本ウェブサイトに掲載したときから効力を生じるものとします。</p>
           </div>
         </section>
-        <section id="article-11">
+        <section id="article-11" className="pt-25 -mt-25">
           <div className="flex items-center gap-3 pb-3 border-b border-(--color-primary)">
             <p className="font-en text-xs text-(--color-primary) bg-(--color-bg) w-6 h-6 flex justify-center items-center rounded-[50%]">11</p>
             <h3>お問い合わせ窓口</h3>
           </div>
           <div className="flex flex-col gap-3 pt-6">
             <p className="leading-7">本ポリシーに関するお問い合わせ、および個人情報の開示・訂正・利用停止等のご請求は、下記の窓口までお願いいたします。ご本人確認を行った上で、法令に基づき合理的な期間内に対応いたします。なお、手数料は無料です。</p>
-            <div className="flex flex-col gap-6 bg-(--color-bg) p-6 rounded-[0_5px_5px_0] border-l-4 border-(--color-primary)">
-              <p className="leading-7">ログイン状態の維持のため、Supabaseが提供する認証機能においてCookieを使用しています。このCookieはサービスの提供に必要なもので、無効にするとログイン機能が正常に動作しない場合があります。</p>
+            <div className="flex flex-col gap-6 bg-white p-6 rounded-[10px] border border-(--color-sub)">
+              <dl className="flex gap-10 pb-3 border-b border-(--color-sub)/20">
+                <dt className="flex gap-2.25 w-37">
+                  <Image src="/images/shared/icon_office.svg" alt="" width={24} height={24}/>
+                  <p className="text-(--color-sub)">事業者名</p>
+                </dt>
+                <dd>ダミー</dd>
+              </dl>
+              <dl className="flex gap-10 pb-3 border-b border-(--color-sub)/20">
+                <dt className="flex gap-2.25 w-37">
+                  <Image src="/images/shared/icon_place.svg" alt="" width={24} height={24}/>
+                  <p className="text-(--color-sub)">所在地</p>
+                </dt>
+                <dd>ダミー</dd>
+              </dl>
+              <dl className="flex gap-10 pb-3 border-b border-(--color-sub)/20">
+                <dt className="flex gap-2.25 w-37">
+                  <Image src="/images/shared/icon_mail.svg" alt="" width={24} height={24}/>
+                  <p className="text-(--color-sub)">メールアドレス</p>
+                </dt>
+                <dd>champagne1120@gmail.com</dd>
+              </dl>
             </div>
           </div>
         </section>

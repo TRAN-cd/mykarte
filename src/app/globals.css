@@ -19,10 +19,18 @@
   }
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   color: var(--color-text);
   font-family: var(--font-jp), sans-serif;
-  background: url(/images/shared/bg.png) no-repeat center / cover;
+  /* background: url(/images/shared/bg.png) no-repeat center / cover; */
+  background-image: url(/images/shared/bg.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed, scroll;
 }
 
 .font-en {
