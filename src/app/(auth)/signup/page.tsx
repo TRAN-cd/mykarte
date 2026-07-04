@@ -22,14 +22,14 @@ export default function Page() {
     register,
     handleSubmit,
     setError,
-    formState: {  
+    formState: {
       isDirty,
       isValid,
       isSubmitting,
       errors,
     },
     reset,
-  } = useAuthForm<Inputs>({email: ""})
+  } = useAuthForm<Inputs>({ email: "" })
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     try {
@@ -41,10 +41,22 @@ export default function Page() {
       })
 
       if (error) {
-        setError("root.serverError", {
-          type: "manual",
-          message: "しばらく時間をおいてから再度お試しください。"
-        })
+        if (error.code === 'over_email_send_rate_limit') {
+          setError("root.serverError", {
+            type: "manual",
+            message: "メールの送信回数が上限に達しました。しばらく時間をおいてから再度お試しください。"
+          })
+        } else if (error.code === 'email_address_invalid') {
+          setError("root.serverError", {
+            type: "manual",
+            message: "有効なメールアドレスを入力してください。"
+          })
+        } else {
+          setError("root.serverError", {
+            type: "manual",
+            message: "エラーが発生しました。もう一度お試しください。"
+          })
+        }
         return
       }
 
@@ -74,10 +86,10 @@ export default function Page() {
         <p className="text-center text-[15px] leading-relaxed"><a href="/user_policy" className="text-(--color-link) border-b hover:border-transparent hover:opacity-70 duration-300">利用規約</a>、<a href="/privacy" className="text-(--color-link) border-b hover:border-transparent hover:opacity-70 duration-300">プライバシーポリシー</a>について同意の上、<br />以下のいずれかの方法でご登録ください。</p>
         <div className="flex items-center gap-6">
           <div className="border border-(--color-sub) px-17.25 py-1.75 rounded-[30px] hover:opacity-70 duration-300">
-            <Image src="/icons/google.png"  alt="googleアカウント" width={30} height={26} />
+            <Image src="/icons/google.png" alt="googleアカウント" width={30} height={26} />
           </div>
           <div className="border border-(--color-sub) px-17.25 py-1.75 rounded-[30px] hover:opacity-70 duration-300">
-            <Image src="/icons/apple.png"  alt="Appleアカウント" width={30} height={26} />
+            <Image src="/icons/apple.png" alt="Appleアカウント" width={30} height={26} />
           </div>
         </div>
         <DividerLine text="またはメールアドレスで登録" />

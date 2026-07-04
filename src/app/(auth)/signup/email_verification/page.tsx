@@ -55,10 +55,22 @@ export default function Page() {
       })
 
       if (error) {
-        setError("root.serverError", {
-          type: "manual",
-          message: "確認コードが異なります。再度お試しください。"
-        })
+        if (error.code === 'otp_expired') {
+          setError("root.serverError", {
+            type: "manual",
+            message: "確認コードの有効期限が切れました。再送信してください。"
+          })
+        } else if (error.code === 'over_request_rate_limit') {
+          setError("root.serverError", {
+            type: "manual",
+            message: "しばらく時間をおいてから、再度お試しください。"
+          })
+        } else {
+          setError("root.serverError", {
+            type: "manual",
+            message: "エラーが発生しました。再度お試しください。"
+          })
+        }
         return
       }
 
@@ -80,7 +92,7 @@ export default function Page() {
     formState: {
       isSubmitting: isResendSubmitting,
     }
-  } = useAuthForm<ResendInputs>({email: ""})
+  } = useAuthForm<ResendInputs>({ email: "" })
 
   useEffect(() => {
     setValueResend('email', sessionStorage.getItem('email') ?? '')
@@ -96,10 +108,17 @@ export default function Page() {
       })
 
       if (error) {
-        setErrorResend("root.serverError", {
-          type: "manual",
-          message: "しばらく時間をおいてから再度お試しください。"
-        })
+        if (error.code === 'over_email_send_rate_limit') {
+          setErrorResend("root.serverError", {
+            type: "manual",
+            message: "メールの送信回数が上限に達しました。しばらく時間をおいてから再度お試しください。"
+          })
+        } else {
+          setErrorResend("root.serverError", {
+            type: "manual",
+            message: "エラーが発生しました。初めからお試しください。"
+          })
+        }
         return
       }
 

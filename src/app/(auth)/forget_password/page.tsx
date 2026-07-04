@@ -39,11 +39,22 @@ export default function Page() {
         })
 
       if (error) {
-        console.log(error)
-        setError("root.serverError", {
-          type: "manual",
-          message: "しばらく時間をおいてから、再度お試しください。"
-        })
+        if (error.code === 'over_email_send_rate_limit') {
+          setError("root.serverError", {
+            type: "manual",
+            message: "メールの送信回数が上限に達しました。しばらく時間をおいてから再度お試しください。"
+          })
+        } else if (error.code === 'email_address_invalid') {
+          setError("root.serverError", {
+            type: "manual",
+            message: "有効なメールアドレスを入力してください。"
+          })
+        } else {
+          setError("root.serverError", {
+            type: "manual",
+            message: "エラーが発生しました。もう一度お試しください。"
+          })
+        }
         return
       }
 
@@ -60,9 +71,9 @@ export default function Page() {
     <div className="flex flex-col gap-4 items-center justify-center w-full">
       {isSuccess && (
         <p className="text-(--color-text) text-xs border border-(--color-sub) bg-(--color-bg) max-w-115 w-full text-center p-3 rounded-[10px]">
-        パスワードリセットに必要なメールを送信しました。<br />
-        30分以内にメール記載のリンクをクリックし、<br />
-        パスワードの再設定に進んでください。</p>
+          パスワードリセットに必要なメールを送信しました。<br />
+          30分以内にメール記載のリンクをクリックし、<br />
+          パスワードの再設定に進んでください。</p>
       )}
       {isSubmitting && <p className="text-(--color-primary) text-xs border border-(--color-sub) bg-(--color-bg) max-w-115 w-full text-center p-3 rounded-[10px]">送信中</p>}
       {errors.root?.serverError && (

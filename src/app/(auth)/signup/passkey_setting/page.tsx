@@ -36,10 +36,22 @@ export default function Page() {
       })
 
       if (error) {
-        setError("root.serverError", {
-          type: "manual",
-          message: "パスワードは半角英数字・記号のみ 8字以上で設定してください。"
-        })
+        if (error.code === 'weak_password') {
+          setError("root.serverError", {
+            type: "manual",
+            message: "パスワードが弱すぎます。半角英数字・記号を組み合わせて8字以上で設定してください。"
+          })
+        } else if (error.code === 'session_not_found') {
+          setError("root.serverError", {
+            type: "manual",
+            message: "セッションが切れました。新規登録から再度お試しください。"
+          })
+        } else {
+          setError("root.serverError", {
+            type: "manual",
+            message: "エラーが発生しました。再度お試しください。"
+          })
+        }
         return
       }
 
