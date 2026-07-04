@@ -11,6 +11,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Card } from "@/app/_components/Card";
 import { useAuthForm } from "@/app/_hooks/useAuthForm";
+import { getAuthErrorMessage } from "@/app/_libs/authErrorHandler";
 
 type Inputs = {
   email: string;
@@ -44,17 +45,10 @@ export default function Page() {
       })
 
       if (error) {
-        if (error.message.includes("Invalid login credentials")) {
-          setError("root.serverError", {
-            type: "manual",
-            message: "メールアドレスまたはパスワードが正しくありません。"
-          })
-        } else {
-          setError("root.serverError", {
-            type: "manual",
-            message: "エラーが発生しました。しばらく時間をおいて再度お試しください。"
-          })
-        }
+        setError("root.serverError", {
+          type: "manual",
+          message: getAuthErrorMessage(error.code)
+        })
         return
       }
 
@@ -62,7 +56,7 @@ export default function Page() {
     } catch (error) {
       setError("root.serverError", {
         type: "manual",
-        message: "エラーが発生しました。しばらく時間をおいて再度お試しください。"
+        message: getAuthErrorMessage(undefined)
       })
     }
   }
@@ -142,10 +136,10 @@ export default function Page() {
 
         <div className="flex items-center gap-6">
           <div className="border border-(--color-sub) px-17.25 py-1.75 rounded-[30px] hover:opacity-70 duration-300">
-            <Image src="/icons/google.png"  alt="googleアカウント" width={30} height={26} />
+            <Image src="/icons/google.png" alt="googleアカウント" width={30} height={26} />
           </div>
           <div className="border border-(--color-sub) px-17.25 py-1.75 rounded-[30px] hover:opacity-70 duration-300">
-            <Image src="/icons/apple.png"  alt="Appleアカウント" width={30} height={26} />
+            <Image src="/icons/apple.png" alt="Appleアカウント" width={30} height={26} />
           </div>
         </div>
 

@@ -7,9 +7,9 @@ import { Input } from "@/app/_components/Input"
 import { AuthButton } from "@/app/_components/AuthButton";
 import { Card } from "@/app/_components/Card";
 import { useAuthForm } from "@/app/_hooks/useAuthForm";
+import { getAuthErrorMessage } from "@/app/_libs/authErrorHandler";
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL;
-
 
 type Inputs = {
   email: string;
@@ -38,31 +38,19 @@ export default function Page() {
           redirectTo: `${appUrl}/forget_password/input/password`,
         })
 
-      if (error) {
-        if (error.code === 'over_email_send_rate_limit') {
+        if (error) {
           setError("root.serverError", {
             type: "manual",
-            message: "メールの送信回数が上限に達しました。しばらく時間をおいてから再度お試しください。"
+            message: getAuthErrorMessage(error.code)
           })
-        } else if (error.code === 'email_address_invalid') {
-          setError("root.serverError", {
-            type: "manual",
-            message: "有効なメールアドレスを入力してください。"
-          })
-        } else {
-          setError("root.serverError", {
-            type: "manual",
-            message: "エラーが発生しました。もう一度お試しください。"
-          })
+          return
         }
-        return
-      }
 
       setIsSuccess(true)
     } catch (error) {
       setError("root.serverError", {
         type: "manual",
-        message: "エラーが発生しました。もう一度お試しください。"
+        message: getAuthErrorMessage(undefined)
       })
     }
   }

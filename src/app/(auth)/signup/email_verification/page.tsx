@@ -8,6 +8,7 @@ import { Input } from "@/app/_components/Input"
 import { AuthButton } from "@/app/_components/AuthButton";
 import { Card } from "@/app/_components/Card";
 import { useAuthForm } from "@/app/_hooks/useAuthForm";
+import { getAuthErrorMessage } from "@/app/_libs/authErrorHandler";
 
 type Inputs = {
   email: string;
@@ -55,22 +56,10 @@ export default function Page() {
       })
 
       if (error) {
-        if (error.code === 'otp_expired') {
-          setError("root.serverError", {
-            type: "manual",
-            message: "確認コードの有効期限が切れました。再送信してください。"
-          })
-        } else if (error.code === 'over_request_rate_limit') {
-          setError("root.serverError", {
-            type: "manual",
-            message: "しばらく時間をおいてから、再度お試しください。"
-          })
-        } else {
-          setError("root.serverError", {
-            type: "manual",
-            message: "エラーが発生しました。再度お試しください。"
-          })
-        }
+        setError("root.serverError", {
+          type: "manual",
+          message: getAuthErrorMessage(error.code)
+        })
         return
       }
 
@@ -79,7 +68,7 @@ export default function Page() {
     } catch (error) {
       setError("root.serverError", {
         type: "manual",
-        message: "確認コードが異なります。再度お試しください。"
+        message: getAuthErrorMessage(undefined)
       })
     }
   }
@@ -108,17 +97,10 @@ export default function Page() {
       })
 
       if (error) {
-        if (error.code === 'over_email_send_rate_limit') {
-          setErrorResend("root.serverError", {
-            type: "manual",
-            message: "メールの送信回数が上限に達しました。しばらく時間をおいてから再度お試しください。"
-          })
-        } else {
-          setErrorResend("root.serverError", {
-            type: "manual",
-            message: "エラーが発生しました。初めからお試しください。"
-          })
-        }
+        setErrorResend("root.serverError", {
+          type: "manual",
+          message: getAuthErrorMessage(error.code)
+        })
         return
       }
 
@@ -127,7 +109,7 @@ export default function Page() {
     } catch (error) {
       setErrorResend("root.serverError", {
         type: "manual",
-        message: "エラーが発生しました。初めからお試しください。"
+        message: getAuthErrorMessage(undefined)
       })
     }
   }

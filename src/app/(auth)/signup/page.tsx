@@ -10,6 +10,7 @@ import Image from "next/image";
 import { DividerLine } from "@/app/_components/DividerLine";
 import { Card } from "@/app/_components/Card";
 import { useAuthForm } from "@/app/_hooks/useAuthForm";
+import { getAuthErrorMessage } from "@/app/_libs/authErrorHandler";
 
 type Inputs = {
   email: string;
@@ -41,22 +42,10 @@ export default function Page() {
       })
 
       if (error) {
-        if (error.code === 'over_email_send_rate_limit') {
-          setError("root.serverError", {
-            type: "manual",
-            message: "メールの送信回数が上限に達しました。しばらく時間をおいてから再度お試しください。"
-          })
-        } else if (error.code === 'email_address_invalid') {
-          setError("root.serverError", {
-            type: "manual",
-            message: "有効なメールアドレスを入力してください。"
-          })
-        } else {
-          setError("root.serverError", {
-            type: "manual",
-            message: "エラーが発生しました。もう一度お試しください。"
-          })
-        }
+        setError("root.serverError", {
+          type: "manual",
+          message: getAuthErrorMessage(error.code)
+        })
         return
       }
 
@@ -66,7 +55,7 @@ export default function Page() {
     } catch (error) {
       setError("root.serverError", {
         type: "manual",
-        message: "登録に失敗しました。もう一度お試しください。"
+        message: getAuthErrorMessage(undefined)
       })
     }
   }
