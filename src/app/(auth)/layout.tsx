@@ -14,12 +14,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <>    
-      <Header variant="fixed"/>
+    <div className="flex flex-col flex-1 bg-[url('/images/shared/bg.png')] bg-no-repeat bg-cover bg-fixed">
+      <Header variant="fixed" />
       <main className="flex-1 flex pt-16">
         {children}
       </main>
       <Footer />
-    </>
+    </div>
   );
 }
