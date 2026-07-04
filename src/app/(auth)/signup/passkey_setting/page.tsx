@@ -8,7 +8,7 @@ import { Input } from "@/app/_components/Input"
 import { AuthButton } from "@/app/_components/AuthButton";
 import { Card } from "@/app/_components/Card";
 import { useAuthForm } from "@/app/_hooks/useAuthForm";
-import { getAuthErrorMessage } from "@/app/_libs/authErrorHandler";
+import { getAuthErrorMessage } from "@/app/_libs/getAuthErrorMessage";
 
 type Inputs = {
   password: string;

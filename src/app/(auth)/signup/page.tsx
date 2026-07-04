@@ -10,7 +10,7 @@ import Image from "next/image";
 import { DividerLine } from "@/app/_components/DividerLine";
 import { Card } from "@/app/_components/Card";
 import { useAuthForm } from "@/app/_hooks/useAuthForm";
-import { getAuthErrorMessage } from "@/app/_libs/authErrorHandler";
+import { getAuthErrorMessage } from "@/app/_libs/getAuthErrorMessage";
 
 type Inputs = {
   email: string;
