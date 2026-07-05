@@ -2,22 +2,21 @@
 
 import { supabase } from "@/app/_libs/supabase";
 import { SubmitHandler } from "react-hook-form"
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Input } from "@/app/_components/Input"
 import { AuthButton } from "@/app/_components/AuthButton";
-import Link from "next/link";
-import Image from "next/image";
-import { DividerLine } from "@/app/_components/DividerLine";
 import { Card } from "@/app/_components/Card";
 import { useAuthForm } from "@/app/_hooks/useAuthForm";
 import { getAuthErrorMessage } from "@/app/_libs/getAuthErrorMessage";
+
+const appUrl = process.env.NEXT_PUBLIC_APP_URL;
 
 type Inputs = {
   email: string;
 };
 
 export default function Page() {
-  const router = useRouter()
+  const [isSuccess, setIsSuccess] = useState(false)
 
   const {
     register,
@@ -29,29 +28,25 @@ export default function Page() {
       isSubmitting,
       errors,
     },
-    reset,
   } = useAuthForm<Inputs>({ email: "" })
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     try {
-      const { error } = await supabase.auth.signInWithOtp({
-        email: data.email,
-        options: {
-          shouldCreateUser: true,
-        },
-      })
-
-      if (error) {
-        setError("root.serverError", {
-          type: "manual",
-          message: getAuthErrorMessage(error.code)
+      const { error } = await supabase.auth.resetPasswordForEmail(
+        data.email,
+        {
+          redirectTo: `${appUrl}/forget_password/input/password`,
         })
-        return
-      }
 
-      sessionStorage.setItem('email', data.email);
-      reset();
-      router.push('/signup/email_verification/');
+        if (error) {
+          setError("root.serverError", {
+            type: "manual",
+            message: getAuthErrorMessage(error.code)
+          })
+          return
+        }
+
+      setIsSuccess(true)
     } catch (error) {
       setError("root.serverError", {
         type: "manual",
@@ -62,7 +57,12 @@ export default function Page() {
 
   return (
     <div className="flex flex-col gap-4 items-center justify-center w-full">
-
+      {isSuccess && (
+        <p className="text-(--color-text) text-xs border border-(--color-sub) bg-(--color-bg) max-w-115 w-full text-center p-3 rounded-[10px]">
+          パスワードリセットに必要なメールを送信しました。<br />
+          30分以内にメール記載のリンクをクリックし、<br />
+          パスワードの再設定に進んでください。</p>
+      )}
       {isSubmitting && <p className="text-(--color-primary) text-xs border border-(--color-sub) bg-(--color-bg) max-w-115 w-full text-center p-3 rounded-[10px]">送信中</p>}
       {errors.root?.serverError && (
         <p className="text-(--color-danger) text-xs border border-(--color-danger) bg-(--color-danger-bg) max-w-115 w-full text-center p-3 rounded-[10px]">
@@ -71,17 +71,10 @@ export default function Page() {
       )}
 
       <Card>
-        <h2 className="text-center text-2xl font-bold">新規登録</h2>
-        <p className="text-center text-[15px] leading-relaxed"><a href="/user_policy" className="text-(--color-link) border-b hover:border-transparent hover:opacity-70 duration-300">利用規約</a>、<a href="/privacy" className="text-(--color-link) border-b hover:border-transparent hover:opacity-70 duration-300">プライバシーポリシー</a>について同意の上、<br />以下のいずれかの方法でご登録ください。</p>
-        <div className="flex items-center gap-6">
-          <div className="border border-(--color-sub) px-17.25 py-1.75 rounded-[30px] hover:opacity-70 duration-300">
-            <Image src="/icons/google.png" alt="googleアカウント" width={30} height={26} />
-          </div>
-          <div className="border border-(--color-sub) px-17.25 py-1.75 rounded-[30px] hover:opacity-70 duration-300">
-            <Image src="/icons/apple.png" alt="Appleアカウント" width={30} height={26} />
-          </div>
-        </div>
-        <DividerLine text="またはメールアドレスで登録" />
+        <h2 className="text-center text-2xl font-bold">パスワードをリセットする</h2>
+        <p className="text-center text-[15px] leading-relaxed">
+          「パスワード再設定ページのURL」を、<br />登録メールアドレスに送信します。<br />登録メールアドレスを入力し【送信する】を<br />押してください。
+        </p>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
           <Input
@@ -103,13 +96,10 @@ export default function Page() {
           }
 
           <AuthButton
-            text="上記に同意して登録"
+            text="送信する"
             disabled={!isDirty || !isValid || isSubmitting}
           />
         </form>
-
-
-        <Link href="/login" className="text-center text-(--color-primary) text-xs hover:opacity-70 duration-300">すでにお持ちのアカウントでログインする</Link>
       </Card>
     </div>
   )

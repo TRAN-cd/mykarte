@@ -8,6 +8,7 @@ import { Input } from "@/app/_components/Input"
 import { AuthButton } from "@/app/_components/AuthButton";
 import { Card } from "@/app/_components/Card";
 import { useAuthForm } from "@/app/_hooks/useAuthForm";
+import { getAuthErrorMessage } from "@/app/_libs/getAuthErrorMessage";
 
 type Inputs = {
   password: string;
@@ -38,7 +39,7 @@ export default function Page() {
       if (error) {
         setError("root.serverError", {
           type: "manual",
-          message: "パスワードは半角英数字・記号のみ 8字以上で設定してください。"
+          message: getAuthErrorMessage(error.code)
         })
         return
       }
@@ -47,7 +48,7 @@ export default function Page() {
     } catch (error) {
       setError("root.serverError", {
         type: "manual",
-        message: "エラーが発生しました。再度お試しください。"
+        message: getAuthErrorMessage(undefined)
       })
     }
   }

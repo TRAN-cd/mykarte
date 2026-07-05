@@ -8,6 +8,7 @@ import { Input } from "@/app/_components/Input"
 import { AuthButton } from "@/app/_components/AuthButton";
 import { Card } from "@/app/_components/Card";
 import { useAuthForm } from "@/app/_hooks/useAuthForm";
+import { getAuthErrorMessage } from "@/app/_libs/getAuthErrorMessage";
 
 type Inputs = {
   email: string;
@@ -57,7 +58,7 @@ export default function Page() {
       if (error) {
         setError("root.serverError", {
           type: "manual",
-          message: "確認コードが異なります。再度お試しください。"
+          message: getAuthErrorMessage(error.code)
         })
         return
       }
@@ -67,7 +68,7 @@ export default function Page() {
     } catch (error) {
       setError("root.serverError", {
         type: "manual",
-        message: "確認コードが異なります。再度お試しください。"
+        message: getAuthErrorMessage(undefined)
       })
     }
   }
@@ -80,7 +81,7 @@ export default function Page() {
     formState: {
       isSubmitting: isResendSubmitting,
     }
-  } = useAuthForm<ResendInputs>({email: ""})
+  } = useAuthForm<ResendInputs>({ email: "" })
 
   useEffect(() => {
     setValueResend('email', sessionStorage.getItem('email') ?? '')
@@ -98,7 +99,7 @@ export default function Page() {
       if (error) {
         setErrorResend("root.serverError", {
           type: "manual",
-          message: "しばらく時間をおいてから再度お試しください。"
+          message: getAuthErrorMessage(error.code)
         })
         return
       }
@@ -108,7 +109,7 @@ export default function Page() {
     } catch (error) {
       setErrorResend("root.serverError", {
         type: "manual",
-        message: "エラーが発生しました。初めからお試しください。"
+        message: getAuthErrorMessage(undefined)
       })
     }
   }

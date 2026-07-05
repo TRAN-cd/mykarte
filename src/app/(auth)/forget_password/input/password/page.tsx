@@ -1,20 +1,16 @@
 'use client'
 
 import { supabase } from "@/app/_libs/supabase";
-import { useState } from "react";
 import { SubmitHandler } from "react-hook-form"
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/app/_components/Input"
 import { AuthButton } from "@/app/_components/AuthButton";
-import { DividerLine } from "@/app/_components/DividerLine";
-import Link from "next/link";
-import Image from "next/image";
 import { Card } from "@/app/_components/Card";
 import { useAuthForm } from "@/app/_hooks/useAuthForm";
 import { getAuthErrorMessage } from "@/app/_libs/getAuthErrorMessage";
 
 type Inputs = {
-  email: string;
   password: string;
 };
 
@@ -31,16 +27,12 @@ export default function Page() {
       isValid,
       isSubmitting,
       errors,
-    }
-  } = useAuthForm<Inputs>({
-    email: "",
-    password: ""
-  })
+    },
+  } = useAuthForm<Inputs>({ password: "" })
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: data.email,
+      const { error } = await supabase.auth.updateUser({
         password: data.password,
       })
 
@@ -52,7 +44,7 @@ export default function Page() {
         return
       }
 
-      router.push('/mykarte/')
+      router.push('/forget_password/complete/')
     } catch (error) {
       setError("root.serverError", {
         type: "manual",
@@ -63,7 +55,7 @@ export default function Page() {
 
   return (
     <div className="flex flex-col gap-4 items-center justify-center w-full">
-
+      {isSubmitting && <p className="text-(--color-primary) text-xs border border-(--color-sub) bg-(--color-bg) max-w-115 w-full text-center p-3 rounded-[10px]">送信中</p>}
       {errors.root?.serverError && (
         <p className="text-(--color-danger) text-xs border border-(--color-danger) bg-(--color-danger-bg) max-w-115 w-full text-center p-3 rounded-[10px]">
           {errors.root.serverError.message}
@@ -71,28 +63,10 @@ export default function Page() {
       )}
 
       <Card>
-        <h2 className="text-center text-2xl font-bold">ログイン</h2>
-        <p className="text-center text-[15px] leading-relaxed">登録したメールアドレスとパスワードをご入力の上、<br />【ログイン】ボタンを押してください。</p>
+        <h2 className="text-center text-2xl font-bold">パスワードの再設定</h2>
+        <p className="text-center text-[15px] leading-relaxed">新しいパスワードを入力し、<br />【設定する】を押してください。</p>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
-          <Input
-            htmlFor="email"
-            title="メールアドレス"
-            type="email"
-            id="email"
-            placeholder="example@mykarte.com"
-            registerProps={register("email", {
-              required: "メールアドレスが入力されていません。",
-              pattern: {
-                value: /[\w\.-]+@[\w\.-]+\.\w{2,4}/,
-                message: "正しいメールアドレス形式で入力してください。"
-              }
-            })}
-          />
-          {errors.email &&
-            <span className="text-(--color-danger) text-xs">{errors.email.message}</span>
-          }
-
           <Input
             htmlFor="password"
             title="パスワード(半角英数字・記号のみ 8字以上)"
@@ -110,6 +84,7 @@ export default function Page() {
           {errors.password &&
             <span className="text-(--color-danger) text-xs">{errors.password.message}</span>
           }
+
           <div className="flex justify-end items-center gap-2">
             <input
               type="checkbox"
@@ -123,29 +98,10 @@ export default function Page() {
           </div>
 
           <AuthButton
-            text="ログイン"
+            text="設定する"
             disabled={!isDirty || !isValid || isSubmitting}
           />
         </form>
-
-        <Link href="/forget_password" className="text-center text-(--color-link) text-xs hover:opacity-70 duration-300">
-          パスワードをお忘れの場合
-        </Link>
-
-        <DividerLine text="他の方法でログインする" />
-
-        <div className="flex items-center gap-6">
-          <div className="border border-(--color-sub) px-17.25 py-1.75 rounded-[30px] hover:opacity-70 duration-300">
-            <Image src="/icons/google.png" alt="googleアカウント" width={30} height={26} />
-          </div>
-          <div className="border border-(--color-sub) px-17.25 py-1.75 rounded-[30px] hover:opacity-70 duration-300">
-            <Image src="/icons/apple.png" alt="Appleアカウント" width={30} height={26} />
-          </div>
-        </div>
-
-        <Link href="/signup" className="text-center text-(--color-primary) text-xs hover:opacity-70 duration-300">
-          myカルテ の新規登録はこちら
-        </Link>
       </Card>
     </div>
   )
