@@ -1,12 +1,5 @@
-import type { Metadata } from "next";
-import "../globals.css";
 import Header from "../_components/Header";
 import Footer from "../_components/Footer";
-
-export const metadata: Metadata = {
-  title: "myカルテ",
-  description: "記憶に頼らず、自分の健康状態を振り返るための私専用カルテ",
-};
 
 export default function RootLayout({
   children,
