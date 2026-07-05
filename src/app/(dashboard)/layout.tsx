@@ -1,6 +1,5 @@
 'use client'
 
-import "../globals.css";
 import { useRouteGuard } from "../_hooks/useRouteGuard";
 
 export default function RootLayout({
