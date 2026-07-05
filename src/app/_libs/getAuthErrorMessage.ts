@@ -36,7 +36,7 @@ export const getAuthErrorMessage = (errorCode: string | undefined) => {
       return "セッション期限が切れました。再度、ログインしてください。";
 
     case "otp_expired":
-      return "確認コードの有効期限が切れています。再度、お試しください。";
+      return "確認コードが異なります。再度、お試しください。";
 
     case "over_request_rate_limit":
       return "しばらく時間をおいてから、再度お試しください。";
