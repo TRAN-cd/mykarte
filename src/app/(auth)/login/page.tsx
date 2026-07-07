@@ -8,10 +8,10 @@ import { Input } from "@/app/_components/Input"
 import { AuthButton } from "@/app/_components/AuthButton";
 import { DividerLine } from "@/app/_components/DividerLine";
 import Link from "next/link";
-import Image from "next/image";
 import { Card } from "@/app/_components/Card";
 import { useAuthForm } from "@/app/_hooks/useAuthForm";
 import { getAuthErrorMessage } from "@/app/_libs/getAuthErrorMessage";
+import { GoogleAuthButton } from "@/app/_components/GoogleAuthButton";
 
 type Inputs = {
   email: string;
@@ -134,14 +134,7 @@ export default function Page() {
 
         <DividerLine text="他の方法でログインする" />
 
-        <div className="flex items-center gap-6">
-          <div className="border border-(--color-sub) px-17.25 py-1.75 rounded-[30px] hover:opacity-70 duration-300">
-            <Image src="/icons/google.png" alt="googleアカウント" width={30} height={26} />
-          </div>
-          <div className="border border-(--color-sub) px-17.25 py-1.75 rounded-[30px] hover:opacity-70 duration-300">
-            <Image src="/icons/apple.png" alt="Appleアカウント" width={30} height={26} />
-          </div>
-        </div>
+        <GoogleAuthButton label="Googleでログイン"/>
 
         <Link href="/signup" className="text-center text-(--color-primary) text-xs hover:opacity-70 duration-300">
           myカルテ の新規登録はこちら
