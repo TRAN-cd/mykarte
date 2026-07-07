@@ -12,6 +12,8 @@ import { Card } from "@/app/_components/Card";
 import { useAuthForm } from "@/app/_hooks/useAuthForm";
 import { getAuthErrorMessage } from "@/app/_libs/getAuthErrorMessage";
 
+const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+
 type Inputs = {
   email: string;
 };
@@ -60,6 +62,15 @@ export default function Page() {
     }
   }
 
+  const handleGoogleLogin = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${appUrl}/mykarte`
+      },
+    })
+  }
+
   return (
     <div className="flex flex-col gap-4 items-center justify-center w-full">
 
@@ -74,9 +85,11 @@ export default function Page() {
         <h2 className="text-center text-2xl font-bold">新規登録</h2>
         <p className="text-center text-[15px] leading-relaxed"><a href="/user_policy" className="text-(--color-link) border-b hover:border-transparent hover:opacity-70 duration-300">利用規約</a>、<a href="/privacy" className="text-(--color-link) border-b hover:border-transparent hover:opacity-70 duration-300">プライバシーポリシー</a>について同意の上、<br />以下のいずれかの方法でご登録ください。</p>
         <div className="flex items-center gap-6">
-          <div className="border border-(--color-sub) px-17.25 py-1.75 rounded-[30px] hover:opacity-70 duration-300">
+          <button 
+            onClick={handleGoogleLogin}
+            className="border border-(--color-sub) px-17.25 py-1.75 rounded-[30px] hover:opacity-70 duration-300 cursor-pointer">
             <Image src="/icons/google.png" alt="googleアカウント" width={30} height={26} />
-          </div>
+          </button>
           <div className="border border-(--color-sub) px-17.25 py-1.75 rounded-[30px] hover:opacity-70 duration-300">
             <Image src="/icons/apple.png" alt="Appleアカウント" width={30} height={26} />
           </div>
