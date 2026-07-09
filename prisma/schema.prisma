@@ -16,6 +16,7 @@ datasource db {
 model User {
   id             Int      @id @default(autoincrement())
   name           String
+  avatarKey      String?  @map("avatar_key")
   email          String   @unique
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
