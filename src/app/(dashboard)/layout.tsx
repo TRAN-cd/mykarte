@@ -8,6 +8,7 @@ import { RecordIcon } from "../_components/icons/RecordIcon";
 import { RecordsIcon } from "../_components/icons/RecordsIcon";
 import { CategoryIcon } from "../_components/icons/CategoryIcon";
 import { SettingIcon } from "../_components/icons/SettingIcon";
+import { UserInfoCard } from "../_components/UserInfoCard";
 
 export default function DashboardLayout({
   children,
@@ -72,7 +73,7 @@ export default function DashboardLayout({
                   {children}
                 </div>
                 <div className="bg-(--color-bg) rounded-[0_15px_15px_0] max-w-[304px] w-full p-[20px_12px]">
-                  右アクションバー
+                  <UserInfoCard />
                 </div>
               </div>
             </div>
