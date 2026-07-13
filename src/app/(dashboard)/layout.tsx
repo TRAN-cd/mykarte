@@ -11,6 +11,7 @@ import { SettingIcon } from "../_components/icons/SettingIcon";
 import { UserInfoCard } from "../_components/UserInfoCard";
 import { RecordButtonCard } from "../_components/RecordButtonCard";
 import { AiSummaryCard } from "../_components/AiSummaryCard";
+import { WeekCalendar } from "../_components/WeekCalendar";
 
 export default function DashboardLayout({
   children,
@@ -80,6 +81,7 @@ export default function DashboardLayout({
                     <RecordButtonCard />
                     <AiSummaryCard />
                   </div>
+                  <WeekCalendar />
                 </div>
               </div>
             </div>
