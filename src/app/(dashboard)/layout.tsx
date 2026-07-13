@@ -10,6 +10,7 @@ import { CategoryIcon } from "../_components/icons/CategoryIcon";
 import { SettingIcon } from "../_components/icons/SettingIcon";
 import { UserInfoCard } from "../_components/UserInfoCard";
 import { RecordButtonCard } from "../_components/RecordButtonCard";
+import { AiSummaryCard } from "../_components/AiSummaryCard";
 
 export default function DashboardLayout({
   children,
@@ -75,8 +76,9 @@ export default function DashboardLayout({
                 </div>
                 <div className="bg-(--color-bg) rounded-[0_15px_15px_0] max-w-[304px] w-full p-[20px_12px]">
                   <UserInfoCard />
-                  <div className="pt-9">
+                  <div className="pt-9 flex flex-col gap-5">
                     <RecordButtonCard />
+                    <AiSummaryCard />
                   </div>
                 </div>
               </div>
