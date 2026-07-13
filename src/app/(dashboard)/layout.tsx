@@ -8,6 +8,10 @@ import { RecordIcon } from "../_components/icons/RecordIcon";
 import { RecordsIcon } from "../_components/icons/RecordsIcon";
 import { CategoryIcon } from "../_components/icons/CategoryIcon";
 import { SettingIcon } from "../_components/icons/SettingIcon";
+import { UserInfoCard } from "../_components/UserInfoCard";
+import { RecordButtonCard } from "../_components/RecordButtonCard";
+import { AiSummaryCard } from "../_components/AiSummaryCard";
+import { WeekCalendar } from "../_components/WeekCalendar";
 
 export default function DashboardLayout({
   children,
@@ -34,25 +38,25 @@ export default function DashboardLayout({
                   <ul className="ml-1.25 mr-5 border-b border-(--color-sub)">
                     <li className="rounded-[10px] mb-3.75 duration-300 hover:bg-white/80 group">
                       <Link href="/mykarte" className="flex items-center gap-2.5 p-2.5 max-lg:justify-center duration-300">
-                        <HomeIcon className="text-(--color-muted) group-hover:text-(--color-primary) transition-colors" />
+                        <HomeIcon className="text-(--color-muted) group-hover:text-(--color-primary) transition-colors w-6" />
                         <p className="font-medium max-lg:hidden duration-300">ホーム</p>
                       </Link>
                     </li>
                     <li className="rounded-[10px] mb-3.75 duration-300 hover:bg-white/80 group">
                       <Link href="/mykarte/records/new" className="flex items-center gap-2.5 p-2.5 max-lg:justify-center duration-300">
-                        <RecordIcon className="text-(--color-muted) group-hover:text-(--color-primary) transition-colors" />
+                        <RecordIcon className="text-(--color-muted) group-hover:text-(--color-primary) transition-colors w-6" />
                         <p className="font-medium max-lg:hidden duration-300">新規記録</p>
                       </Link>
                     </li>
                     <li className="rounded-[10px] mb-3.75 duration-300 hover:bg-white/80 group">
                       <Link href="/mykarte/records" className="flex items-center gap-2.5 p-2.5 max-lg:justify-center duration-300">
-                        <RecordsIcon className="text-(--color-muted) group-hover:text-(--color-primary) transition-colors" />
+                        <RecordsIcon className="text-(--color-muted) group-hover:text-(--color-primary) transition-colors w-6" />
                         <p className="font-medium max-lg:hidden duration-300">記録一覧</p>
                       </Link>
                     </li>
                     <li className="rounded-[10px] mb-3.75 duration-300 hover:bg-white/80 group">
                       <Link href="/mykarte/categories" className="flex items-center gap-2.5 p-2.5 max-lg:justify-center duration-300">
-                        <CategoryIcon className="text-(--color-muted) group-hover:text-(--color-primary) transition-colors" />
+                        <CategoryIcon className="text-(--color-muted) group-hover:text-(--color-primary) transition-colors w-6" />
                         <p className="font-medium max-lg:hidden duration-300">カテゴリー</p>
                       </Link>
                     </li>
@@ -60,7 +64,7 @@ export default function DashboardLayout({
                   <ul className="ml-1.25 mr-5 mt-6">
                     <li className="rounded-[10px] mb-3.75 duration-300 hover:bg-white/80 group">
                       <Link href="/mykarte/setting" className="flex items-center gap-2.5 p-2.5 max-lg:justify-center duration-300">
-                        <SettingIcon className="text-(--color-muted) group-hover:text-(--color-primary) transition-colors" />
+                        <SettingIcon className="text-(--color-muted) group-hover:text-(--color-primary) transition-colors w-6" />
                         <p className="font-medium max-lg:hidden duration-300">設定</p>
                       </Link>
                     </li>
@@ -72,7 +76,12 @@ export default function DashboardLayout({
                   {children}
                 </div>
                 <div className="bg-(--color-bg) rounded-[0_15px_15px_0] max-w-[304px] w-full p-[20px_12px]">
-                  右アクションバー
+                  <UserInfoCard />
+                  <div className="pt-9 flex flex-col gap-5">
+                    <RecordButtonCard />
+                    <AiSummaryCard />
+                  </div>
+                  <WeekCalendar />
                 </div>
               </div>
             </div>
