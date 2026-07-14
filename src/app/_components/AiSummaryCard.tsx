@@ -4,7 +4,7 @@ import Image from "next/image"
 export const AiSummaryCard = () => {
   return (
     <div>
-      <div className="flex items-center gap-4 bg-gradient-to-br from-[#D6F2E5] to-[#E8F8F0] border-2 border-(--color-primary) px-5 py-6 rounded-[20px] shadow-[0px_10px_50px_0px_rgba(28,43,36,0.1)] duration-300 hover:shadow-none hover:opacity-70">
+      <div className="flex items-center gap-4 bg-linear-to-br from-[#D6F2E5] to-[#E8F8F0] border-2 border-(--color-primary) px-5 py-6 rounded-[20px] shadow-[0px_10px_50px_0px_rgba(28,43,36,0.1)] duration-300 hover:shadow-none hover:opacity-70">
         <StarIcon className="text-(--color-primary) transition-colors max-w-10 " />
         <div className="text-(--color-primary) flex flex-col gap-1">
           <p className="text-xl font-bold">記録する</p>

@@ -1,52 +1,39 @@
-
+import { addDays, eachDayOfInterval, format } from "date-fns"
 
 export const WeekCalendar = () => {
+  const today = new Date()
+  const weekDay = eachDayOfInterval({
+    start: addDays(today, -1),
+    end: addDays(today, 5)
+  })
+  const todayKey = format(today, 'yyyy-MM-dd');
+  const year = format(today, 'yyyy');
+  const month = format(today, 'MMM');
+
   return (
     <div className="font-en pt-10">
-      <p className="text-(--color-primary) font-bold text-center pb-2.5">May. 2026</p>
+      <p className="text-(--color-primary) font-bold text-center pb-2.5">{month}. {year}</p>
       <ul className="flex gap-2">
-        <li>
-          <time dateTime="2026-05-25" className="flex flex-col items-center gap-2.5 bg-transparent w-8 py-2.5 rounded-4xl">
-            <span className="text-[10px]">Mo</span>
-            <span className="font-bold">25</span>
-          </time>
-        </li>
-        <li>
-          <time dateTime="2026-05-26" aria-current="date" className="flex flex-col items-center gap-2.5 bg-(--color-primary) w-8 py-2.5 rounded-4xl text-white">
-            <span className="text-[10px]">Tu</span>
-            <span className="font-bold">26</span>
-          </time>
-        </li>
-        <li>
-          <time dateTime="2026-05-27" className="flex flex-col items-center gap-2.5 bg-transparent w-8 py-2.5 rounded-4xl">
-            <span className="text-[10px]">We</span>
-            <span className="font-bold">27</span>
-          </time>
-        </li>
-        <li>
-          <time dateTime="2026-05-28" className="flex flex-col items-center gap-2.5 bg-transparent w-8 py-2.5 rounded-4xl">
-            <span className="text-[10px]">Th</span>
-            <span className="font-bold">28</span>
-          </time>
-        </li>
-        <li>
-          <time dateTime="2026-05-29" className="flex flex-col items-center gap-2.5 bg-transparent w-8 py-2.5 rounded-4xl">
-            <span className="text-[10px]">Fr</span>
-            <span className="font-bold">29</span>
-          </time>
-        </li>
-        <li>
-          <time dateTime="2026-05-30" className="flex flex-col items-center gap-2.5 bg-transparent w-8 py-2.5 rounded-4xl">
-            <span className="text-[10px]">Sa</span>
-            <span className="font-bold">30</span>
-          </time>
-        </li>
-        <li>
-          <time dateTime="2026-05-31" className="flex flex-col items-center gap-2.5 bg-transparent w-8 py-2.5 rounded-4xl">
-            <span className="text-[10px]">Su</span>
-            <span className="font-bold">31</span>
-          </time>
-        </li>
+        {
+          weekDay.map((date: Date) => {
+            const dayKey = format(date, 'yyyy-MM-dd')
+            const dayOfWeek = format(date, 'EEEEEE')
+            const day = format(date, 'd')
+            return (
+              <li key={dayKey}>
+                <time
+                  dateTime={dayKey}
+                  className={`flex flex-col items-center gap-2.5 w-8 py-2.5 rounded-4xl ${dayKey == todayKey ?
+                      "bg-(--color-primary) text-white" :
+                      "bg-transparent"
+                    }`}>
+                  <span className="text-[10px]">{dayOfWeek}</span>
+                  <span className="font-bold">{day}</span>
+                </time>
+              </li>
+            )
+          })
+        }
       </ul>
     </div>
   )
