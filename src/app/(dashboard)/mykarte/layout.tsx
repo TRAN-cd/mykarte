@@ -2,21 +2,23 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouteGuard } from "../_hooks/useRouteGuard";
-import { HomeIcon } from "../_components/icons/HomeIcon";
-import { RecordIcon } from "../_components/icons/RecordIcon";
-import { RecordsIcon } from "../_components/icons/RecordsIcon";
-import { CategoryIcon } from "../_components/icons/CategoryIcon";
-import { SettingIcon } from "../_components/icons/SettingIcon";
-import { UserInfoCard } from "../_components/UserInfoCard";
-import { RecordButtonCard } from "../_components/RecordButtonCard";
-import { AiSummaryCard } from "../_components/AiSummaryCard";
-import { WeekCalendar } from "../_components/WeekCalendar";
+import { useRouteGuard } from "@/app/_hooks/useRouteGuard";
+import { HomeIcon } from "@/app/_components/icons/HomeIcon";
+import { RecordIcon } from "@/app/_components/icons/RecordIcon";
+import { RecordsIcon } from "@/app/_components/icons/RecordsIcon";
+import { CategoryIcon } from "@/app/_components/icons/CategoryIcon";
+import { SettingIcon } from "@/app/_components/icons/SettingIcon";
+import { UserInfoCard } from "@/app/_components/UserInfoCard";
+import { RecordButtonCard } from "@/app/_components/RecordButtonCard";
+import { AiSummaryCard } from "@/app/_components/AiSummaryCard";
+import { WeekCalendar } from "@/app/_components/WeekCalendar";
 
 export default function DashboardLayout({
   children,
+  modal
 }: Readonly<{
   children: React.ReactNode;
+  modal: React.ReactNode;
 }>) {
 
   useRouteGuard()
@@ -74,6 +76,7 @@ export default function DashboardLayout({
               <div className="bg-white/50 w-full rounded-[15px] flex gap-10.5">
                 <div className="flex-1">
                   {children}
+                  {modal}
                 </div>
                 <div className="bg-(--color-bg) rounded-[0_15px_15px_0] max-w-[304px] w-full p-[20px_12px]">
                   <UserInfoCard />
