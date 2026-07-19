@@ -1,4 +1,6 @@
 import { useForm } from "react-hook-form";
+import { CheckIcon } from "@/app/_components/icons/CheckIcon";
+import Image from "next/image";
 
 export type CategoryFormInputs = {
   category: string
@@ -7,6 +9,7 @@ export type CategoryFormInputs = {
 interface Props {
   mode: 'new' | "edit"
   defaultValues: CategoryFormInputs
+  placeholder?: string
   onSubmit: (data: CategoryFormInputs) => void
   onDelete?: () => void
   disabled: boolean
@@ -15,6 +18,7 @@ interface Props {
 export const CategoryForm = ({
   mode,
   defaultValues,
+  placeholder,
   onSubmit,
   onDelete,
   disabled
@@ -37,11 +41,13 @@ export const CategoryForm = ({
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex justify-between items-center gap-2 bg-white px-3 py-2.5 rounded-[5px] border border-(--color-bg) max-w-136 w-full">
         <div className="flex items-center gap-1 max-w-108 w-full">
+          <Image src="/images/shared/icon_plus.svg" alt="" width="24" height="24" />
           <label htmlFor="category" className="sr-only">カテゴリー名</label>
           <input
             id="category"
             type="text"
             className="w-full border border-(--color-primary) rounded-[5px] px-2.5 py-1.5 text-sm font-medium placeholder:text-(--color-sub)"
+            placeholder={placeholder}
             {...register("category", {
               required: "カテゴリーが入力されていません。",
               maxLength: { value: 20, message: "20文字以内で入力してください。" }
@@ -49,8 +55,33 @@ export const CategoryForm = ({
             disabled={disabled || isSubmitting}
           />
           {errors.category && (
-            <span className="text---color-danger) text-xs">{errors.category.message}</span>
+            <span className="text-(--color-danger) text-xs">{errors.category.message}</span>
           )}
+        </div>
+        <div className="flex items-center gap-2">
+        {mode === "edit" && (
+            <button
+              type="button"
+              className="w-20 h-9 flex justify-center items-center gap-2 bg-white rounded-[5px] border border-(--color-text)/20 duration-300 hover:border-(--color-primary) hover:bg-white group cursor-pointer"
+              disabled={isSubmitting}
+            >
+              <p className="text-xs font-medium duration-300 group-hover:text-(--color-primary)">
+                キャンセル
+              </p>
+            </button>
+          )}
+
+          <button
+            type="submit"
+            className="w-20 h-9 flex justify-center items-center gap-2 bg-(--color-primary) text-white rounded-[5px] border border-(--color-text)/20 duration-300 hover:border-(--color-primary) hover:bg-(--color-bg) group cursor-pointer"
+            disabled={!isDirty || !isValid || isSubmitting || disabled}
+
+          >
+            <CheckIcon className="w-4 duration-300 group-hover:text-(--color-primary)" />
+            <p className="text-xs font-medium duration-300 group-hover:text-(--color-primary)">
+              {mode === "new" ? "追加" : "保存"}
+            </p>
+          </button>
         </div>
       </div>
     </form>

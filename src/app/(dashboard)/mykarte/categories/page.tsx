@@ -1,11 +1,36 @@
+'use client'
+
 import { PageHeader } from "@/app/_components/PageHeader";
 import { RecordIcon } from "@/app/_components/icons/RecordIcon";
 import { DeleteIcon } from "@/app/_components/icons/DeleteIcon";
 import { CheckIcon } from "@/app/_components/icons/CheckIcon";
 import Image from "next/image";
+import { CategoryForm } from "@/app/_components/categories/CategoryForm";
+import { CategoryFormInputs } from "@/app/_components/categories/CategoryForm";
 
 export default function CategoriesPage() {
-  
+  const initialData = { category: "" }
+
+  const handleCreate = async (data: CategoryFormInputs) => {
+    try {
+      const response = await fetch(`/api/categories/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ category: data.category})
+      });
+
+      if (response.ok) {
+        console.log("カテゴリーが作成されました。");
+      } else {
+        alert("カテゴリーの作成に失敗しました。")
+      }
+    } catch (error) {
+      console.log("カテゴリー作成エラー", error);
+    }
+  }
+
 
   return (
     <div className="px-6 py-5">
@@ -31,6 +56,13 @@ export default function CategoriesPage() {
             </button>
           </div>
         </div>
+        <CategoryForm 
+          mode="new"
+          defaultValues={initialData}
+          placeholder="新しいカテゴリーを入力（例：内科）"
+          onSubmit={handleCreate}
+          disabled={false}
+        />
 
         {/* 1つのカテゴリーコンポーネント */}
         <div className="flex justify-between items-center bg-white px-3 py-2.5 rounded-[5px] border border-(--color-bg) max-w-136 w-full">
