@@ -7,23 +7,33 @@ import { CheckIcon } from "@/app/_components/icons/CheckIcon";
 import Image from "next/image";
 import { CategoryForm } from "@/app/_components/categories/CategoryForm";
 import { CategoryFormInputs } from "@/app/_components/categories/CategoryForm";
+import { useSupabaseSession } from "@/app/_hooks/useSupabaseSession";
 
 export default function CategoriesPage() {
-  const initialData = { category: "" }
+  const { token } = useSupabaseSession()
+  const initialData = { name: "" }
 
   const handleCreate = async (data: CategoryFormInputs) => {
+    if (!token) {
+      alert("認証セッションが見つかりません。")
+      return
+    }
+
     try {
       const response = await fetch(`/api/categories/`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          Authorization: token,
         },
-        body: JSON.stringify({ category: data.category})
+        body: JSON.stringify({ name: data.name})
       });
 
       if (response.ok) {
         console.log("カテゴリーが作成されました。");
       } else {
+        const errorData = await response.json()
+        console.log(errorData)
         alert("カテゴリーの作成に失敗しました。")
       }
     } catch (error) {
@@ -37,25 +47,6 @@ export default function CategoriesPage() {
       <PageHeader pageTitle="カテゴリー" />
 
       <div className="flex flex-col gap-3">
-        <div className="flex justify-between items-center gap-2 bg-white px-3 py-2.5 rounded-[5px] border border-(--color-bg) max-w-136 w-full">
-          <div className="flex items-center gap-1 max-w-108 w-full">
-            <Image src="/images/shared/icon_plus.svg" alt="" width="24" height="24" />
-            <label htmlFor="category" className="sr-only">カテゴリー名</label>
-            <input
-              type="text" 
-              id="category"
-              name="category" 
-              placeholder="新しいカテゴリーを入力（例：内科）"
-              className="w-full border border-(--color-primary) rounded-[5px] px-2.5 py-1.5 text-sm font-medium placeholder:text-(--color-sub)"
-              />
-          </div>
-          <div>
-            <button type="button" className="w-20 h-9 flex justify-center items-center gap-2 bg-white rounded-[5px] border border-(--color-text)/20 duration-300 hover:border-(--color-primary) hover:bg-(--color-bg) group cursor-pointer">
-              <CheckIcon className="w-4 duration-300 group-hover:text-(--color-primary)" />
-              <p className="text-xs font-medium duration-300 group-hover:text-(--color-primary)">追加</p>
-            </button>
-          </div>
-        </div>
         <CategoryForm 
           mode="new"
           defaultValues={initialData}
