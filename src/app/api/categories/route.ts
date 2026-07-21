@@ -54,10 +54,10 @@ export const POST = async (request: Request) => {
     const existing = await prisma.category.findFirst({
       where: {
         userId,
-        name
+        name,
       },
     });
-    if(existing)
+    if (existing)
       return NextResponse.json(
         { message: "入力されたカテゴリーはすでに作成済みです。" },
         { status: 409 }
@@ -70,7 +70,10 @@ export const POST = async (request: Request) => {
       },
     });
 
-    return NextResponse.json<CreateCategoryResponse>({ id: newCategory.id });
+    return NextResponse.json<CreateCategoryResponse>(
+      { id: newCategory.id },
+      { status: 201 }
+    );
   } catch (error) {
     if (error instanceof Error)
       return NextResponse.json({ message: error.message }, { status: 400 });

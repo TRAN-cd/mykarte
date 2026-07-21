@@ -37,7 +37,7 @@ export const POST = async (request: Request) => {
         },
       });
 
-      return NextResponse.json<CreateNewUserResponse>({ name: newUser.name });
+      return NextResponse.json<CreateNewUserResponse>({ name: newUser.name }, { status: 201 });
     }
   } catch (error) {
     if (error instanceof Error)
