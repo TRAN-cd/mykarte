@@ -34,7 +34,7 @@ export default function CategoriesPage() {
       } else {
         const errorData = await response.json()
         console.log(errorData)
-        alert("カテゴリーの作成に失敗しました。")
+        alert(errorData.message)
       }
     } catch (error) {
       console.log("カテゴリー作成エラー", error);

@@ -9,6 +9,7 @@ import { AuthButton } from "@/app/_components/AuthButton";
 import { Card } from "@/app/_components/Card";
 import { useAuthForm } from "@/app/_hooks/useAuthForm";
 import { getAuthErrorMessage } from "@/app/_libs/getAuthErrorMessage";
+// import { useSupabaseSession } from "@/app/_hooks/useSupabaseSession";
 
 type Inputs = {
   password: string;
@@ -17,6 +18,7 @@ type Inputs = {
 export default function Page() {
   const [visible, setVisible] = useState(false)
   const router = useRouter()
+  // const { token } = useSupabaseSession()
 
   const {
     register,
@@ -31,6 +33,11 @@ export default function Page() {
   } = useAuthForm<Inputs>({password: ""})
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    // if (!token) {
+    //   alert("認証セッションが見つかりません。")
+    //   return
+    // }
+
     try {
       const { error } = await supabase.auth.updateUser({
         password: data.password,
@@ -43,7 +50,22 @@ export default function Page() {
         })
         return
       }
+      //  ユーザー情報をDBに追加する
+      // const response = await fetch(`/api/users/`, {
+      //   method: "POST",
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     Authorization: token,
+      //   },
+      // });
 
+      // if (response.ok) {
+      //   console.log("ユーザー情報が登録されました。");
+      // } else {
+      //   const errorData = await response.json()
+      //   console.log(errorData)
+      //   alert("ユーザー情報の登録に失敗しました。")
+      // }
       router.push('/mykarte/')
     } catch (error) {
       setError("root.serverError", {
