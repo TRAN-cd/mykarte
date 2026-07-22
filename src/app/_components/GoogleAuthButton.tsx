@@ -12,7 +12,7 @@ export const GoogleAuthButton = ({label}: Props) => {
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${appUrl}/mykarte`
+        redirectTo: `${appUrl}/callback/google`
       },
     })
   }

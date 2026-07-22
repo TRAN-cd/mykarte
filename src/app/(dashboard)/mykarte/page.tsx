@@ -1,6 +1,7 @@
 'use client'
 
-export default function NewRecords() {
+export default function HomePage() {
+
   return (
     <>
       <main className="flex-1 flex">
