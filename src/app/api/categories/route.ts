@@ -1,6 +1,50 @@
 import { prisma } from "@/app/_libs/prisma";
 import { supabase } from "@/app/_libs/supabase";
 import { NextResponse, NextRequest } from "next/server";
+import { Category } from "@/generated/prisma/client";
+
+// あとで、コンポーネント化する
+export type GetCategoryResponse = {
+  categories: Category[];
+};
+
+// カテゴリー取得
+///////////////////
+export const GET = async (request: Request) => {
+  const token = request.headers.get("Authorization") ?? "";
+  const { data, error } = await supabase.auth.getUser(token);
+  if (error)
+    return NextResponse.json({ status: error.message }, { status: 401 });
+
+  try {
+    // ユーザー特定
+    const dbUser = await prisma.user.findUnique({
+      where: {
+        supabaseUserId: data.user.id,
+      },
+    });
+    if (!dbUser)
+      return NextResponse.json(
+        { message: "ユーザー情報がありません。" },
+        { status: 404 }
+      );
+    const userId = dbUser.id;
+
+    const getCategory = await prisma.category.findMany({
+      where: {
+        userId,
+      },
+    });
+
+    return NextResponse.json<GetCategoryResponse>(
+      { categories: getCategory },
+      { status: 200 }
+    );
+  } catch (error) {
+    if (error instanceof Error)
+      return NextResponse.json({ message: error.message }, { status: 400 });
+  }
+};
 
 // カテゴリー新規作成
 ///////////////////
