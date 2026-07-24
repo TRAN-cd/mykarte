@@ -8,10 +8,47 @@ import Image from "next/image";
 import { CategoryForm } from "@/app/_components/categories/CategoryForm";
 import { CategoryFormInputs } from "@/app/_components/categories/CategoryForm";
 import { useSupabaseSession } from "@/app/_hooks/useSupabaseSession";
+import { Category } from "@/generated/prisma/client";
+import { useEffect, useState } from "react";
+
+export type GetCategoryResponse = {
+  categories: Category[];
+};
 
 export default function CategoriesPage() {
   const { token } = useSupabaseSession()
   const initialData = { name: "" }
+  const [categoriesData, setCategoriesData] = useState<Category[]>([])
+
+  useEffect(() => {
+    const fetcher = async () => {
+      if (!token) {
+        alert("認証セッションが見つかりません。")
+        return
+      }
+
+      try {
+        const response = await fetch(`/api/categories/`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: token,
+          },
+        })
+
+        if (!response.ok) {
+          alert("カテゴリーの取得に失敗しました。")
+          return
+        }
+
+        const data: GetCategoryResponse = await response.json()
+        setCategoriesData(data.categories)
+      } catch (error) {
+        console.log("カテゴリー取得エラー", error);
+      }
+    }
+
+    fetcher();
+  }, [token])
 
   const handleCreate = async (data: CategoryFormInputs) => {
     if (!token) {
@@ -26,7 +63,7 @@ export default function CategoriesPage() {
           'Content-Type': 'application/json',
           Authorization: token,
         },
-        body: JSON.stringify({ name: data.name})
+        body: JSON.stringify({ name: data.name })
       });
 
       if (response.ok) {
@@ -41,13 +78,12 @@ export default function CategoriesPage() {
     }
   }
 
-
   return (
     <div className="px-6 py-5">
       <PageHeader pageTitle="カテゴリー" />
 
-      <div className="flex flex-col gap-3">
-        <CategoryForm 
+      <ul className="flex flex-col gap-3">
+        <CategoryForm
           mode="new"
           defaultValues={initialData}
           placeholder="新しいカテゴリーを入力（例：内科）"
@@ -56,29 +92,24 @@ export default function CategoriesPage() {
         />
 
         {/* 1つのカテゴリーコンポーネント */}
-        <div className="flex justify-between items-center bg-white px-3 py-2.5 rounded-[5px] border border-(--color-bg) max-w-136 w-full">
-          <p className="text-sm font-medium">皮膚科</p>
-          <div className="flex gap-2.5">
-            <button type="button" className="w-9 h-9 flex justify-center items-center bg-white rounded-[5px] border border-(--color-text)/20 duration-300 hover:border-(--color-primary) hover:bg-(--color-bg) group cursor-pointer">
-              <RecordIcon className="w-3.5 duration-300 group-hover:text-(--color-primary)" />
-            </button>
-            <button type="button" className="w-9 h-9 flex justify-center items-center bg-white rounded-[5px] border border-(--color-text)/20 duration-300 hover:border-(--color-danger) hover:bg-(--color-danger-bg) group cursor-pointer">
-              <DeleteIcon className="w-3.5 duration-300 group-hover:text-(--color-danger)" />
-            </button>
-          </div>
-        </div>
-        <div className="flex justify-between items-center bg-white px-3 py-2.5 rounded-[5px] border border-(--color-bg) max-w-136 w-full">
-          <p className="text-sm font-medium">皮膚科</p>
-          <div className="flex gap-2.5">
-            <button type="button" className="w-9 h-9 flex justify-center items-center bg-white rounded-[5px] border border-(--color-text)/20 duration-300 hover:border-(--color-primary) hover:bg-(--color-bg) group cursor-pointer">
-              <RecordIcon className="w-3.5 duration-300 group-hover:text-(--color-primary)" />
-            </button>
-            <button type="button" className="w-9 h-9 flex justify-center items-center bg-white rounded-[5px] border border-(--color-text)/20 duration-300 hover:border-(--color-danger) hover:bg-(--color-danger-bg) group cursor-pointer">
-              <DeleteIcon className="w-3.5 duration-300 group-hover:text-(--color-danger)" />
-            </button>
-          </div>
-        </div>
-      </div>
+        {
+          categoriesData.map((cat) => {
+            return (
+              <li key={cat.id} className="flex justify-between items-center bg-white px-3 py-2.5 rounded-[5px] border border-(--color-bg) max-w-136 w-full">
+                <p className="text-sm font-medium">{cat.name}</p>
+                <div className="flex gap-2.5">
+                  <button type="button" className="w-9 h-9 flex justify-center items-center bg-white rounded-[5px] border border-(--color-text)/20 duration-300 hover:border-(--color-primary) hover:bg-(--color-bg) group cursor-pointer">
+                    <RecordIcon className="w-3.5 duration-300 group-hover:text-(--color-primary)" />
+                  </button>
+                  <button type="button" className="w-9 h-9 flex justify-center items-center bg-white rounded-[5px] border border-(--color-text)/20 duration-300 hover:border-(--color-danger) hover:bg-(--color-danger-bg) group cursor-pointer">
+                    <DeleteIcon className="w-3.5 duration-300 group-hover:text-(--color-danger)" />
+                  </button>
+                </div>
+              </li>
+            )
+          })
+        }
+      </ul>
     </div>
   )
 }
