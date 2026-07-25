@@ -20,12 +20,9 @@ export default function CategoriesPage() {
   const initialData = { name: "" }
   const [categoriesData, setCategoriesData] = useState<Category[]>([])
 
-  useEffect(() => {
+  const getCategory = () => {
     const fetcher = async () => {
-      if (!token) {
-        alert("認証セッションが見つかりません。")
-        return
-      }
+      if (!token) return
 
       try {
         const response = await fetch(`/api/categories/`, {
@@ -48,12 +45,16 @@ export default function CategoriesPage() {
     }
 
     fetcher();
+  }
+
+  useEffect(() => {
+    getCategory()
   }, [token])
 
   const handleCreate = async (data: CategoryFormInputs) => {
     if (!token) {
       alert("認証セッションが見つかりません。")
-      return
+      return false
     }
 
     try {
@@ -68,13 +69,17 @@ export default function CategoriesPage() {
 
       if (response.ok) {
         console.log("カテゴリーが作成されました。");
+        getCategory()
+        return true
       } else {
         const errorData = await response.json()
         console.log(errorData)
         alert(errorData.message)
+        return false
       }
     } catch (error) {
       console.log("カテゴリー作成エラー", error);
+      return false
     }
   }
 
@@ -91,7 +96,6 @@ export default function CategoriesPage() {
           disabled={false}
         />
 
-        {/* 1つのカテゴリーコンポーネント */}
         {
           categoriesData.map((cat) => {
             return (

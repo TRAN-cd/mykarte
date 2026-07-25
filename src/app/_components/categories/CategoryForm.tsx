@@ -10,7 +10,7 @@ interface Props {
   mode: 'new' | "edit"
   defaultValues: CategoryFormInputs
   placeholder?: string
-  onSubmit: (data: CategoryFormInputs) => void
+  onSubmit: (data: CategoryFormInputs) => Promise<boolean>
   onDelete?: () => void
   disabled: boolean
 }
@@ -32,6 +32,7 @@ export const CategoryForm = ({
       isSubmitting,
       errors,
     },
+    reset
   } = useForm<CategoryFormInputs>({
     defaultValues,
     mode: "all"
@@ -39,7 +40,12 @@ export const CategoryForm = ({
 
   return (
     <li>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(async (data) => {
+        const success = await onSubmit(data)
+        if (success) {
+          reset()
+        }
+      })}>
         <div className=" bg-white px-3 py-2.5 rounded-[5px] border border-(--color-bg) max-w-136 w-full">
           <div className="flex justify-between items-center gap-2">
             <div className="flex items-center gap-1 max-w-108 w-full">
