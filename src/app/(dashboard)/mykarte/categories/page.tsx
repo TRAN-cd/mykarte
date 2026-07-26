@@ -83,6 +83,33 @@ export default function CategoriesPage() {
     }
   }
 
+  const handleDelete = async (id: number) => {
+    const fetcher = async () => {
+      if (!token) return
+
+      try {
+        const response = await fetch(`/api/categories/${id}/`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: token,
+          },
+        })
+
+        if (!response.ok) {
+          alert("カテゴリーの削除に失敗しました。")
+          return
+        } else {
+          getCategory()
+        }
+      } catch (error) {
+        console.log("カテゴリー削除エラー", error);
+      }
+    }
+
+    fetcher();
+  }
+
   return (
     <div className="px-6 py-5">
       <PageHeader pageTitle="カテゴリー" />
@@ -105,7 +132,11 @@ export default function CategoriesPage() {
                   <button type="button" className="w-9 h-9 flex justify-center items-center bg-white rounded-[5px] border border-(--color-text)/20 duration-300 hover:border-(--color-primary) hover:bg-(--color-bg) group cursor-pointer">
                     <RecordIcon className="w-3.5 duration-300 group-hover:text-(--color-primary)" />
                   </button>
-                  <button type="button" className="w-9 h-9 flex justify-center items-center bg-white rounded-[5px] border border-(--color-text)/20 duration-300 hover:border-(--color-danger) hover:bg-(--color-danger-bg) group cursor-pointer">
+                  <button
+                    onClick={() => handleDelete(cat.id)}
+                    type="button"
+                    className="w-9 h-9 flex justify-center items-center bg-white rounded-[5px] border border-(--color-text)/20 duration-300 hover:border-(--color-danger) hover:bg-(--color-danger-bg) group cursor-pointer"
+                  >
                     <DeleteIcon className="w-3.5 duration-300 group-hover:text-(--color-danger)" />
                   </button>
                 </div>

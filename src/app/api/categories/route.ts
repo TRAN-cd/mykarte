@@ -33,6 +33,7 @@ export const GET = async (request: Request) => {
     const getCategory = await prisma.category.findMany({
       where: {
         userId,
+        deletedAt: null
       },
     });
 
@@ -99,6 +100,7 @@ export const POST = async (request: Request) => {
       where: {
         userId,
         name,
+        deletedAt: null
       },
     });
     if (existing)
