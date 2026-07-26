@@ -3,6 +3,85 @@ import { supabase } from "@/app/_libs/supabase";
 import { NextRequest, NextResponse } from "next/server";
 import { Category } from "@/generated/prisma/client";
 
+export type CategoryRequestBody = {
+  name: string;
+};
+
+// カテゴリー更新
+export const PUT = async (
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) => {
+  const token = request.headers.get("Authorization") ?? "";
+  const { data, error } = await supabase.auth.getUser(token);
+  if (error)
+    return NextResponse.json({ status: error.message }, { status: 401 });
+
+  const { id } = await params;
+
+  try {
+    const body = await request.json();
+    const { name }: CategoryRequestBody = body;
+
+    // サーバー側でもバリデーション
+    if (!name)
+      return NextResponse.json(
+        { message: "カテゴリーが入力されていません。" },
+        { status: 400 }
+      );
+    if (name.length > 20)
+      return NextResponse.json(
+        { message: "20文字以内で入力してください。" },
+        { status: 400 }
+      );
+
+    // ユーザー特定
+    const dbUser = await prisma.user.findUnique({
+      where: {
+        supabaseUserId: data.user.id,
+      },
+    });
+    if (!dbUser)
+      return NextResponse.json(
+        { message: "ユーザー情報がありません。" },
+        { status: 404 }
+      );
+    const userId = dbUser.id;
+
+    // 重複チェック
+    const existing = await prisma.category.findFirst({
+      where: {
+        userId,
+        name,
+        deletedAt: null,
+        id: {
+          not: parseInt(id),
+        } 
+      },
+    });
+    if (existing)
+      return NextResponse.json(
+        { message: "入力されたカテゴリーはすでに作成済みです。" },
+        { status: 409 }
+      );
+
+    await prisma.category.update({
+      where: {
+        userId,
+        id: parseInt(id),
+      },
+      data: {
+        name
+      },
+    });
+
+    return NextResponse.json({ message: "OK" }, { status: 200 });
+  } catch (error) {
+    if (error instanceof Error)
+      return NextResponse.json({ message: error.message }, { status: 400 });
+  }
+};
+
 // カテゴリー削除（論理削除）
 export const DELETE = async (
   request: NextRequest,
@@ -32,16 +111,16 @@ export const DELETE = async (
     await prisma.category.update({
       where: {
         userId,
-        id: parseInt(id)
+        id: parseInt(id),
       },
       data: {
-        deletedAt: new Date()
-      }
-    })
+        deletedAt: new Date(),
+      },
+    });
 
-    return NextResponse.json({ message: 'OK' }, { status: 200 })
+    return NextResponse.json({ message: "OK" }, { status: 200 });
   } catch (error) {
     if (error instanceof Error)
-    return NextResponse.json({ message: error.message }, { status: 400 });
+      return NextResponse.json({ message: error.message }, { status: 400 });
   }
 };

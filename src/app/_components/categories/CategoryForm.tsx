@@ -12,6 +12,7 @@ interface Props {
   placeholder?: string
   onSubmit: (data: CategoryFormInputs) => Promise<boolean>
   onDelete?: () => void
+  onCancel?: () => void
   disabled: boolean
 }
 
@@ -21,6 +22,7 @@ export const CategoryForm = ({
   placeholder,
   onSubmit,
   onDelete,
+  onCancel,
   disabled
 }: Props) => {
   const {
@@ -46,10 +48,12 @@ export const CategoryForm = ({
           reset()
         }
       })}>
-        <div className=" bg-white px-3 py-2.5 rounded-[5px] border border-(--color-bg) max-w-136 w-full">
+        <div className="bg-white px-3 py-2.5 rounded-[5px] border border-(--color-bg) max-w-136 w-full">
           <div className="flex justify-between items-center gap-2">
             <div className="flex items-center gap-1 max-w-108 w-full">
-              <Image src="/images/shared/icon_plus.svg" alt="" width="24" height="24" />
+              {mode !== "edit" && (
+                <Image src="/images/shared/icon_plus.svg" alt="" width="24" height="24" />
+              )}
               <label htmlFor="name" className="sr-only">カテゴリー名</label>
               <input
                 id="name"
@@ -67,10 +71,12 @@ export const CategoryForm = ({
               {mode === "edit" && (
                 <button
                   type="button"
+                  onClick={onCancel}
                   className="w-20 h-9 flex justify-center items-center gap-2 bg-white rounded-[5px] border border-(--color-text)/20 duration-300 hover:border-(--color-primary) hover:bg-white group cursor-pointer"
                   disabled={isSubmitting}
                 >
-                  <p className="text-xs font-medium duration-300 group-hover:text-(--color-primary)">
+                  <p
+                    className="text-xs font-medium duration-300 group-hover:text-(--color-primary)">
                     キャンセル
                   </p>
                 </button>
