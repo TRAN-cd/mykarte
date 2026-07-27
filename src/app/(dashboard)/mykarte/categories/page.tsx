@@ -10,10 +10,7 @@ import { CategoryFormInputs } from "@/app/_components/categories/CategoryForm";
 import { useSupabaseSession } from "@/app/_hooks/useSupabaseSession";
 import { Category } from "@/generated/prisma/client";
 import { useEffect, useState } from "react";
-
-export type GetCategoryResponse = {
-  categories: Category[];
-};
+import type { GetCategoryResponse } from "@/app/_type/GetCategoryResponse";
 
 export default function CategoriesPage() {
   const { token } = useSupabaseSession()
