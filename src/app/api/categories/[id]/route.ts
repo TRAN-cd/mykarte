@@ -1,11 +1,7 @@
 import { prisma } from "@/app/_libs/prisma";
 import { supabase } from "@/app/_libs/supabase";
 import { NextRequest, NextResponse } from "next/server";
-import { Category } from "@/generated/prisma/client";
-
-export type CategoryRequestBody = {
-  name: string;
-};
+import { CategoryRequestBody } from "@/app/_type/CategoryRequestBody";
 
 // カテゴリー更新
 export const PUT = async (

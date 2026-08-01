@@ -1,12 +1,9 @@
 import { prisma } from "@/app/_libs/prisma";
 import { supabase } from "@/app/_libs/supabase";
 import { NextResponse, NextRequest } from "next/server";
-import { Category } from "@/generated/prisma/client";
-
-// あとで、コンポーネント化する
-export type GetCategoryResponse = {
-  categories: Category[];
-};
+import { GetCategoryResponse } from "@/app/_type/GetCategoryResponse";
+import { CreateCategoryRequestBody } from "@/app/_type/CreateCategoryRequestBody";
+import { CreateCategoryResponse } from "@/app/_type/CreateCategoryResponse";
 
 // カテゴリー取得
 ///////////////////
@@ -49,17 +46,6 @@ export const GET = async (request: Request) => {
 
 // カテゴリー新規作成
 ///////////////////
-
-// あとで、コンポーネント化する
-export type CreateCategoryRequestBody = {
-  name: string;
-};
-
-// あとで、コンポーネント化する
-export type CreateCategoryResponse = {
-  id: number;
-};
-
 export const POST = async (request: Request) => {
   const token = request.headers.get("Authorization") ?? "";
   const { data, error } = await supabase.auth.getUser(token);

@@ -41,7 +41,7 @@ export const CategoryForm = ({
   })
 
   return (
-    <li>
+    <>
       <form onSubmit={handleSubmit(async (data) => {
         const success = await onSubmit(data)
         if (success) {
@@ -102,6 +102,6 @@ export const CategoryForm = ({
         </div>
 
       </form>
-    </li>
+    </>
   )
 }

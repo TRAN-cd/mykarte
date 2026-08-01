@@ -3,14 +3,15 @@
 import { PageHeader } from "@/app/_components/PageHeader";
 import { RecordIcon } from "@/app/_components/icons/RecordIcon";
 import { DeleteIcon } from "@/app/_components/icons/DeleteIcon";
-import { CheckIcon } from "@/app/_components/icons/CheckIcon";
-import Image from "next/image";
+// import { CheckIcon } from "@/app/_components/icons/CheckIcon";
+// import Image from "next/image";
 import { CategoryForm } from "@/app/_components/categories/CategoryForm";
 import { CategoryFormInputs } from "@/app/_components/categories/CategoryForm";
 import { useSupabaseSession } from "@/app/_hooks/useSupabaseSession";
 import { Category } from "@/generated/prisma/client";
 import { useEffect, useState } from "react";
 import type { GetCategoryResponse } from "@/app/_type/GetCategoryResponse";
+import { apiFetch } from "@/app/_libs/apiFetch";
 
 export default function CategoriesPage() {
   const { token } = useSupabaseSession()
@@ -18,34 +19,20 @@ export default function CategoriesPage() {
   const [categoriesData, setCategoriesData] = useState<Category[]>([])
   const [editingId, setEditingId] = useState<number | null>(null)
 
-  const getCategory = () => {
-    const fetcher = async () => {
-      if (!token) return
+  const getCategory = async () => {
+    const response = await apiFetch("/api/categories/", "GET", token)
 
-      try {
-        const response = await fetch(`/api/categories/`, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: token,
-          },
-        })
-
-        if (!response.ok) {
-          alert("カテゴリーの取得に失敗しました。")
-          return
-        }
-
-        const data: GetCategoryResponse = await response.json()
-        setCategoriesData(data.categories)
-      } catch (error) {
-        console.log("カテゴリー取得エラー", error);
-      }
+    if (!response || !response.ok) {
+      alert("カテゴリーの取得に失敗しました。")
+      return
     }
 
-    fetcher();
+    const data: GetCategoryResponse = await response.json()
+    setCategoriesData(data.categories)
   }
 
   useEffect(() => {
+    if (!token) return
     getCategory()
   }, [token])
 
@@ -118,30 +105,14 @@ export default function CategoriesPage() {
   }
 
   const handleDelete = async (id: number) => {
-    const fetcher = async () => {
-      if (!token) return
+    const response = await apiFetch(`/api/categories/${id}/`, "DELETE", token)
 
-      try {
-        const response = await fetch(`/api/categories/${id}/`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: token,
-          },
-        })
-
-        if (!response.ok) {
-          alert("カテゴリーの削除に失敗しました。")
-          return
-        } else {
-          getCategory()
-        }
-      } catch (error) {
-        console.log("カテゴリー削除エラー", error);
-      }
+    if (!response || !response.ok) {
+      alert("カテゴリーの削除に失敗しました。")
+      return
+    } else {
+      getCategory()
     }
-
-    fetcher();
   }
 
   return (
@@ -149,13 +120,15 @@ export default function CategoriesPage() {
       <PageHeader pageTitle="カテゴリー" />
 
       <ul className="flex flex-col gap-3">
-        <CategoryForm
-          mode="new"
-          defaultValues={initialData}
-          placeholder="新しいカテゴリーを入力（例：内科）"
-          onSubmit={handleCreate}
-          disabled={false}
-        />
+        <li>
+          <CategoryForm
+            mode="new"
+            defaultValues={initialData}
+            placeholder="新しいカテゴリーを入力（例：内科）"
+            onSubmit={handleCreate}
+            disabled={false}
+          />
+        </li>
 
         {
           categoriesData.map((cat) => {
