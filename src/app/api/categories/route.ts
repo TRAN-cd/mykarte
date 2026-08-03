@@ -32,6 +32,9 @@ export const GET = async (request: Request) => {
         userId,
         deletedAt: null,
       },
+      orderBy: {
+        createdAt: "desc"
+      }
     });
 
     return NextResponse.json<GetCategoryResponse>(

@@ -3,14 +3,12 @@
 import { PageHeader } from "@/app/_components/PageHeader";
 import { RecordIcon } from "@/app/_components/icons/RecordIcon";
 import { DeleteIcon } from "@/app/_components/icons/DeleteIcon";
-// import { CheckIcon } from "@/app/_components/icons/CheckIcon";
-// import Image from "next/image";
 import { CategoryForm } from "@/app/_components/categories/CategoryForm";
 import { CategoryFormInputs } from "@/app/_components/categories/CategoryForm";
 import { useSupabaseSession } from "@/app/_hooks/useSupabaseSession";
+import type { GetCategoryResponse } from "@/app/_type/GetCategoryResponse";
 import { Category } from "@/generated/prisma/client";
 import { useEffect, useState } from "react";
-import type { GetCategoryResponse } from "@/app/_type/GetCategoryResponse";
 import { apiFetch } from "@/app/_libs/apiFetch";
 
 export default function CategoriesPage() {
@@ -37,33 +35,17 @@ export default function CategoriesPage() {
   }, [token])
 
   const handleCreate = async (data: CategoryFormInputs) => {
-    if (!token) {
-      alert("認証セッションが見つかりません。")
-      return false
-    }
+    const body = JSON.stringify({ name: data.name })
+    const response = await apiFetch("/api/categories/", "POST", token, body)
 
-    try {
-      const response = await fetch(`/api/categories/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: token,
-        },
-        body: JSON.stringify({ name: data.name })
-      });
-
-      if (response.ok) {
-        console.log("カテゴリーが作成されました。");
-        getCategory()
-        return true
-      } else {
-        const errorData = await response.json()
-        console.log(errorData)
-        alert(errorData.message)
-        return false
-      }
-    } catch (error) {
-      console.log("カテゴリー作成エラー", error);
+    if (response == null) return false
+    if (response.ok) {
+      getCategory()
+      return true
+    } else {
+      const errorData = await response.json()
+      console.log(errorData)
+      alert(errorData.message)
       return false
     }
   }
@@ -73,33 +55,18 @@ export default function CategoriesPage() {
   }
 
   const handleUpdate = async (id: number, data: CategoryFormInputs) => {
-    if (!token) {
-      alert("認証セッションが見つかりません。")
-      return false
-    }
+    const body = JSON.stringify({ name: data.name })
+    const response = await apiFetch(`/api/categories/${id}/`, "PUT", token, body)
 
-    try {
-      const response = await fetch(`/api/categories/${id}/`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: token,
-        },
-        body: JSON.stringify({ name: data.name })
-      });
-
-      if (response.ok) {
-        console.log("カテゴリーが更新されました。");
-        getCategory()
-        setEditingId(null)
-        return true
-      } else {
-        const errorData = await response.json()
-        alert(errorData.message)
-        return false
-      }
-    } catch (error) {
-      console.log("カテゴリー更新エラー", error);
+    if (response == null) return false
+    if (response.ok) {
+      getCategory()
+      setEditingId(null)
+      return true
+    } else {
+      const errorData = await response.json()
+      console.log(errorData)
+      alert(errorData.message)
       return false
     }
   }
