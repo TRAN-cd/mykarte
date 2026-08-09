@@ -3,82 +3,131 @@
 import { PageHeader } from "@/app/_components/PageHeader";
 import { RecordIcon } from "@/app/_components/icons/RecordIcon";
 import { DeleteIcon } from "@/app/_components/icons/DeleteIcon";
-import { CheckIcon } from "@/app/_components/icons/CheckIcon";
-import Image from "next/image";
 import { CategoryForm } from "@/app/_components/categories/CategoryForm";
 import { CategoryFormInputs } from "@/app/_components/categories/CategoryForm";
-import { useSupabaseSession } from "@/app/_hooks/useSupabaseSession";
+import type { GetCategoryResponse } from "@/app/_type/GetCategoryResponse";
+import { useState } from "react";
+import { useFetch } from "@/app/_hooks/useFetch";
+import { apiFetch } from "@/app/_libs/apiFetch";
 
 export default function CategoriesPage() {
-  const { token } = useSupabaseSession()
   const initialData = { name: "" }
+  const [editingId, setEditingId] = useState<number | null>(null)
+  
+
+  const { data, error , isLoading, mutate } = useFetch<GetCategoryResponse>("/api/categories/");
+  const categories = data?.categories || []
 
   const handleCreate = async (data: CategoryFormInputs) => {
-    if (!token) {
-      alert("認証セッションが見つかりません。")
-      return
-    }
-
     try {
-      const response = await fetch(`/api/categories/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: token,
-        },
-        body: JSON.stringify({ name: data.name})
-      });
-
-      if (response.ok) {
-        console.log("カテゴリーが作成されました。");
-      } else {
-        const errorData = await response.json()
-        console.log(errorData)
-        alert(errorData.message)
-      }
+      await apiFetch.post("/api/categories/", {name: data.name})
+      mutate()
+      return true
     } catch (error) {
-      console.log("カテゴリー作成エラー", error);
+      if (error instanceof Error) alert(error.message)
+      return false
     }
   }
 
+  const handleEdit = (id: number) => {
+    setEditingId(id)
+  }
+
+  const handleUpdate = async (id: number, data: CategoryFormInputs) => {
+    try {
+      await apiFetch.put(`/api/categories/${id}/`, {name: data.name})
+      mutate()
+      setEditingId(null)
+      return true
+    } catch(error) {
+      if (error instanceof Error) alert(error.message)
+      return false
+    }
+  }
+
+  const handleDelete = async (id: number) => {
+    try {
+      await apiFetch.del(`/api/categories/${id}/`)
+      mutate()
+    } catch(error) {
+      if (error instanceof Error) alert(error.message)
+    }
+  }
+
+  if (isLoading) return (
+    <div className="px-6 py-5">
+      <p className="text-sm text-(--color-sub) text-center py-10">読み込み中...</p>
+    </div>
+  );
+  
+  if (error) return (
+    <div className="px-6 py-5">
+      <p className="text-sm text-(--color-danger) text-center py-10 bg-(--color-danger-bg) rounded-[5px] border border-(--color-danger)">
+        カテゴリーの取得に失敗しました。
+      </p>
+    </div>
+  );
 
   return (
     <div className="px-6 py-5">
       <PageHeader pageTitle="カテゴリー" />
 
-      <div className="flex flex-col gap-3">
-        <CategoryForm 
-          mode="new"
-          defaultValues={initialData}
-          placeholder="新しいカテゴリーを入力（例：内科）"
-          onSubmit={handleCreate}
-          disabled={false}
-        />
+      <ul className="flex flex-col gap-3">
+        <li>
+          <CategoryForm
+            mode="new"
+            defaultValues={initialData}
+            placeholder="新しいカテゴリーを入力（例：内科）"
+            onSubmit={handleCreate}
+            disabled={false}
+          />
+        </li>
 
-        {/* 1つのカテゴリーコンポーネント */}
-        <div className="flex justify-between items-center bg-white px-3 py-2.5 rounded-[5px] border border-(--color-bg) max-w-136 w-full">
-          <p className="text-sm font-medium">皮膚科</p>
-          <div className="flex gap-2.5">
-            <button type="button" className="w-9 h-9 flex justify-center items-center bg-white rounded-[5px] border border-(--color-text)/20 duration-300 hover:border-(--color-primary) hover:bg-(--color-bg) group cursor-pointer">
-              <RecordIcon className="w-3.5 duration-300 group-hover:text-(--color-primary)" />
-            </button>
-            <button type="button" className="w-9 h-9 flex justify-center items-center bg-white rounded-[5px] border border-(--color-text)/20 duration-300 hover:border-(--color-danger) hover:bg-(--color-danger-bg) group cursor-pointer">
-              <DeleteIcon className="w-3.5 duration-300 group-hover:text-(--color-danger)" />
-            </button>
-          </div>
-        </div>
-        <div className="flex justify-between items-center bg-white px-3 py-2.5 rounded-[5px] border border-(--color-bg) max-w-136 w-full">
-          <p className="text-sm font-medium">皮膚科</p>
-          <div className="flex gap-2.5">
-            <button type="button" className="w-9 h-9 flex justify-center items-center bg-white rounded-[5px] border border-(--color-text)/20 duration-300 hover:border-(--color-primary) hover:bg-(--color-bg) group cursor-pointer">
-              <RecordIcon className="w-3.5 duration-300 group-hover:text-(--color-primary)" />
-            </button>
-            <button type="button" className="w-9 h-9 flex justify-center items-center bg-white rounded-[5px] border border-(--color-text)/20 duration-300 hover:border-(--color-danger) hover:bg-(--color-danger-bg) group cursor-pointer">
-              <DeleteIcon className="w-3.5 duration-300 group-hover:text-(--color-danger)" />
-            </button>
-          </div>
-        </div>
-      </div>
+        {
+          categories.map((cat) => {
+            return (
+              <li
+                key={cat.id}
+                className={
+                  cat.id === editingId
+                    ? ""
+                    : "flex justify-between items-center bg-white px-3 py-2.5 rounded-[5px] border border-(--color-bg) max-w-136 w-full"
+                }
+              >
+                {cat.id === editingId ? (
+                  <CategoryForm
+                    mode="edit"
+                    defaultValues={{ name: cat.name }}
+                    placeholder="新しいカテゴリーを入力（例：内科）"
+                    onSubmit={(data) => handleUpdate(cat.id, data)}
+                    disabled={false}
+                    onCancel={() => setEditingId(null)}
+                  />
+                ) : (
+                  <>
+                    <p className="text-sm font-medium">{cat.name}</p>
+                    <div className="flex gap-2.5">
+                      <button
+                        onClick={() => handleEdit(cat.id)}
+                        type="button"
+                        className="w-9 h-9 flex justify-center items-center bg-white rounded-[5px] border border-(--color-text)/20 duration-300 hover:border-(--color-primary) hover:bg-(--color-bg) group cursor-pointer">
+                        <RecordIcon className="w-3.5 duration-300 group-hover:text-(--color-primary)" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(cat.id)}
+                        type="button"
+                        className="w-9 h-9 flex justify-center items-center bg-white rounded-[5px] border border-(--color-text)/20 duration-300 hover:border-(--color-danger) hover:bg-(--color-danger-bg) group cursor-pointer"
+                      >
+                        <DeleteIcon className="w-3.5 duration-300 group-hover:text-(--color-danger)" />
+                      </button>
+                    </div>
+                  </>
+                )}
+              </li>
+            )
+          })
+        }
+      </ul>
     </div>
   )
 }
