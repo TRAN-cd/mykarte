@@ -21,7 +21,6 @@ export default function CategoriesPage() {
   const handleCreate = async (data: CategoryFormInputs) => {
     try {
       await apiFetch.post("/api/categories/", {name: data.name})
-      // getCategory()
       mutate()
       return true
     } catch (error) {
@@ -37,7 +36,6 @@ export default function CategoriesPage() {
   const handleUpdate = async (id: number, data: CategoryFormInputs) => {
     try {
       await apiFetch.put(`/api/categories/${id}/`, {name: data.name})
-      // getCategory()
       mutate()
       setEditingId(null)
       return true
@@ -50,7 +48,6 @@ export default function CategoriesPage() {
   const handleDelete = async (id: number) => {
     try {
       await apiFetch.del(`/api/categories/${id}/`)
-      // getCategory()
       mutate()
     } catch(error) {
       if (error instanceof Error) alert(error.message)
