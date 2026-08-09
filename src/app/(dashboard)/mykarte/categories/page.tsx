@@ -5,47 +5,27 @@ import { RecordIcon } from "@/app/_components/icons/RecordIcon";
 import { DeleteIcon } from "@/app/_components/icons/DeleteIcon";
 import { CategoryForm } from "@/app/_components/categories/CategoryForm";
 import { CategoryFormInputs } from "@/app/_components/categories/CategoryForm";
-import { useSupabaseSession } from "@/app/_hooks/useSupabaseSession";
 import type { GetCategoryResponse } from "@/app/_type/GetCategoryResponse";
-import { Category } from "@/generated/prisma/client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useFetch } from "@/app/_hooks/useFetch";
 import { apiFetch } from "@/app/_libs/apiFetch";
 
 export default function CategoriesPage() {
-  const { token } = useSupabaseSession()
   const initialData = { name: "" }
-  const [categoriesData, setCategoriesData] = useState<Category[]>([])
   const [editingId, setEditingId] = useState<number | null>(null)
+  
 
-  const getCategory = async () => {
-    const response = await apiFetch("/api/categories/", "GET", token)
-
-    if (!response || !response.ok) {
-      alert("カテゴリーの取得に失敗しました。")
-      return
-    }
-
-    const data: GetCategoryResponse = await response.json()
-    setCategoriesData(data.categories)
-  }
-
-  useEffect(() => {
-    if (!token) return
-    getCategory()
-  }, [token])
+  const { data, error , isLoading, mutate } = useFetch<GetCategoryResponse>("/api/categories/");
+  const categories = data?.categories || []
 
   const handleCreate = async (data: CategoryFormInputs) => {
-    const body = JSON.stringify({ name: data.name })
-    const response = await apiFetch("/api/categories/", "POST", token, body)
-
-    if (response == null) return false
-    if (response.ok) {
-      getCategory()
+    try {
+      await apiFetch.post("/api/categories/", {name: data.name})
+      // getCategory()
+      mutate()
       return true
-    } else {
-      const errorData = await response.json()
-      console.log(errorData)
-      alert(errorData.message)
+    } catch (error) {
+      if (error instanceof Error) alert(error.message)
       return false
     }
   }
@@ -55,32 +35,41 @@ export default function CategoriesPage() {
   }
 
   const handleUpdate = async (id: number, data: CategoryFormInputs) => {
-    const body = JSON.stringify({ name: data.name })
-    const response = await apiFetch(`/api/categories/${id}/`, "PUT", token, body)
-
-    if (response == null) return false
-    if (response.ok) {
-      getCategory()
+    try {
+      await apiFetch.put(`/api/categories/${id}/`, {name: data.name})
+      // getCategory()
+      mutate()
       setEditingId(null)
       return true
-    } else {
-      const errorData = await response.json()
-      console.log(errorData)
-      alert(errorData.message)
+    } catch(error) {
+      if (error instanceof Error) alert(error.message)
       return false
     }
   }
 
   const handleDelete = async (id: number) => {
-    const response = await apiFetch(`/api/categories/${id}/`, "DELETE", token)
-
-    if (!response || !response.ok) {
-      alert("カテゴリーの削除に失敗しました。")
-      return
-    } else {
-      getCategory()
+    try {
+      await apiFetch.del(`/api/categories/${id}/`)
+      // getCategory()
+      mutate()
+    } catch(error) {
+      if (error instanceof Error) alert(error.message)
     }
   }
+
+  if (isLoading) return (
+    <div className="px-6 py-5">
+      <p className="text-sm text-(--color-sub) text-center py-10">読み込み中...</p>
+    </div>
+  );
+  
+  if (error) return (
+    <div className="px-6 py-5">
+      <p className="text-sm text-(--color-danger) text-center py-10 bg-(--color-danger-bg) rounded-[5px] border border-(--color-danger)">
+        カテゴリーの取得に失敗しました。
+      </p>
+    </div>
+  );
 
   return (
     <div className="px-6 py-5">
@@ -98,7 +87,7 @@ export default function CategoriesPage() {
         </li>
 
         {
-          categoriesData.map((cat) => {
+          categories.map((cat) => {
             return (
               <li
                 key={cat.id}
