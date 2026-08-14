@@ -4,31 +4,35 @@ import { useForm, Controller } from "react-hook-form";
 import { PageHeader } from "@/app/_components/PageHeader";
 import { RecordItemTitle } from "@/app/_components/RecordItemTitle";
 import { CustomDateInput } from "@/app/_components/CustomDateInput";
+import { RecordTypeCard } from "@/app/_components/records/RecordTypeCard";
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 import { ja } from "date-fns/locale";
+import { RecordIcon } from "@/app/_components/icons/RecordIcon";
+import { HospitalIcon } from "@/app/_components/icons/HospitalIcon";
 
 
 interface RecordFormInputs {
   recordDate: Date
-  // recordType: enum
+  recordType: "daily" | "medical"
 }
 
 export default function NewRecords() {
-  const { register, control } = useForm<RecordFormInputs>()
+  const { control } = useForm<RecordFormInputs>()
 
   return (
     <div className="px-6 py-5">
       <PageHeader pageTitle="新規記録" />
 
       <div className="flex flex-col gap-6 p-5 bg-white rounded-[20px] border-(--color-bg) border">
-          <form action="" className="flex flex-col">
-            <RecordItemTitle itemTitle="記録日"/>
-            <Controller 
+        <form action="" className="flex flex-col gap-6">
+          <div>
+            <RecordItemTitle itemTitle="記録日" />
+            <Controller
               name="recordDate"
               control={control}
-              render = {({field}) => (
-                <DatePicker 
+              render={({ field }) => (
+                <DatePicker
                   selected={field.value}
                   onChange={field.onChange}
                   customInput={<CustomDateInput />}
@@ -38,7 +42,33 @@ export default function NewRecords() {
                 />
               )}
             />
-          </form>
+          </div>
+          <div>
+            <RecordItemTitle itemTitle="記録の種類" />
+            <Controller
+              name="recordType"
+              control={control}
+              render={({ field }) => (
+                <div className="flex items-center gap-5 pt-3">
+                  <RecordTypeCard
+                    cardIcon={RecordIcon}
+                    cardTitle="日常の記録"
+                    cardDescription="体調・症状・気になること"
+                    isSelected = {field.value === "daily"}
+                    onClick = {() => field.onChange("daily")}
+                  />
+                  <RecordTypeCard
+                    cardIcon={HospitalIcon}
+                    cardTitle="診療の内容"
+                    cardDescription="受診後の記録・処方薬など"
+                    isSelected = {field.value === "medical"}
+                    onClick = {() => field.onChange("medical")}
+                  />
+                </div>
+              )}
+            />
+          </div>
+        </form>
       </div>
     </div>
   );
