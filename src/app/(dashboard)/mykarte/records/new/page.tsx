@@ -15,10 +15,11 @@ import { HospitalIcon } from "@/app/_components/icons/HospitalIcon";
 interface RecordFormInputs {
   recordDate: Date
   recordType: "daily" | "medical"
+  content: string
 }
 
 export default function NewRecords() {
-  const { control } = useForm<RecordFormInputs>()
+  const { control, register } = useForm<RecordFormInputs>()
 
   return (
     <div className="px-6 py-5">
@@ -54,19 +55,32 @@ export default function NewRecords() {
                     cardIcon={RecordIcon}
                     cardTitle="日常の記録"
                     cardDescription="体調・症状・気になること"
-                    isSelected = {field.value === "daily"}
-                    onClick = {() => field.onChange("daily")}
+                    isSelected={field.value === "daily"}
+                    onClick={() => field.onChange("daily")}
                   />
                   <RecordTypeCard
                     cardIcon={HospitalIcon}
                     cardTitle="診療の内容"
                     cardDescription="受診後の記録・処方薬など"
-                    isSelected = {field.value === "medical"}
-                    onClick = {() => field.onChange("medical")}
+                    isSelected={field.value === "medical"}
+                    onClick={() => field.onChange("medical")}
                   />
                 </div>
               )}
             />
+          </div>
+          <div>
+            <RecordItemTitle itemTitle="カテゴリー" />
+          </div>
+          <div>
+            <RecordItemTitle itemTitle="メモ" />
+            <textarea
+              id="content"
+              placeholder="例：お腹の調子が昨日から悪い。薬は飲んでない。"
+              className="bg-(--color-card-bg) p-3 rounded-[10px] border border-(--color-primary) font-en text-xs w-full min-h-17.5 flex justify-between items-center mt-3"
+              {...register("content")}
+            >
+            </textarea>
           </div>
         </form>
       </div>
