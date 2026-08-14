@@ -9,7 +9,7 @@ export const RecordItemTitle = ({itemTitle}: Props) => {
         htmlFor="recordDate"
         className="flex items-center text-[13px] font-medium pl-2 border-l-2 border-(--color-primary)"
       >
-          {itemTitle}
+        {itemTitle}
       </label>
     </div>
   )
