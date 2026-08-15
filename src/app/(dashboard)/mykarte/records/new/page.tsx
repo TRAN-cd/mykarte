@@ -1,6 +1,7 @@
 'use client'
 
 import { useForm, Controller } from "react-hook-form";
+import { useState } from "react";
 import { PageHeader } from "@/app/_components/PageHeader";
 import { RecordItemTitle } from "@/app/_components/RecordItemTitle";
 import { CustomDateInput } from "@/app/_components/CustomDateInput";
@@ -10,16 +11,27 @@ import "react-datepicker/dist/react-datepicker.css"
 import { ja } from "date-fns/locale";
 import { RecordIcon } from "@/app/_components/icons/RecordIcon";
 import { HospitalIcon } from "@/app/_components/icons/HospitalIcon";
+import { MinusIcon } from "@/app/_components/icons/MinusIcon";
+import { MildIcon } from "@/app/_components/icons/MildIcon";
+import { ModerateIcon } from "@/app/_components/icons/ModerateIcon";
+import { SevereIcon } from "@/app/_components/icons/SevereIcon";
 
 
 interface RecordFormInputs {
   recordDate: Date
   recordType: "daily" | "medical"
+
   content: string
+  severityLevel: "mild" | "moderate" | "severe" | "na"
 }
 
 export default function NewRecords() {
   const { control, register } = useForm<RecordFormInputs>()
+  const [isDetailOpen, setIsDetailOpen] = useState(false)
+
+  const handleOpenDetail = () => {
+    setIsDetailOpen((prev) => !prev)
+  }
 
   return (
     <div className="px-6 py-5">
@@ -28,7 +40,7 @@ export default function NewRecords() {
       <div className="flex flex-col gap-6 p-5 bg-white rounded-[20px] border-(--color-bg) border">
         <form action="" className="flex flex-col gap-6">
           <div>
-            <RecordItemTitle itemTitle="記録日" />
+            <RecordItemTitle itemTitle="記録日" htmlFor="recordDate" />
             <Controller
               name="recordDate"
               control={control}
@@ -45,7 +57,7 @@ export default function NewRecords() {
             />
           </div>
           <div>
-            <RecordItemTitle itemTitle="記録の種類" />
+            <RecordItemTitle itemTitle="記録の種類" htmlFor="recordType" />
             <Controller
               name="recordType"
               control={control}
@@ -70,17 +82,71 @@ export default function NewRecords() {
             />
           </div>
           <div>
-            <RecordItemTitle itemTitle="カテゴリー" />
+            <RecordItemTitle itemTitle="カテゴリー" htmlFor="category" />
           </div>
           <div>
-            <RecordItemTitle itemTitle="メモ" />
+            <RecordItemTitle itemTitle="メモ" htmlFor="content" />
             <textarea
               id="content"
               placeholder="例：お腹の調子が昨日から悪い。薬は飲んでない。"
-              className="bg-(--color-card-bg) p-3 rounded-[10px] border border-(--color-primary) font-en text-xs w-full min-h-17.5 flex justify-between items-center mt-3"
+              className="c font-en text-xs w-full min-h-17.5 flex justify-between items-center mt-3"
               {...register("content")}
             >
             </textarea>
+          </div>
+          <div>
+            <div
+              onClick={handleOpenDetail}
+              className="flex gap-1 items-center text-(--color-primary) text-[13px] font-medium pb-2.5 border-b border-b-(--color-sub)/20 w-full"
+            >
+              <div className="relative">
+                <MinusIcon className="w-4" />
+                <MinusIcon
+                  className={`w-4 absolute inset-0 transition-transform duration-300 ${isDetailOpen ? "rotate-0" : "rotate-90"}`}
+                />
+              </div>
+              <p>詳しく記録する</p>
+            </div>
+
+            <div className={`flex gap-6 bg-(--color-card-bg) p-3 rounded-[10px] border border-(--color-primary) overflow-hidden transition-all duration-300 ${isDetailOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}`}>
+              <div className="flex gap-4.5 w-full">
+                <fieldset className="flex flex-col gap-3 max-w-58.5 w-full">
+                  <legend className="text-[10px] font-medium text-(--color-sub) pb-3">強さ・程度</legend>
+                  <div className="flex items-center gap-1.5 w-full">
+                    <label className="flex items-center gap-1 text-[10px] text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-[10px] duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
+                      <input type="radio" value="mild" className="hidden" {...register("severityLevel")} />
+                      <MildIcon className="w-3" />
+                      <span className="leading-none">軽度</span>
+                    </label>
+                    <label className="flex items-center gap-1 text-[10px] text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-[10px] duration-300 has-checked:text-[#D97706] has-checked:font-medium has-checked:border-[#D97706] has-checked:bg-[#FFF4E5]">
+                      <input type="radio" value="moderate" className="hidden" {...register("severityLevel")} />
+                      <ModerateIcon className="w-3" />
+                      <span className="leading-none">中等度</span>
+                    </label>
+                    <label className="flex items-center gap-1 text-[10px] text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-[10px] duration-300 has-checked:text-(--color-danger) has-checked:font-medium has-checked:border-(--color-danger) has-checked:bg-(--color-danger-bg)">
+                      <input type="radio" value="severe" className="hidden" {...register("severityLevel")} />
+                      <SevereIcon className="w-3" />
+                      <span className="leading-none">重度</span>
+                    </label>
+                    <label className="flex items-center gap-1 text-[10px] text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-[10px] duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
+                      <input type="radio" value="na" className="hidden" {...register("severityLevel")} />
+                      <span className="leading-none">該当なし</span>
+                    </label>
+                  </div>
+                </fieldset>
+                <div className="flex flex-col gap-3 max-w-46 w-full">
+                  <label htmlFor="timeZone">時間帯</label>
+                  <input type="checkbox" name="timeZone" value="朝" />朝
+                  <input type="checkbox" name="timeZone" value="昼" />昼
+                  <input type="checkbox" name="timeZone" value="夕" />夕
+                  <input type="checkbox" name="timeZone" value="夜" />夜
+                  <input type="checkbox" name="timeZone" value="終日" />終日
+                </div>
+              </div>
+              <div>
+
+              </div>
+            </div>
           </div>
         </form>
       </div>
