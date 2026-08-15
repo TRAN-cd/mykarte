@@ -23,11 +23,14 @@ interface RecordFormInputs {
 
   content: string
   severityLevel: "mild" | "moderate" | "severe" | "na"
+  timeZone: ("morning" | "daytime" | "evening" | "night" | "allDay")[]
 }
 
 export default function NewRecords() {
-  const { control, register } = useForm<RecordFormInputs>()
+  const { control, register, watch } = useForm<RecordFormInputs>()
   const [isDetailOpen, setIsDetailOpen] = useState(false)
+
+  console.log(watch("timeZone"));
 
   const handleOpenDetail = () => {
     setIsDetailOpen((prev) => !prev)
@@ -89,7 +92,7 @@ export default function NewRecords() {
             <textarea
               id="content"
               placeholder="例：お腹の調子が昨日から悪い。薬は飲んでない。"
-              className="c font-en text-xs w-full min-h-17.5 flex justify-between items-center mt-3"
+              className="bg-(--color-card-bg) p-3 rounded-[10px] border border-(--color-primary) font-en text-xs w-full min-h-17.5 flex justify-between items-center mt-3"
               {...register("content")}
             >
             </textarea>
@@ -108,8 +111,8 @@ export default function NewRecords() {
               <p>詳しく記録する</p>
             </div>
 
-            <div className={`flex gap-6 bg-(--color-card-bg) p-3 rounded-[10px] border border-(--color-primary) overflow-hidden transition-all duration-300 ${isDetailOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}`}>
-              <div className="flex gap-4.5 w-full">
+            <div className={`flex gap-6 bg-(--color-card-bg) p-3 rounded-[10px] border border-(--color-primary) overflow-hidden transition-all duration-300 ${isDetailOpen ? "max-h-96 mt-2.5 opacity-100" : "max-h-0 opacity-0"}`}>
+              <div className="flex gap-5.5 w-full">
                 <fieldset className="flex flex-col gap-3 max-w-58.5 w-full">
                   <legend className="text-[10px] font-medium text-(--color-sub) pb-3">強さ・程度</legend>
                   <div className="flex items-center gap-1.5 w-full">
@@ -134,14 +137,31 @@ export default function NewRecords() {
                     </label>
                   </div>
                 </fieldset>
-                <div className="flex flex-col gap-3 max-w-46 w-full">
-                  <label htmlFor="timeZone">時間帯</label>
-                  <input type="checkbox" name="timeZone" value="朝" />朝
-                  <input type="checkbox" name="timeZone" value="昼" />昼
-                  <input type="checkbox" name="timeZone" value="夕" />夕
-                  <input type="checkbox" name="timeZone" value="夜" />夜
-                  <input type="checkbox" name="timeZone" value="終日" />終日
-                </div>
+                <fieldset className="flex flex-col gap-3 max-w-46 w-full">
+                  <legend className="text-[10px] font-medium text-(--color-sub) pb-3">時間帯</legend>
+                  <div className="flex items-center gap-1.5 w-full">
+                    <label className="flex items-center gap-1 text-[10px] text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-[10px] duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
+                      <input type="checkbox" value="morning" className="hidden" {...register("timeZone")} />
+                      <span className="leading-none">朝</span>
+                    </label>
+                    <label className="flex items-center gap-1 text-[10px] text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-[10px] duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
+                      <input type="checkbox" value="daytime" className="hidden" {...register("timeZone")} />
+                      <span className="leading-none">昼</span>
+                    </label>
+                    <label className="flex items-center gap-1 text-[10px] text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-[10px] duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
+                      <input type="checkbox" value="evening" className="hidden" {...register("timeZone")} />
+                      <span className="leading-none">夕</span>
+                    </label>
+                    <label className="flex items-center gap-1 text-[10px] text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-[10px] duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
+                      <input type="checkbox" value="night" className="hidden" {...register("timeZone")} />
+                      <span className="leading-none">夜</span>
+                    </label>
+                    <label className="flex items-center gap-1 text-[10px] text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-[10px] duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
+                      <input type="checkbox" value="allDay" className="hidden" {...register("timeZone")} />
+                      <span className="leading-none">終日</span>
+                    </label>
+                  </div>
+                </fieldset>
               </div>
               <div>
 
