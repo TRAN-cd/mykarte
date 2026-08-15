@@ -24,6 +24,8 @@ interface RecordFormInputs {
   content: string
   severityLevel: "mild" | "moderate" | "severe" | "na"
   timeZone: ("morning" | "daytime" | "evening" | "night" | "allDay")[]
+  treatment: string
+  nextVisit: Date | null
 }
 
 export default function NewRecords() {
@@ -111,7 +113,7 @@ export default function NewRecords() {
               <p>詳しく記録する</p>
             </div>
 
-            <div className={`flex gap-6 bg-(--color-card-bg) p-3 rounded-[10px] border border-(--color-primary) overflow-hidden transition-all duration-300 ${isDetailOpen ? "max-h-96 mt-2.5 opacity-100" : "max-h-0 opacity-0"}`}>
+            <div className={`flex flex-col gap-6 bg-(--color-card-bg) p-3 rounded-[10px] border border-(--color-primary) overflow-hidden transition-all duration-300 ${isDetailOpen ? "max-h-96 mt-2.5 opacity-100" : "max-h-0 opacity-0"}`}>
               <div className="flex gap-5.5 w-full">
                 <fieldset className="flex flex-col gap-3 max-w-58.5 w-full">
                   <legend className="text-[10px] font-medium text-(--color-sub) pb-3">強さ・程度</legend>
@@ -163,9 +165,40 @@ export default function NewRecords() {
                   </div>
                 </fieldset>
               </div>
-              <div>
-
+              <div className="flex gap-5.5 w-full">
+                <div className="flex flex-col max-w-58.5 w-full">
+                  <label htmlFor="treatment" className="text-[10px] font-medium text-(--color-sub) pb-3">対処したこと</label>
+                  <textarea
+                    id="treatment"
+                    placeholder="例：暖かくして寝た。"
+                    rows={1}
+                    className="bg-(--color-card-bg) p-3 rounded-[10px] border border-(--color-primary) font-en text-xs w-full min-h-8 flex justify-between items-center"
+                    {...register("treatment")}
+                  >
+                  </textarea>
+                </div>
+                <div className="flex flex-col max-w-46 w-full">
+                  <label htmlFor="nextVisit" className="text-[10px] font-medium text-(--color-sub)">次回受診予定日</label>
+                  <Controller
+                    name="nextVisit"
+                    control={control}
+                    render={({ field }) => (
+                      <DatePicker
+                        selected={field.value}
+                        onChange={field.onChange}
+                        customInput={<CustomDateInput />}
+                        locale={ja}
+                        dateFormat={"yyyy/MM/dd"}
+                        placeholderText="年/ 月/ 日"
+                      />
+                    )}
+                  />
+                </div>
               </div>
+            </div>
+
+            <div>
+              
             </div>
           </div>
         </form>
