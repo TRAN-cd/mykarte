@@ -15,6 +15,7 @@ import { MinusIcon } from "@/app/_components/icons/MinusIcon";
 import { MildIcon } from "@/app/_components/icons/MildIcon";
 import { ModerateIcon } from "@/app/_components/icons/ModerateIcon";
 import { SevereIcon } from "@/app/_components/icons/SevereIcon";
+import { CheckIcon } from "@/app/_components/icons/CheckIcon";
 
 
 interface RecordFormInputs {
@@ -197,8 +198,28 @@ export default function NewRecords() {
               </div>
             </div>
 
-            <div>
-              
+            <div className="flex justify-end items-center gap-3">
+              <button
+                type="button"
+                // onClick={onCancel}
+                className="w-27 h-9 flex justify-center items-center bg-white rounded-[5px] border border-(--color-text)/20 duration-300 hover:border-(--color-primary) hover:bg-white group cursor-pointer"
+              // disabled={isSubmitting}
+              >
+                <p
+                  className="text-[13px] font-medium duration-300 group-hover:text-(--color-primary)">
+                  キャンセル
+                </p>
+              </button>
+              <button
+                type="submit"
+                className="w-27 h-9 flex justify-center items-center gap-1 bg-(--color-primary) text-white rounded-[5px] border border-(--color-text)/20 duration-300 hover:border-(--color-primary) hover:bg-(--color-bg) group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-(--color-primary) disabled:hover:text-white disabled:hover:border-(--color-text)/20"
+              // disabled={!isDirty || !isValid || isSubmitting || disabled}
+              >
+                <CheckIcon className="w-3 duration-300 group-hover:text-(--color-primary) group-disabled:group-hover:text-white" />
+                <p className="text-[13px] font-medium leading-0 duration-300 group-hover:text-(--color-primary) group-disabled:group-hover:text-white">
+                  保存する
+                </p>
+              </button>
             </div>
           </div>
         </form>
