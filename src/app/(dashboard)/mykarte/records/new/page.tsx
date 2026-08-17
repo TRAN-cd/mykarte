@@ -16,12 +16,19 @@ import { MildIcon } from "@/app/_components/icons/MildIcon";
 import { ModerateIcon } from "@/app/_components/icons/ModerateIcon";
 import { SevereIcon } from "@/app/_components/icons/SevereIcon";
 import { CheckIcon } from "@/app/_components/icons/CheckIcon";
+import type { GetCategoryResponse } from "@/app/_type/GetCategoryResponse";
+import { useFetch } from "@/app/_hooks/useFetch";
+import { PlusIcon } from "@/app/_components/icons/PlusIcon";
+import { CategoryForm } from "@/app/_components/categories/CategoryForm";
+import { CategoryFormInputs } from "@/app/_components/categories/CategoryForm";
+import { apiFetch } from "@/app/_libs/apiFetch";
+import { RecordCategoryForm } from "@/app/_components/records/RecordCategoryForm";
 
 
 interface RecordFormInputs {
   recordDate: Date
   recordType: "daily" | "medical"
-
+  recordCategory: string
   content: string
   severityLevel: "mild" | "moderate" | "severe" | "na"
   timeZone: ("morning" | "daytime" | "evening" | "night" | "allDay")[]
@@ -30,10 +37,29 @@ interface RecordFormInputs {
 }
 
 export default function NewRecords() {
-  const { control, register, watch } = useForm<RecordFormInputs>()
+  const { control, register } = useForm<RecordFormInputs>()
+  const [isCategoryFormOpen, setIsCategoryFormOpen] = useState(false)
+  const initialData = { name: "" }
   const [isDetailOpen, setIsDetailOpen] = useState(false)
 
-  console.log(watch("timeZone"));
+  const { data, error, isLoading, mutate } = useFetch<GetCategoryResponse>("/api/categories/")
+  const categories = data?.categories || []
+
+  const handleOpenCategoryForm = () => {
+    setIsCategoryFormOpen((prev) => !prev)
+  }
+
+  const handleCreate = async (data: CategoryFormInputs) => {
+    try {
+      await apiFetch.post("/api/categories/", { name: data.name })
+      mutate()
+      setIsCategoryFormOpen(false)
+      return true
+    } catch (error) {
+      if (error instanceof Error) alert(error.message)
+      return false
+    }
+  }
 
   const handleOpenDetail = () => {
     setIsDetailOpen((prev) => !prev)
@@ -68,7 +94,7 @@ export default function NewRecords() {
               name="recordType"
               control={control}
               render={({ field }) => (
-                <div className="flex items-center gap-5 pt-3">
+                <div className="flex items-center gap-5 mt-3">
                   <RecordTypeCard
                     cardIcon={RecordIcon}
                     cardTitle="日常の記録"
@@ -89,6 +115,43 @@ export default function NewRecords() {
           </div>
           <div>
             <RecordItemTitle itemTitle="カテゴリー" htmlFor="category" />
+            <ul className="flex flex-wrap items-center gap-3 mt-3">
+              {
+                categories.map((cat) => {
+                  return (
+                    <li key={cat.id}>
+                      <label
+                        className="flex justify-between items-center bg-white px-2 py-0.5 rounded-xl border border-(--color-sub) text-xs font-medium text-(--color-sub) cursor-pointer duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)"
+                      >
+                        <input type="radio" value={cat.name} className="hidden" {...register("recordCategory")} />
+                        <span className="leading-none"> {cat.name} </span>
+                      </label>
+                    </li>
+                  )
+                })
+              }
+              {
+                isCategoryFormOpen === true
+                  ? (
+                    // <p onClick={handleOpenCategoryForm}>仮</p>
+                    <RecordCategoryForm
+                      defaultValues={initialData}
+                      placeholder="カテゴリーを追加"
+                      onSubmit={handleCreate}
+                      disabled={false}
+                      onCancel={() => setIsCategoryFormOpen(false)}
+                    />
+                  ) : (
+                    <li
+                      onClick={handleOpenCategoryForm}
+                      className="flex justify-between items-center bg-(--color-card-bg) px-2 py-0.5 rounded-xl cursor-pointer"
+                    >
+                      <PlusIcon className="w-3 text-(--color-primary)" />
+                      <span className="text-xs font-medium text-(--color-primary)">カテゴリー追加</span>
+                    </li>
+                  )
+              }
+            </ul>
           </div>
           <div>
             <RecordItemTitle itemTitle="メモ" htmlFor="content" />
@@ -114,61 +177,61 @@ export default function NewRecords() {
               <p>詳しく記録する</p>
             </div>
 
-            <div className={`flex flex-col gap-6 bg-(--color-card-bg) p-3 rounded-[10px] border border-(--color-primary) overflow-hidden transition-all duration-300 ${isDetailOpen ? "max-h-96 mt-2.5 opacity-100" : "max-h-0 opacity-0"}`}>
+            <div className={`flex flex-col gap-6 bg-(--color-card-bg) rounded-[10px] border border-(--color-primary) overflow-hidden transition-all duration-300 ${isDetailOpen ? "max-h-96 mt-2.5 p-3 opacity-100" : "max-h-0 opacity-0"}`}>
               <div className="flex gap-5.5 w-full">
-                <fieldset className="flex flex-col gap-3 max-w-58.5 w-full">
-                  <legend className="text-[10px] font-medium text-(--color-sub) pb-3">強さ・程度</legend>
+                <fieldset className="flex flex-col gap-3 max-w-64 w-full">
+                  <legend className="text-xs font-medium text-(--color-sub) pb-3">強さ・程度</legend>
                   <div className="flex items-center gap-1.5 w-full">
-                    <label className="flex items-center gap-1 text-[10px] text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-[10px] duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
+                    <label className="flex items-center gap-1 text-xs text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-xl cursor-pointer duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
                       <input type="radio" value="mild" className="hidden" {...register("severityLevel")} />
                       <MildIcon className="w-3" />
-                      <span className="leading-none">軽度</span>
+                      <span className="">軽度</span>
                     </label>
-                    <label className="flex items-center gap-1 text-[10px] text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-[10px] duration-300 has-checked:text-[#D97706] has-checked:font-medium has-checked:border-[#D97706] has-checked:bg-[#FFF4E5]">
+                    <label className="flex items-center gap-1 text-xs text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-xl cursor-pointer duration-300 has-checked:text-[#D97706] has-checked:font-medium has-checked:border-[#D97706] has-checked:bg-[#FFF4E5]">
                       <input type="radio" value="moderate" className="hidden" {...register("severityLevel")} />
                       <ModerateIcon className="w-3" />
-                      <span className="leading-none">中等度</span>
+                      <span className="">中等度</span>
                     </label>
-                    <label className="flex items-center gap-1 text-[10px] text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-[10px] duration-300 has-checked:text-(--color-danger) has-checked:font-medium has-checked:border-(--color-danger) has-checked:bg-(--color-danger-bg)">
+                    <label className="flex items-center gap-1 text-xs text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-xl cursor-pointer duration-300 has-checked:text-(--color-danger) has-checked:font-medium has-checked:border-(--color-danger) has-checked:bg-(--color-danger-bg)">
                       <input type="radio" value="severe" className="hidden" {...register("severityLevel")} />
                       <SevereIcon className="w-3" />
-                      <span className="leading-none">重度</span>
+                      <span className="">重度</span>
                     </label>
-                    <label className="flex items-center gap-1 text-[10px] text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-[10px] duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
+                    <label className="flex items-center gap-1 text-xs text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-xl cursor-pointer duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
                       <input type="radio" value="na" className="hidden" {...register("severityLevel")} />
-                      <span className="leading-none">該当なし</span>
+                      <span className="">該当なし</span>
                     </label>
                   </div>
                 </fieldset>
                 <fieldset className="flex flex-col gap-3 max-w-46 w-full">
-                  <legend className="text-[10px] font-medium text-(--color-sub) pb-3">時間帯</legend>
+                  <legend className="text-xs font-medium text-(--color-sub) pb-3">時間帯</legend>
                   <div className="flex items-center gap-1.5 w-full">
-                    <label className="flex items-center gap-1 text-[10px] text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-[10px] duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
+                    <label className="flex items-center gap-1 text-xs text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-[10px] cursor-pointer duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
                       <input type="checkbox" value="morning" className="hidden" {...register("timeZone")} />
-                      <span className="leading-none">朝</span>
+                      <span className="">朝</span>
                     </label>
-                    <label className="flex items-center gap-1 text-[10px] text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-[10px] duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
+                    <label className="flex items-center gap-1 text-xs text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-xl cursor-pointer duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
                       <input type="checkbox" value="daytime" className="hidden" {...register("timeZone")} />
-                      <span className="leading-none">昼</span>
+                      <span className="">昼</span>
                     </label>
-                    <label className="flex items-center gap-1 text-[10px] text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-[10px] duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
+                    <label className="flex items-center gap-1 text-xs text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-xl cursor-pointer duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
                       <input type="checkbox" value="evening" className="hidden" {...register("timeZone")} />
-                      <span className="leading-none">夕</span>
+                      <span className="">夕</span>
                     </label>
-                    <label className="flex items-center gap-1 text-[10px] text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-[10px] duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
+                    <label className="flex items-center gap-1 text-xs text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-xl cursor-pointer duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
                       <input type="checkbox" value="night" className="hidden" {...register("timeZone")} />
-                      <span className="leading-none">夜</span>
+                      <span className="">夜</span>
                     </label>
-                    <label className="flex items-center gap-1 text-[10px] text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-[10px] duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
+                    <label className="flex items-center gap-1 text-xs text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-xl cursor-pointer duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
                       <input type="checkbox" value="allDay" className="hidden" {...register("timeZone")} />
-                      <span className="leading-none">終日</span>
+                      <span className="">終日</span>
                     </label>
                   </div>
                 </fieldset>
               </div>
               <div className="flex gap-5.5 w-full">
-                <div className="flex flex-col max-w-58.5 w-full">
-                  <label htmlFor="treatment" className="text-[10px] font-medium text-(--color-sub) pb-3">対処したこと</label>
+                <div className="flex flex-col max-w-64 w-full">
+                  <label htmlFor="treatment" className="text-xs font-medium text-(--color-sub) pb-3">対処したこと</label>
                   <textarea
                     id="treatment"
                     placeholder="例：暖かくして寝た。"
@@ -179,7 +242,7 @@ export default function NewRecords() {
                   </textarea>
                 </div>
                 <div className="flex flex-col max-w-46 w-full">
-                  <label htmlFor="nextVisit" className="text-[10px] font-medium text-(--color-sub)">次回受診予定日</label>
+                  <label htmlFor="nextVisit" className="text-xs font-medium text-(--color-sub)">次回受診予定日</label>
                   <Controller
                     name="nextVisit"
                     control={control}
@@ -198,11 +261,11 @@ export default function NewRecords() {
               </div>
             </div>
 
-            <div className="flex justify-end items-center gap-3">
+            <div className="flex justify-end items-center gap-3 mt-6">
               <button
                 type="button"
                 // onClick={onCancel}
-                className="w-27 h-9 flex justify-center items-center bg-white rounded-[5px] border border-(--color-text)/20 duration-300 hover:border-(--color-primary) hover:bg-white group cursor-pointer"
+                className="w-27 h-9 flex justify-center items-center bg-white rounded-[5px] border border-(--color-text)/20 shadow-[0px_10px_50px_0px_rgba(28,43,36,0.1)] duration-300 hover:shadow-none hover:border-(--color-primary) hover:bg-white group cursor-pointer"
               // disabled={isSubmitting}
               >
                 <p
@@ -212,7 +275,7 @@ export default function NewRecords() {
               </button>
               <button
                 type="submit"
-                className="w-27 h-9 flex justify-center items-center gap-1 bg-(--color-primary) text-white rounded-[5px] border border-(--color-text)/20 duration-300 hover:border-(--color-primary) hover:bg-(--color-bg) group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-(--color-primary) disabled:hover:text-white disabled:hover:border-(--color-text)/20"
+                className="w-27 h-9 flex justify-center items-center gap-1 bg-(--color-primary) text-white rounded-[5px] border border-(--color-text)/20 shadow-[0px_10px_50px_0px_rgba(28,43,36,0.1)] duration-300 hover:shadow-none hover:border-(--color-primary) hover:bg-(--color-bg) group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-(--color-primary) disabled:hover:text-white disabled:hover:border-(--color-text)/20"
               // disabled={!isDirty || !isValid || isSubmitting || disabled}
               >
                 <CheckIcon className="w-3 duration-300 group-hover:text-(--color-primary) group-disabled:group-hover:text-white" />

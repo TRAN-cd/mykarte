@@ -14,7 +14,7 @@ export const RecordTypeCard = ({ cardIcon, cardTitle, cardDescription, isSelecte
   return (
     <div
       onClick={onClick}
-      className={`max-w-55 w-full flex items-center gap-2.5 border p-3 rounded-[10px] duration-300 ${isSelected
+      className={`max-w-55 w-full flex items-center gap-2.5 border p-3 rounded-[10px] cursor-pointer duration-300 ${isSelected
           ? "bg-(--color-bg) border-(--color-primary)"
           : "bg-(--color-card-bg) border-(--color-sub) hover:opacity-70"
         }`}

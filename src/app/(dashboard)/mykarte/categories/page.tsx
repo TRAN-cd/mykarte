@@ -15,7 +15,7 @@ export default function CategoriesPage() {
   const [editingId, setEditingId] = useState<number | null>(null)
   
 
-  const { data, error , isLoading, mutate } = useFetch<GetCategoryResponse>("/api/categories/");
+  const { data, error, isLoading, mutate } = useFetch<GetCategoryResponse>("/api/categories/");
   const categories = data?.categories || []
 
   const handleCreate = async (data: CategoryFormInputs) => {
