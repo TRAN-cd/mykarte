@@ -123,7 +123,7 @@ export default function NewRecords() {
                       <label
                         className="flex justify-between items-center bg-white px-2 py-0.5 rounded-xl border border-(--color-sub) text-xs font-medium text-(--color-sub) cursor-pointer duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)"
                       >
-                        <input type="radio" value={cat.name} className="hidden" {...register("recordCategory")} />
+                        <input type="radio" value={cat.id} className="hidden" {...register("recordCategory")} />
                         <span className="leading-none"> {cat.name} </span>
                       </label>
                     </li>
@@ -133,7 +133,6 @@ export default function NewRecords() {
               {
                 isCategoryFormOpen === true
                   ? (
-                    // <p onClick={handleOpenCategoryForm}>仮</p>
                     <RecordCategoryForm
                       defaultValues={initialData}
                       placeholder="カテゴリーを追加"
