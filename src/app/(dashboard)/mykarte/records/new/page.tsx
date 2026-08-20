@@ -26,7 +26,7 @@ import { RecordCategoryForm } from "@/app/_components/records/RecordCategoryForm
 
 
 interface RecordFormInputs {
-  recordDate: Date
+  recordAt: Date
   recordType: "daily" | "medical"
   recordCategory: string
   content: string
@@ -72,9 +72,9 @@ export default function NewRecords() {
       <div className="flex flex-col gap-6 p-5 bg-white rounded-[20px] border-(--color-bg) border">
         <form action="" className="flex flex-col gap-6">
           <div>
-            <RecordItemTitle itemTitle="記録日" htmlFor="recordDate" />
+            <RecordItemTitle itemTitle="記録日" htmlFor="recordAt" />
             <Controller
-              name="recordDate"
+              name="recordAt"
               control={control}
               render={({ field }) => (
                 <DatePicker
