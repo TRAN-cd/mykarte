@@ -32,8 +32,8 @@ model User {
 
 // 記録の種類
 enum RecordType {
-  SIMPLE
-  DETAIL
+  DAILY
+  MEDICAL
 }
 
 // 時間帯
@@ -54,7 +54,7 @@ model Record {
   recordType    RecordType @map("record_type")
   content       String
   severityLevel Int?       @map("severity_level")
-  timeZone      TimeZone?  @map("time_zone")
+
   treatment     String?
   nextVisit     DateTime?  @map("next_visit")
 
@@ -62,8 +62,19 @@ model Record {
   user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   recordCategories RecordCategory[]
+  recordTimeZones   RecordTimeZone[]
 
   @@map("records")
+}
+
+// 時間帯
+model RecordTimeZone {
+  id           Int       @id @default(autoincrement())
+  recordId     Int       @map("record_id")
+  timeZone     TimeZone
+  record       Record    @relation(fields: [recordId], references: [id], onDelete: Cascade)
+
+  @@map("record_time_zones")
 }
 
 // カテゴリー
