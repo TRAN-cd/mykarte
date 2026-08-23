@@ -31,7 +31,7 @@ interface RecordFormInputs {
   recordCategory: string
   content: string
   severityLevel: "mild" | "moderate" | "severe" | "na"
-  timeZone: ("morning" | "daytime" | "evening" | "night" | "allDay")[]
+  timeZone: ("morning" | "afternoon" | "evening" | "night" | "all_day")[]
   treatment: string
   nextVisit: Date | null
 }
@@ -211,7 +211,7 @@ export const RecordForm = () => {
                       <span className="">朝</span>
                     </label>
                     <label className="flex items-center gap-1 text-xs text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-xl cursor-pointer duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
-                      <input type="checkbox" value="daytime" className="hidden" {...register("timeZone")} />
+                      <input type="checkbox" value="afternoon" className="hidden" {...register("timeZone")} />
                       <span className="">昼</span>
                     </label>
                     <label className="flex items-center gap-1 text-xs text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-xl cursor-pointer duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
@@ -223,7 +223,7 @@ export const RecordForm = () => {
                       <span className="">夜</span>
                     </label>
                     <label className="flex items-center gap-1 text-xs text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-xl cursor-pointer duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
-                      <input type="checkbox" value="allDay" className="hidden" {...register("timeZone")} />
+                      <input type="checkbox" value="all_day" className="hidden" {...register("timeZone")} />
                       <span className="">終日</span>
                     </label>
                   </div>

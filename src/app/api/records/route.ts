@@ -1,6 +1,7 @@
 import { prisma } from "@/app/_libs/prisma";
 import { supabase } from "@/app/_libs/supabase";
 import { NextResponse } from "next/server";
+import { TimeZone } from "@/generated/prisma/enums";
 
 export type CreateRecordRequestBody = {
   recordAt: string;
@@ -8,7 +9,7 @@ export type CreateRecordRequestBody = {
   recordCategory: string;
   content: string;
   severityLevel: "mild" | "moderate" | "severe" | "na";
-  timeZone: ("morning" | "daytime" | "evening" | "night" | "allDay")[];
+  timeZone: ("morning" | "afternoon" | "evening" | "night" | "all_day")[];
   treatment: string;
   nextVisit: string | null;
 };
@@ -69,6 +70,19 @@ export const POST = async (request: Request) => {
         { status: 400 }
       );
 
+    // recordTypeの変換
+    const convertRecordType = (type: string) => {
+      switch(type) {
+        case "daily":
+          return "DAILY" as const;
+        case "medical":
+          return "MEDICAL" as const;
+        default:
+          throw new Error("不正なrecordTypeの値です。");
+      }
+    }
+    const recordTypeConverted = convertRecordType(recordType);
+
     // severityLevel（強さ・程度）の変換処理（string→number）
     const convertSeverityLevel = (level: string) => {
       switch (level) {
@@ -86,6 +100,28 @@ export const POST = async (request: Request) => {
     };
     const severityLevelNumber = convertSeverityLevel(severityLevel);
 
+    const newRecord = await prisma.record.create({
+      data: {
+        userId,
+        recordAt: new Date(recordAt),
+        recordType: recordTypeConverted,
+        recordCategories: {
+          create: { categoryId: Number(recordCategory)}
+        },
+        content,
+        severityLevel: severityLevelNumber,
+        recordTimeZones: {
+          create: timeZone.map((tz) => ({ timeZone: tz.toUpperCase() as TimeZone}))
+        },
+        treatment,
+        nextVisit: nextVisit ? new Date(nextVisit) : null,
+      }
+    })
+
+    return NextResponse.json<CreateRecordResponse>(
+      { id: newRecord.id},
+      {status: 201}
+    )
 
   } catch (error) {
     if (error instanceof Error)
