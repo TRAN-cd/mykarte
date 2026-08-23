@@ -72,7 +72,7 @@ export const POST = async (request: Request) => {
 
     // recordTypeの変換
     const convertRecordType = (type: string) => {
-      switch(type) {
+      switch (type) {
         case "daily":
           return "DAILY" as const;
         case "medical":
@@ -80,7 +80,7 @@ export const POST = async (request: Request) => {
         default:
           throw new Error("不正なrecordTypeの値です。");
       }
-    }
+    };
     const recordTypeConverted = convertRecordType(recordType);
 
     // severityLevel（強さ・程度）の変換処理（string→number）
@@ -106,23 +106,24 @@ export const POST = async (request: Request) => {
         recordAt: new Date(recordAt),
         recordType: recordTypeConverted,
         recordCategories: {
-          create: { categoryId: Number(recordCategory)}
+          create: { categoryId: Number(recordCategory) },
         },
         content,
         severityLevel: severityLevelNumber,
         recordTimeZones: {
-          create: timeZone.map((tz) => ({ timeZone: tz.toUpperCase() as TimeZone}))
+          create: timeZone.map((tz) => ({
+            timeZone: tz.toUpperCase() as TimeZone,
+          })),
         },
         treatment,
         nextVisit: nextVisit ? new Date(nextVisit) : null,
-      }
-    })
+      },
+    });
 
-    return NextResponse.json<CreateRecordResponse>(
-      { id: newRecord.id},
-      {status: 201}
-    )
-
+    return NextResponse.json(
+      { message: "記録を保存しました。" },
+      { status: 201 }
+    );
   } catch (error) {
     if (error instanceof Error)
       return NextResponse.json({ message: error.message }, { status: 400 });
