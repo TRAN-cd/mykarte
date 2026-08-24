@@ -19,7 +19,6 @@ import { CheckIcon } from "@/app/_components/icons/CheckIcon";
 import type { GetCategoryResponse } from "@/app/_type/GetCategoryResponse";
 import { useFetch } from "@/app/_hooks/useFetch";
 import { PlusIcon } from "@/app/_components/icons/PlusIcon";
-import { CategoryForm } from "@/app/_components/categories/CategoryForm";
 import { CategoryFormInputs } from "@/app/_components/categories/CategoryForm";
 import { apiFetch } from "@/app/_libs/apiFetch";
 import { RecordCategoryForm } from "@/app/_components/records/RecordCategoryForm";
@@ -30,7 +29,7 @@ interface RecordFormInputs {
   recordType: "daily" | "medical"
   recordCategory: string
   content: string
-  severityLevel: "mild" | "moderate" | "severe" | "na"
+  severityLevel: "mild" | "moderate" | "severe" | "na" | null
   timeZone: ("morning" | "afternoon" | "evening" | "night" | "all_day")[]
   treatment: string
   nextVisit: Date | null
@@ -38,12 +37,17 @@ interface RecordFormInputs {
 
 export const RecordForm = () => {
   const router = useRouter()
-  const { control, register } = useForm<RecordFormInputs>()
+  const { control, register, handleSubmit, reset, formState: { isDirty, isValid, isSubmitting } } = useForm<RecordFormInputs>({
+    mode: "all", defaultValues: {
+      severityLevel: null,
+      timeZone: [],
+    }
+  })
   const [isCategoryFormOpen, setIsCategoryFormOpen] = useState(false)
   const initialData = { name: "" }
   const [isDetailOpen, setIsDetailOpen] = useState(false)
 
-  const { data, error, isLoading, mutate } = useFetch<GetCategoryResponse>("/api/categories/")
+  const { data, mutate } = useFetch<GetCategoryResponse>("/api/categories/")
   const categories = data?.categories || []
 
   const handleOpenCategoryForm = () => {
@@ -66,17 +70,42 @@ export const RecordForm = () => {
     setIsDetailOpen((prev) => !prev)
   }
 
+  const handleSave = async (data: RecordFormInputs) => {
+    try {
+      await apiFetch.post("/api/records/", {
+        recordAt: data.recordAt,
+        recordType: data.recordType,
+        recordCategory: data.recordCategory,
+        content: data.content,
+        severityLevel: data.severityLevel,
+        timeZone: data.timeZone,
+        treatment: data.treatment,
+        nextVisit: data.nextVisit
+      })
+      reset()
+    } catch (error) {
+      if (error) {
+        if (error instanceof Error) alert(error.message)
+      }
+    }
+  }
+
   return (
     <div className="px-6 py-5">
       <PageHeader pageTitle="新規記録" />
 
       <div className="flex flex-col gap-6 p-5 bg-white rounded-[20px] border-(--color-bg) border">
-        <form action="" className="flex flex-col gap-6">
+        <form
+          onSubmit={handleSubmit(handleSave)}
+          action=""
+          className="flex flex-col gap-6"
+        >
           <div>
-            <RecordItemTitle itemTitle="記録日" htmlFor="recordAt" />
+            <RecordItemTitle itemTitle="記録日" htmlFor="recordAt" required />
             <Controller
               name="recordAt"
               control={control}
+              rules={{ required: true }}
               render={({ field }) => (
                 <DatePicker
                   selected={field.value}
@@ -90,10 +119,11 @@ export const RecordForm = () => {
             />
           </div>
           <div>
-            <RecordItemTitle itemTitle="記録の種類" htmlFor="recordType" />
+            <RecordItemTitle itemTitle="記録の種類" htmlFor="recordType" required />
             <Controller
               name="recordType"
               control={control}
+              rules={{ required: true }}
               render={({ field }) => (
                 <div className="flex items-center gap-5 mt-3">
                   <RecordTypeCard
@@ -115,7 +145,7 @@ export const RecordForm = () => {
             />
           </div>
           <div>
-            <RecordItemTitle itemTitle="カテゴリー" htmlFor="category" />
+            <RecordItemTitle itemTitle="カテゴリー" htmlFor="category" required />
             <ul className="flex flex-wrap items-center gap-3 mt-3">
               {
                 categories.map((cat) => {
@@ -124,7 +154,14 @@ export const RecordForm = () => {
                       <label
                         className="flex justify-between items-center bg-white px-2 py-0.5 rounded-xl border border-(--color-sub) text-xs font-medium text-(--color-sub) cursor-pointer duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)"
                       >
-                        <input type="radio" value={cat.id} className="hidden" {...register("recordCategory")} />
+                        <input
+                          type="radio"
+                          value={cat.id}
+                          className="hidden"
+                          {...register("recordCategory",
+                            { required: true }
+                          )}
+                        />
                         <span className="leading-none"> {cat.name} </span>
                       </label>
                     </li>
@@ -154,12 +191,14 @@ export const RecordForm = () => {
             </ul>
           </div>
           <div>
-            <RecordItemTitle itemTitle="メモ" htmlFor="content" />
+            <RecordItemTitle itemTitle="メモ" htmlFor="content" required />
             <textarea
               id="content"
               placeholder="例：お腹の調子が昨日から悪い。薬は飲んでない。"
               className="bg-(--color-card-bg) p-3 rounded-[10px] border border-(--color-primary) font-en text-xs w-full min-h-17.5 flex justify-between items-center mt-3"
-              {...register("content")}
+              {...register("content",
+                { required: true }
+              )}
             >
             </textarea>
           </div>
@@ -266,7 +305,6 @@ export const RecordForm = () => {
                 type="button"
                 onClick={() => router.back()}
                 className="w-27 h-9 flex justify-center items-center bg-white rounded-[5px] border border-(--color-text)/20 shadow-[0px_10px_50px_0px_rgba(28,43,36,0.1)] duration-300 hover:shadow-none hover:border-(--color-primary) hover:bg-white group cursor-pointer"
-              // disabled={isSubmitting}
               >
                 <p
                   className="text-[13px] font-medium duration-300 group-hover:text-(--color-primary)">
@@ -276,7 +314,7 @@ export const RecordForm = () => {
               <button
                 type="submit"
                 className="w-27 h-9 flex justify-center items-center gap-1 bg-(--color-primary) text-white rounded-[5px] border border-(--color-text)/20 shadow-[0px_10px_50px_0px_rgba(28,43,36,0.1)] duration-300 hover:shadow-none hover:border-(--color-primary) hover:bg-(--color-bg) group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-(--color-primary) disabled:hover:text-white disabled:hover:border-(--color-text)/20"
-              // disabled={!isDirty || !isValid || isSubmitting || disabled}
+                disabled={!isDirty || !isValid || isSubmitting}
               >
                 <CheckIcon className="w-3 duration-300 group-hover:text-(--color-primary) group-disabled:group-hover:text-white" />
                 <p className="text-[13px] font-medium leading-0 duration-300 group-hover:text-(--color-primary) group-disabled:group-hover:text-white">

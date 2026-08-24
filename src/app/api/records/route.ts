@@ -8,10 +8,10 @@ export type CreateRecordRequestBody = {
   recordType: "daily" | "medical";
   recordCategory: string;
   content: string;
-  severityLevel: "mild" | "moderate" | "severe" | "na";
-  timeZone: ("morning" | "afternoon" | "evening" | "night" | "all_day")[];
-  treatment: string;
-  nextVisit: string | null;
+  severityLevel?: "mild" | "moderate" | "severe" | "na" | null;
+  timeZone?: ("morning" | "afternoon" | "evening" | "night" | "all_day")[];
+  treatment?: string;
+  nextVisit?: string | null;
 };
 
 // 新規記録作成
@@ -84,7 +84,7 @@ export const POST = async (request: Request) => {
     const recordTypeConverted = convertRecordType(recordType);
 
     // severityLevel（強さ・程度）の変換処理（string→number）
-    const convertSeverityLevel = (level: string) => {
+    const convertSeverityLevel = (level: string | null | undefined) => {
       switch (level) {
         case "mild":
           return 1;
@@ -93,6 +93,10 @@ export const POST = async (request: Request) => {
         case "severe":
           return 3;
         case "na":
+          return null;
+        case null:
+          return null;
+        case undefined:
           return null;
         default:
           throw new Error("不正なseverityLevelの値です。");
@@ -110,8 +114,9 @@ export const POST = async (request: Request) => {
         },
         content,
         severityLevel: severityLevelNumber,
+        
         recordTimeZones: {
-          create: timeZone.map((tz) => ({
+          create: (timeZone ?? []).map((tz) => ({
             timeZone: tz.toUpperCase() as TimeZone,
           })),
         },
