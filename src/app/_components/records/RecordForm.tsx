@@ -71,16 +71,17 @@ export const RecordForm = () => {
   }
 
   const handleSave = async (data: RecordFormInputs) => {
+    const {recordAt, recordType, recordCategory, content, severityLevel, timeZone, treatment, nextVisit} = data
     try {
       await apiFetch.post("/api/records/", {
-        recordAt: data.recordAt,
-        recordType: data.recordType,
-        recordCategory: data.recordCategory,
-        content: data.content,
-        severityLevel: data.severityLevel,
-        timeZone: data.timeZone,
-        treatment: data.treatment,
-        nextVisit: data.nextVisit
+        recordAt,
+        recordType,
+        recordCategory,
+        content,
+        severityLevel,
+        timeZone,
+        treatment,
+        nextVisit
       })
       reset()
     } catch (error) {
