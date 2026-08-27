@@ -24,6 +24,8 @@ import { apiFetch } from "@/app/_libs/apiFetch";
 import { RecordCategoryForm } from "@/app/_components/records/RecordCategoryForm";
 import { useRouter } from "next/navigation";
 import { CreateRecordRequestBody } from "@/app/api/records/route";
+import { handleApiError } from "@/app/_libs/handleApiError";
+
 
 interface RecordFormInputs {
   recordAt: Date
@@ -62,7 +64,7 @@ export const RecordForm = () => {
       setIsCategoryFormOpen(false)
       return true
     } catch (error) {
-      if (error instanceof Error) alert(error.message)
+      handleApiError(error, "カテゴリーの作成に失敗しました。")
       return false
     }
   }
@@ -87,9 +89,7 @@ export const RecordForm = () => {
       await apiFetch.post("/api/records/", requestBody)
       reset()
     } catch (error) {
-      if (error) {
-        if (error instanceof Error) alert(error.message)
-      }
+      handleApiError(error, "記録の作成に失敗しました。")
     }
   }
 

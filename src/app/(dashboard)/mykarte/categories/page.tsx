@@ -9,6 +9,7 @@ import type { GetCategoryResponse } from "@/app/_type/GetCategoryResponse";
 import { useState } from "react";
 import { useFetch } from "@/app/_hooks/useFetch";
 import { apiFetch } from "@/app/_libs/apiFetch";
+import { handleApiError } from "@/app/_libs/handleApiError";
 
 export default function CategoriesPage() {
   const initialData = { name: "" }
@@ -24,7 +25,7 @@ export default function CategoriesPage() {
       mutate()
       return true
     } catch (error) {
-      if (error instanceof Error) alert(error.message)
+      handleApiError(error, "カテゴリーの作成に失敗しました。")
       return false
     }
   }
@@ -40,7 +41,7 @@ export default function CategoriesPage() {
       setEditingId(null)
       return true
     } catch(error) {
-      if (error instanceof Error) alert(error.message)
+      handleApiError(error, "カテゴリーの更新に失敗しました。")
       return false
     }
   }
@@ -50,7 +51,7 @@ export default function CategoriesPage() {
       await apiFetch.del(`/api/categories/${id}/`)
       mutate()
     } catch(error) {
-      if (error instanceof Error) alert(error.message)
+      handleApiError(error, "カテゴリーの削除に失敗しました。")
     }
   }
 
