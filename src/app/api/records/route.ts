@@ -2,14 +2,15 @@ import { prisma } from "@/app/_libs/prisma";
 import { supabase } from "@/app/_libs/supabase";
 import { NextResponse } from "next/server";
 import { TimeZone } from "@/generated/prisma/enums";
+import { RecordCategoryType, SeverityLevel,TimeZoneType } from "@/app/_type/RecordTypes";
 
 export type CreateRecordRequestBody = {
   recordAt: string;
-  recordType: "daily" | "medical";
+  recordType: RecordCategoryType;
   recordCategory: string;
   content: string;
-  severityLevel?: "mild" | "moderate" | "severe" | "na" | null;
-  timeZone?: ("morning" | "afternoon" | "evening" | "night" | "all_day")[];
+  severityLevel?: SeverityLevel;
+  timeZone?: TimeZoneType[];
   treatment?: string;
   nextVisit?: string | null;
 };

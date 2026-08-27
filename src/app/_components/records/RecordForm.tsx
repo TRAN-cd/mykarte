@@ -25,15 +25,16 @@ import { RecordCategoryForm } from "@/app/_components/records/RecordCategoryForm
 import { useRouter } from "next/navigation";
 import { CreateRecordRequestBody } from "@/app/api/records/route";
 import { handleApiError } from "@/app/_libs/handleApiError";
+import { RecordCategoryType, SeverityLevel,TimeZoneType } from "@/app/_type/RecordTypes";
 
 
 interface RecordFormInputs {
   recordAt: Date
-  recordType: "daily" | "medical"
+  recordType: RecordCategoryType
   recordCategory: string
   content: string
-  severityLevel: "mild" | "moderate" | "severe" | "na" | null
-  timeZone: ("morning" | "afternoon" | "evening" | "night" | "all_day")[]
+  severityLevel: SeverityLevel
+  timeZone: TimeZoneType[]
   treatment: string
   nextVisit: Date | null
 }
@@ -153,28 +154,30 @@ export const RecordForm = () => {
           <div>
             <RecordItemTitle itemTitle="カテゴリー" htmlFor="category" required />
             <ul className="flex flex-wrap items-center gap-3 mt-3">
-              {
-                categories.map((cat) => {
-                  return (
-                    <li key={cat.id}>
-                      <label
-                        className="flex justify-between items-center bg-white px-2 py-0.5 rounded-xl border border-(--color-sub) text-xs font-medium text-(--color-sub) cursor-pointer duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)"
-                      >
-                        <input
-                          type="radio"
-                          value={cat.id}
-                          className="hidden"
-                          {...register("recordCategory",
-                            { required: true }
-                          )}
-                          disabled={isSubmitting}
-                        />
-                        <span className="leading-none"> {cat.name} </span>
-                      </label>
-                    </li>
-                  )
-                })
-              }
+                <Controller 
+                  name="recordCategory"
+                  control={control}
+                  rules={{required: true}}
+                  render={({field}) => (
+                    <>
+                      {categories.map((cat) => (
+                        <li key={cat.id}>
+                          <label className="flex justify-between items-center bg-white px-2 py-0.5 rounded-xl border border-(--color-sub) text-xs font-medium text-(--color-sub) cursor-pointer duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
+                            <input 
+                              type="radio" 
+                              value={cat.id}
+                              className="hidden"
+                              checked={field.value === String(cat.id)}
+                              onChange={() => field.onChange(String(cat.id))}
+                              disabled={isSubmitting}
+                            />
+                            <span>{cat.name}</span>
+                          </label>
+                        </li>
+                      ))}
+                    </>
+                  )}
+                />
               {
                 isCategoryFormOpen === true
                   ? (
