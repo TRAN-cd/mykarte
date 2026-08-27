@@ -117,6 +117,7 @@ export const RecordForm = () => {
                   locale={ja}
                   dateFormat={"yyyy/MM/dd"}
                   placeholderText="年/ 月/ 日"
+                  disabled={isSubmitting}
                 />
               )}
             />
@@ -135,6 +136,7 @@ export const RecordForm = () => {
                     cardDescription="体調・症状・気になること"
                     isSelected={field.value === "daily"}
                     onClick={() => field.onChange("daily")}
+                    disabled={isSubmitting}
                   />
                   <RecordTypeCard
                     cardIcon={HospitalIcon}
@@ -142,6 +144,7 @@ export const RecordForm = () => {
                     cardDescription="受診後の記録・処方薬など"
                     isSelected={field.value === "medical"}
                     onClick={() => field.onChange("medical")}
+                    disabled={isSubmitting}
                   />
                 </div>
               )}
@@ -164,6 +167,7 @@ export const RecordForm = () => {
                           {...register("recordCategory",
                             { required: true }
                           )}
+                          disabled={isSubmitting}
                         />
                         <span className="leading-none"> {cat.name} </span>
                       </label>
@@ -178,7 +182,7 @@ export const RecordForm = () => {
                       defaultValues={initialData}
                       placeholder="カテゴリーを追加"
                       onSubmit={handleCreate}
-                      disabled={false}
+                      disabled={isSubmitting}
                       onCancel={() => setIsCategoryFormOpen(false)}
                     />
                   ) : (
@@ -202,6 +206,7 @@ export const RecordForm = () => {
               {...register("content",
                 { required: true }
               )}
+              disabled={isSubmitting}
             >
             </textarea>
           </div>
@@ -225,22 +230,22 @@ export const RecordForm = () => {
                   <legend className="text-xs font-medium text-(--color-sub) pb-3">強さ・程度</legend>
                   <div className="flex items-center gap-1.5 w-full">
                     <label className="flex items-center gap-1 text-xs text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-xl cursor-pointer duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
-                      <input type="radio" value="mild" className="hidden" {...register("severityLevel")} />
+                      <input type="radio" value="mild" className="hidden" {...register("severityLevel")} disabled={isSubmitting}/>
                       <MildIcon className="w-3" />
                       <span className="">軽度</span>
                     </label>
                     <label className="flex items-center gap-1 text-xs text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-xl cursor-pointer duration-300 has-checked:text-[#D97706] has-checked:font-medium has-checked:border-[#D97706] has-checked:bg-[#FFF4E5]">
-                      <input type="radio" value="moderate" className="hidden" {...register("severityLevel")} />
+                      <input type="radio" value="moderate" className="hidden" {...register("severityLevel")} disabled={isSubmitting} />
                       <ModerateIcon className="w-3" />
                       <span className="">中等度</span>
                     </label>
                     <label className="flex items-center gap-1 text-xs text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-xl cursor-pointer duration-300 has-checked:text-(--color-danger) has-checked:font-medium has-checked:border-(--color-danger) has-checked:bg-(--color-danger-bg)">
-                      <input type="radio" value="severe" className="hidden" {...register("severityLevel")} />
+                      <input type="radio" value="severe" className="hidden" {...register("severityLevel")} disabled={isSubmitting} />
                       <SevereIcon className="w-3" />
                       <span className="">重度</span>
                     </label>
                     <label className="flex items-center gap-1 text-xs text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-xl cursor-pointer duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
-                      <input type="radio" value="na" className="hidden" {...register("severityLevel")} />
+                      <input type="radio" value="na" className="hidden" {...register("severityLevel")} disabled={isSubmitting} />
                       <span className="">該当なし</span>
                     </label>
                   </div>
@@ -249,23 +254,23 @@ export const RecordForm = () => {
                   <legend className="text-xs font-medium text-(--color-sub) pb-3">時間帯</legend>
                   <div className="flex items-center gap-1.5 w-full">
                     <label className="flex items-center gap-1 text-xs text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-[10px] cursor-pointer duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
-                      <input type="checkbox" value="morning" className="hidden" {...register("timeZone")} />
+                      <input type="checkbox" value="morning" className="hidden" {...register("timeZone")} disabled={isSubmitting}/>
                       <span className="">朝</span>
                     </label>
                     <label className="flex items-center gap-1 text-xs text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-xl cursor-pointer duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
-                      <input type="checkbox" value="afternoon" className="hidden" {...register("timeZone")} />
+                      <input type="checkbox" value="afternoon" className="hidden" {...register("timeZone")} disabled={isSubmitting}/>
                       <span className="">昼</span>
                     </label>
                     <label className="flex items-center gap-1 text-xs text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-xl cursor-pointer duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
-                      <input type="checkbox" value="evening" className="hidden" {...register("timeZone")} />
+                      <input type="checkbox" value="evening" className="hidden" {...register("timeZone")} disabled={isSubmitting}/>
                       <span className="">夕</span>
                     </label>
                     <label className="flex items-center gap-1 text-xs text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-xl cursor-pointer duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
-                      <input type="checkbox" value="night" className="hidden" {...register("timeZone")} />
+                      <input type="checkbox" value="night" className="hidden" {...register("timeZone")} disabled={isSubmitting}/>
                       <span className="">夜</span>
                     </label>
                     <label className="flex items-center gap-1 text-xs text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-xl cursor-pointer duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
-                      <input type="checkbox" value="all_day" className="hidden" {...register("timeZone")} />
+                      <input type="checkbox" value="all_day" className="hidden" {...register("timeZone")} disabled={isSubmitting}/>
                       <span className="">終日</span>
                     </label>
                   </div>
@@ -280,6 +285,7 @@ export const RecordForm = () => {
                     rows={1}
                     className="bg-(--color-card-bg) p-3 rounded-[10px] border border-(--color-primary) font-en text-xs w-full min-h-8 flex justify-between items-center"
                     {...register("treatment")}
+                    disabled={isSubmitting}
                   >
                   </textarea>
                 </div>
@@ -296,6 +302,7 @@ export const RecordForm = () => {
                         locale={ja}
                         dateFormat={"yyyy/MM/dd"}
                         placeholderText="年/ 月/ 日"
+                        disabled={isSubmitting}
                       />
                     )}
                   />
@@ -307,7 +314,8 @@ export const RecordForm = () => {
               <button
                 type="button"
                 onClick={() => router.back()}
-                className="w-27 h-9 flex justify-center items-center bg-white rounded-[5px] border border-(--color-text)/20 shadow-[0px_10px_50px_0px_rgba(28,43,36,0.1)] duration-300 hover:shadow-none hover:border-(--color-primary) hover:bg-white group cursor-pointer"
+                className="w-27 h-9 flex justify-center items-center bg-white rounded-[5px] border border-(--color-text)/20 shadow-[0px_10px_50px_0px_rgba(28,43,36,0.1)] duration-300 hover:shadow-none hover:border-(--color-primary) hover:bg-white group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isSubmitting}
               >
                 <p
                   className="text-[13px] font-medium duration-300 group-hover:text-(--color-primary)">

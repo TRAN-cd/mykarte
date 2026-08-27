@@ -6,14 +6,15 @@ type Props = {
   cardDescription: string
   isSelected: boolean
   onClick?: () => void
+  disabled?: boolean
 }
 
-export const RecordTypeCard = ({ cardIcon, cardTitle, cardDescription, isSelected, onClick }: Props) => {
+export const RecordTypeCard = ({ cardIcon, cardTitle, cardDescription, isSelected, onClick, disabled }: Props) => {
   const CardIcon = cardIcon
 
   return (
     <div
-      onClick={onClick}
+      onClick={disabled ? undefined : onClick}
       className={`max-w-55 w-full flex items-center gap-2.5 border p-3 rounded-[10px] cursor-pointer duration-300 ${isSelected
           ? "bg-(--color-bg) border-(--color-primary)"
           : "bg-(--color-card-bg) border-(--color-sub) hover:opacity-70"
