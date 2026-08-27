@@ -23,6 +23,7 @@ import { CategoryFormInputs } from "@/app/_components/categories/CategoryForm";
 import { apiFetch } from "@/app/_libs/apiFetch";
 import { RecordCategoryForm } from "@/app/_components/records/RecordCategoryForm";
 import { useRouter } from "next/navigation";
+import { CreateRecordRequestBody } from "@/app/api/records/route";
 
 interface RecordFormInputs {
   recordAt: Date
@@ -72,17 +73,18 @@ export const RecordForm = () => {
 
   const handleSave = async (data: RecordFormInputs) => {
     const {recordAt, recordType, recordCategory, content, severityLevel, timeZone, treatment, nextVisit} = data
+    const requestBody: CreateRecordRequestBody = {
+      recordAt: recordAt.toISOString(),
+      recordType,
+      recordCategory,
+      content,
+      severityLevel,
+      timeZone,
+      treatment,
+      nextVisit: nextVisit ? nextVisit.toISOString() : null
+    }
     try {
-      await apiFetch.post("/api/records/", {
-        recordAt,
-        recordType,
-        recordCategory,
-        content,
-        severityLevel,
-        timeZone,
-        treatment,
-        nextVisit
-      })
+      await apiFetch.post("/api/records/", requestBody)
       reset()
     } catch (error) {
       if (error) {
