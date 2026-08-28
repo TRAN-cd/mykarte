@@ -1,7 +1,7 @@
 import { prisma } from "@/app/_libs/prisma";
 import { supabase } from "@/app/_libs/supabase";
 import { NextResponse } from "next/server";
-import { TimeZone } from "@/generated/prisma/enums";
+import { RecordType, TimeZone } from "@/generated/prisma/enums";
 import { RecordCategoryType, SeverityLevel,TimeZoneType } from "@/app/_type/RecordTypes";
 
 export type CreateRecordRequestBody = {
@@ -72,12 +72,12 @@ export const POST = async (request: Request) => {
       );
 
     // recordTypeの変換
-    const convertRecordType = (type: string) => {
+    const convertRecordType = (type: RecordCategoryType): RecordType => {
       switch (type) {
         case "daily":
-          return "DAILY" as const;
+          return "DAILY";
         case "medical":
-          return "MEDICAL" as const;
+          return "MEDICAL";
         default:
           throw new Error("不正なrecordTypeの値です。");
       }
@@ -85,7 +85,7 @@ export const POST = async (request: Request) => {
     const recordTypeConverted = convertRecordType(recordType);
 
     // severityLevel（強さ・程度）の変換処理（string→number）
-    const convertSeverityLevel = (level: string | null | undefined) => {
+    const convertSeverityLevel = (level: SeverityLevel | undefined): (number | null) => {
       switch (level) {
         case "mild":
           return 1;
