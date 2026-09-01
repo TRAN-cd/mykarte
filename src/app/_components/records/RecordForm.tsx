@@ -27,7 +27,6 @@ import { CreateRecordRequestBody } from "@/app/api/records/route";
 import { handleApiError } from "@/app/_libs/handleApiError";
 import { RecordCategoryType, SeverityLevel,TimeZoneType } from "@/app/_type/RecordTypes";
 
-
 interface RecordFormInputs {
   recordAt: Date
   recordType: RecordCategoryType
@@ -39,7 +38,20 @@ interface RecordFormInputs {
   nextVisit: Date | null
 }
 
-export const RecordForm = () => {
+interface Props {
+  mode: "new" | "edit"
+  defaultValues?: RecordFormInputs
+  onSubmit: (data: CreateRecordRequestBody) => Promise<boolean>
+  onDelete?: () => void
+  onCancel?: () => void
+}
+
+export const RecordForm = ({
+  mode,
+  defaultValues,
+  onSubmit,
+  onDelete,
+}: Props) => {
   const router = useRouter()
   const { control, register, handleSubmit, reset, formState: { isDirty, isValid, isSubmitting } } = useForm<RecordFormInputs>({
     mode: "all", defaultValues: {
@@ -86,12 +98,8 @@ export const RecordForm = () => {
       treatment,
       nextVisit: nextVisit ? nextVisit.toISOString() : null
     }
-    try {
-      await apiFetch.post("/api/records/", requestBody)
-      reset()
-    } catch (error) {
-      handleApiError(error, "記録の作成に失敗しました。")
-    }
+    const success = await onSubmit(requestBody)
+    if (success) reset()
   }
 
   return (
