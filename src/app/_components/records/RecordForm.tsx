@@ -42,19 +42,16 @@ interface Props {
   mode: "new" | "edit"
   defaultValues?: RecordFormInputs
   onSubmit: (data: CreateRecordRequestBody) => Promise<boolean>
-  onDelete?: () => void
-  onCancel?: () => void
 }
 
 export const RecordForm = ({
   mode,
   defaultValues,
   onSubmit,
-  onDelete,
 }: Props) => {
   const router = useRouter()
   const { control, register, handleSubmit, reset, formState: { isDirty, isValid, isSubmitting } } = useForm<RecordFormInputs>({
-    mode: "all", 
+    mode: "all",
     defaultValues: defaultValues ?? {
       severityLevel: null,
       timeZone: [],
@@ -105,7 +102,7 @@ export const RecordForm = ({
 
   return (
     <div className="px-6 py-5">
-      <PageHeader pageTitle="新規記録" />
+      <PageHeader pageTitle={ mode === "new" ? "新規記録" : "記録の編集" } />
 
       <div className="flex flex-col gap-6 p-5 bg-white rounded-[20px] border-(--color-bg) border">
         <form
@@ -329,9 +326,8 @@ export const RecordForm = ({
                 className="w-27 h-9 flex justify-center items-center bg-white rounded-[5px] border border-(--color-text)/20 shadow-[0px_10px_50px_0px_rgba(28,43,36,0.1)] duration-300 hover:shadow-none hover:border-(--color-primary) hover:bg-white group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={isSubmitting}
               >
-                <p
-                  className="text-[13px] font-medium duration-300 group-hover:text-(--color-primary)">
-                  戻る
+                <p className="text-[13px] font-medium duration-300 group-hover:text-(--color-primary)">
+                  { mode === "new" ? "戻る" : "キャンセル" }
                 </p>
               </button>
               <button
