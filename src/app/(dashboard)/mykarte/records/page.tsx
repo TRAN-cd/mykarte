@@ -8,10 +8,21 @@ import Image from "next/image";
 import { SevereIcon } from "@/app/_components/icons/SevereIcon";
 import { ArrowIcon } from "@/app/_components/icons/ArrowIcon";
 import Link from "next/link";
+import { DeleteIcon } from "@/app/_components/icons/DeleteIcon";
 
 export default function NewRecords() {
   const { data } = useFetch<GetCategoryResponse>("/api/categories/")
   const categories = data?.categories || []
+
+  const handleDeleteConfirm = () => {
+    const isConfirmed = confirm("削除しますか？")
+    if (!isConfirmed) {
+      return false
+    } else {
+      console.log("削除が実行されました。");
+      return true
+    }
+  }
 
   return (
     <div className="px-6 py-5 w-full">
@@ -103,11 +114,20 @@ export default function NewRecords() {
             </div>
           </div>
 
-          <Link href="/mykarte/records/1" className="absolute w-7 h-7 bg-(--color-primary) border border-transparent rounded-[50%] right-5 bottom-5 duration-300 hover:bg-white hover:border-(--color-primary) group">
-            <div className="h-full flex justify-center items-center">
-              <ArrowIcon className="text-white w-2 h-2.75 -mr-0.5 duration-300 group-hover:text-(--color-primary)"/>
+          <div className="absolute right-5 bottom-5">
+            <div className="flex gap-2">
+              <button onClick={handleDeleteConfirm} className="block w-7 h-7 bg-white rounded-[50%] border border-(--color-text)/20 duration-300 hover:border-(--color-danger) hover:bg-(--color-danger-bg) group cursor-pointer">
+                <div className="h-full flex justify-center items-center">
+                  <DeleteIcon className="text-(--color-text) w-3 h-3 duration-300 group-hover:text-(--color-danger)" />
+                </div>
+              </button>
+              <Link href="/mykarte/records/1" className="block w-7 h-7 bg-(--color-primary) border border-transparent rounded-[50%] duration-300 hover:bg-white hover:border-(--color-primary) group">
+                <div className="h-full flex justify-center items-center">
+                  <ArrowIcon className="text-white w-2 h-2.75 -mr-0.5 duration-300 group-hover:text-(--color-primary)" />
+                </div>
+              </Link>
             </div>
-          </Link>
+          </div>
         </li>
 
       </ul>
