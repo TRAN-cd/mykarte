@@ -27,7 +27,7 @@ import { CreateRecordRequestBody } from "@/app/api/records/route";
 import { handleApiError } from "@/app/_libs/handleApiError";
 import { RecordCategoryType, SeverityLevel, TimeZoneType } from "@/app/_type/RecordTypes";
 
-interface RecordFormInputs {
+export interface RecordFormInputs {
   recordAt: Date
   recordType: RecordCategoryType
   recordCategory: string
