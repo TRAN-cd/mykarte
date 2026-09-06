@@ -2,7 +2,11 @@ import { prisma } from "@/app/_libs/prisma";
 import { supabase } from "@/app/_libs/supabase";
 import { NextResponse } from "next/server";
 import { RecordType, TimeZone } from "@/generated/prisma/enums";
-import { RecordCategoryType, SeverityLevel,TimeZoneType } from "@/app/_type/RecordTypes";
+import {
+  RecordCategoryType,
+  SeverityLevel,
+  TimeZoneType,
+} from "@/app/_type/RecordTypes";
 
 export type CreateRecordRequestBody = {
   recordAt: string;
@@ -85,7 +89,9 @@ export const POST = async (request: Request) => {
     const recordTypeConverted = convertRecordType(recordType);
 
     // severityLevel（強さ・程度）の変換処理（string→number）
-    const convertSeverityLevel = (level: SeverityLevel | undefined): (number | null) => {
+    const convertSeverityLevel = (
+      level: SeverityLevel | undefined
+    ): number | null => {
       switch (level) {
         case "mild":
           return 1;
@@ -115,7 +121,7 @@ export const POST = async (request: Request) => {
         },
         content,
         severityLevel: severityLevelNumber,
-        
+
         recordTimeZones: {
           create: (timeZone ?? []).map((tz) => ({
             timeZone: tz.toUpperCase() as TimeZone,
@@ -130,6 +136,76 @@ export const POST = async (request: Request) => {
       { message: "記録を保存しました。" },
       { status: 201 }
     );
+  } catch (error) {
+    if (error instanceof Error)
+      return NextResponse.json({ message: error.message }, { status: 400 });
+  }
+};
+
+
+export type RecordResponse = {
+  records: {
+    id: number;
+    recordAt: Date;
+    recordType: RecordType;
+    recordCategories: {
+      id: number;
+      createdAt: Date;
+      updatedAt: Date;
+      recordId: number;
+      categoryId: number;
+    }[];
+    content: string;
+    severityLevel: number | null;
+    recordTimeZones: {
+      id: number;
+      recordId: number;
+      timeZone: TimeZone;
+    }[];
+    treatment: string | null;
+    nextVisit: Date | null;
+  }[]
+}
+
+// 記録情報取得
+///////////////////
+export const GET = async (request: Request) => {
+  const token = request.headers.get("Authorization") ?? "";
+  const { data, error } = await supabase.auth.getUser(token);
+  if (error)
+    return NextResponse.json({ status: error.message }, { status: 401 });
+
+  try {
+    // ユーザー特定
+    const dbUser = await prisma.user.findUnique({
+      where: {
+        supabaseUserId: data.user.id,
+      },
+    });
+    if (!dbUser)
+      return NextResponse.json(
+        { message: "ユーザー情報がありません" },
+        { status: 400 }
+      );
+    const userId = dbUser.id;
+
+    // 記録データ取得
+    const getRecords = await prisma.record.findMany({
+      where: {
+        userId
+      },
+      include: {
+        recordCategories: true,
+        recordTimeZones: true
+      },
+      orderBy: {
+        recordAt: "desc"
+      },
+    })
+
+    return NextResponse.json<RecordResponse>({ records: getRecords}, {status: 200})
+
+
   } catch (error) {
     if (error instanceof Error)
       return NextResponse.json({ message: error.message }, { status: 400 });
