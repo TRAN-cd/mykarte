@@ -73,7 +73,7 @@ export default function DashboardLayout({
                   </ul>
                 </div>
               </div>
-              <div className="bg-white/50 w-full rounded-[15px] flex gap-10.5">
+              <div className="bg-white/50 w-full rounded-[15px] flex">
                 <div className="flex-1">
                   {children}
                   {modal}

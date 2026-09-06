@@ -25,10 +25,9 @@ import { RecordCategoryForm } from "@/app/_components/records/RecordCategoryForm
 import { useRouter } from "next/navigation";
 import { CreateRecordRequestBody } from "@/app/api/records/route";
 import { handleApiError } from "@/app/_libs/handleApiError";
-import { RecordCategoryType, SeverityLevel,TimeZoneType } from "@/app/_type/RecordTypes";
+import { RecordCategoryType, SeverityLevel, TimeZoneType } from "@/app/_type/RecordTypes";
 
-
-interface RecordFormInputs {
+export interface RecordFormInputs {
   recordAt: Date
   recordType: RecordCategoryType
   recordCategory: string
@@ -39,10 +38,21 @@ interface RecordFormInputs {
   nextVisit: Date | null
 }
 
-export const RecordForm = () => {
+interface Props {
+  mode: "new" | "edit"
+  defaultValues?: RecordFormInputs
+  onSubmit: (data: CreateRecordRequestBody) => Promise<boolean>
+}
+
+export const RecordForm = ({
+  mode,
+  defaultValues,
+  onSubmit,
+}: Props) => {
   const router = useRouter()
   const { control, register, handleSubmit, reset, formState: { isDirty, isValid, isSubmitting } } = useForm<RecordFormInputs>({
-    mode: "all", defaultValues: {
+    mode: "all",
+    defaultValues: defaultValues ?? {
       severityLevel: null,
       timeZone: [],
     }
@@ -75,7 +85,7 @@ export const RecordForm = () => {
   }
 
   const handleSave = async (data: RecordFormInputs) => {
-    const {recordAt, recordType, recordCategory, content, severityLevel, timeZone, treatment, nextVisit} = data
+    const { recordAt, recordType, recordCategory, content, severityLevel, timeZone, treatment, nextVisit } = data
     const requestBody: CreateRecordRequestBody = {
       recordAt: recordAt.toISOString(),
       recordType,
@@ -86,17 +96,13 @@ export const RecordForm = () => {
       treatment,
       nextVisit: nextVisit ? nextVisit.toISOString() : null
     }
-    try {
-      await apiFetch.post("/api/records/", requestBody)
-      reset()
-    } catch (error) {
-      handleApiError(error, "記録の作成に失敗しました。")
-    }
+    const success = await onSubmit(requestBody)
+    if (success) reset()
   }
 
   return (
     <div className="px-6 py-5">
-      <PageHeader pageTitle="新規記録" />
+      <PageHeader pageTitle={ mode === "new" ? "新規記録" : "記録の編集" } />
 
       <div className="flex flex-col gap-6 p-5 bg-white rounded-[20px] border-(--color-bg) border">
         <form
@@ -154,30 +160,30 @@ export const RecordForm = () => {
           <div>
             <RecordItemTitle itemTitle="カテゴリー" htmlFor="category" required />
             <ul className="flex flex-wrap items-center gap-3 mt-3">
-                <Controller 
-                  name="recordCategory"
-                  control={control}
-                  rules={{required: true}}
-                  render={({field}) => (
-                    <>
-                      {categories.map((cat) => (
-                        <li key={cat.id}>
-                          <label className="flex justify-between items-center bg-white px-2 py-0.5 rounded-xl border border-(--color-sub) text-xs font-medium text-(--color-sub) cursor-pointer duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
-                            <input 
-                              type="radio" 
-                              value={cat.id}
-                              className="hidden"
-                              checked={field.value === String(cat.id)}
-                              onChange={() => field.onChange(String(cat.id))}
-                              disabled={isSubmitting}
-                            />
-                            <span>{cat.name}</span>
-                          </label>
-                        </li>
-                      ))}
-                    </>
-                  )}
-                />
+              <Controller
+                name="recordCategory"
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <>
+                    {categories.map((cat) => (
+                      <li key={cat.id}>
+                        <label className="flex justify-between items-center bg-white px-2 py-0.5 rounded-xl border border-(--color-sub) text-xs font-medium text-(--color-sub) cursor-pointer duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
+                          <input
+                            type="radio"
+                            value={cat.id}
+                            className="hidden"
+                            checked={field.value === String(cat.id)}
+                            onChange={() => field.onChange(String(cat.id))}
+                            disabled={isSubmitting}
+                          />
+                          <span>{cat.name}</span>
+                        </label>
+                      </li>
+                    ))}
+                  </>
+                )}
+              />
               {
                 isCategoryFormOpen === true
                   ? (
@@ -233,7 +239,7 @@ export const RecordForm = () => {
                   <legend className="text-xs font-medium text-(--color-sub) pb-3">強さ・程度</legend>
                   <div className="flex items-center gap-1.5 w-full">
                     <label className="flex items-center gap-1 text-xs text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-xl cursor-pointer duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
-                      <input type="radio" value="mild" className="hidden" {...register("severityLevel")} disabled={isSubmitting}/>
+                      <input type="radio" value="mild" className="hidden" {...register("severityLevel")} disabled={isSubmitting} />
                       <MildIcon className="w-3" />
                       <span className="">軽度</span>
                     </label>
@@ -257,23 +263,23 @@ export const RecordForm = () => {
                   <legend className="text-xs font-medium text-(--color-sub) pb-3">時間帯</legend>
                   <div className="flex items-center gap-1.5 w-full">
                     <label className="flex items-center gap-1 text-xs text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-[10px] cursor-pointer duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
-                      <input type="checkbox" value="morning" className="hidden" {...register("timeZone")} disabled={isSubmitting}/>
+                      <input type="checkbox" value="morning" className="hidden" {...register("timeZone")} disabled={isSubmitting} />
                       <span className="">朝</span>
                     </label>
                     <label className="flex items-center gap-1 text-xs text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-xl cursor-pointer duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
-                      <input type="checkbox" value="afternoon" className="hidden" {...register("timeZone")} disabled={isSubmitting}/>
+                      <input type="checkbox" value="afternoon" className="hidden" {...register("timeZone")} disabled={isSubmitting} />
                       <span className="">昼</span>
                     </label>
                     <label className="flex items-center gap-1 text-xs text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-xl cursor-pointer duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
-                      <input type="checkbox" value="evening" className="hidden" {...register("timeZone")} disabled={isSubmitting}/>
+                      <input type="checkbox" value="evening" className="hidden" {...register("timeZone")} disabled={isSubmitting} />
                       <span className="">夕</span>
                     </label>
                     <label className="flex items-center gap-1 text-xs text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-xl cursor-pointer duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
-                      <input type="checkbox" value="night" className="hidden" {...register("timeZone")} disabled={isSubmitting}/>
+                      <input type="checkbox" value="night" className="hidden" {...register("timeZone")} disabled={isSubmitting} />
                       <span className="">夜</span>
                     </label>
                     <label className="flex items-center gap-1 text-xs text-(--color-sub) py-0.5 px-1.5 bg-white border border-(--color-primary) rounded-xl cursor-pointer duration-300 has-checked:text-(--color-primary) has-checked:font-medium has-checked:border-(--color-primary) has-checked:bg-(--color-bg)">
-                      <input type="checkbox" value="all_day" className="hidden" {...register("timeZone")} disabled={isSubmitting}/>
+                      <input type="checkbox" value="all_day" className="hidden" {...register("timeZone")} disabled={isSubmitting} />
                       <span className="">終日</span>
                     </label>
                   </div>
@@ -320,9 +326,8 @@ export const RecordForm = () => {
                 className="w-27 h-9 flex justify-center items-center bg-white rounded-[5px] border border-(--color-text)/20 shadow-[0px_10px_50px_0px_rgba(28,43,36,0.1)] duration-300 hover:shadow-none hover:border-(--color-primary) hover:bg-white group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={isSubmitting}
               >
-                <p
-                  className="text-[13px] font-medium duration-300 group-hover:text-(--color-primary)">
-                  戻る
+                <p className="text-[13px] font-medium duration-300 group-hover:text-(--color-primary)">
+                  { mode === "new" ? "戻る" : "キャンセル" }
                 </p>
               </button>
               <button
