@@ -100,7 +100,7 @@ export const POST = async (request: Request) => {
         case "severe":
           return 3;
         case "na":
-          return null;
+          return 0;
         case null:
           return null;
         case undefined:

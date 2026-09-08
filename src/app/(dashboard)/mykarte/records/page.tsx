@@ -10,7 +10,9 @@ import { ArrowIcon } from "@/app/_components/icons/ArrowIcon";
 import Link from "next/link";
 import { DeleteIcon } from "@/app/_components/icons/DeleteIcon";
 import { RecordResponse } from "@/app/api/records/route";
-import { RecordType } from "@/generated/prisma/enums";
+import { RecordType, TimeZone } from "@/generated/prisma/enums";
+import { MildIcon } from "@/app/_components/icons/MildIcon";
+import { ModerateIcon } from "@/app/_components/icons/ModerateIcon";
 
 const formatDate = (dateString: string | Date) => {
   const date = new Date(dateString);
@@ -34,14 +36,63 @@ const convertRecordType = (type: RecordType) => {
   }
 }
 
-// const convertSeverityLevel = (level: number | undefined | null) => {
+const displaySeverityLevel = (level: number | null) => {
+  switch (level) {
+    case 1:
+      return {
+        label: "軽度",
+        icon: MildIcon,
+        className: "w-fit flex items-center gap-1 text-xs py-0.5 px-1.5 border rounded-xl text-(--color-primary) font-medium border-(--color-primary) bg-(--color-bg)"
+      };
+    case 2:
+      return {
+        label: "中等度",
+        icon: ModerateIcon,
+        className: "w-fit flex items-center gap-1 text-xs py-0.5 px-1.5 border rounded-xl text-[#D97706] font-medium border-[#D97706] bg-[#FFF4E5]"
+      };
+    case 3:
+      return {
+        label: "重度",
+        icon: SevereIcon,
+        className: "w-fit flex items-center gap-1 text-xs py-0.5 px-1.5 border rounded-xl text-(--color-danger) font-medium border-(--color-danger) bg-(--color-danger-bg)"
+      };
+    case 0:
+      return {
+        label: "該当なし",
+        icon: null,
+        className: "w-fit flex items-center gap-1 text-xs py-0.5 px-1.5 border rounded-xl text-(--color-primary)  font-medium border-(--color-primary)  bg-(--color-bg)"
+      };
+    case null:
+      return {
+        label: "",
+        icon: null,
+        className: ""
+      };
+    default:
+      throw new Error("不正なseverityLevelの値です。");
+  }
+}
 
-// }
+const convertTimeZone = (tz: TimeZone) => {
+  switch (tz) {
+    case "MORNING":
+      return "朝";
+    case "AFTERNOON":
+      return "昼";
+    case "EVENING":
+      return "夕";
+    case "NIGHT":
+      return "夜";
+    case "ALL_DAY":
+      return "終日";
+    default:
+      throw new Error("不正なTimeZoneの値です。");
+  }
+}
 
 export default function NewRecords() {
   const { data: categoriesData } = useFetch<GetCategoryResponse>("/api/categories/")
   const categories = categoriesData?.categories || []
-  // const category = categories.find((cat) => cat.id === Element.reco)
 
   const { data: recordsData, error, isLoading } = useFetch<RecordResponse>("/api/records");
   const records = recordsData?.records || []
@@ -62,7 +113,7 @@ export default function NewRecords() {
       <p className="text-sm text-(--color-sub) text-center py-10">読み込み中...</p>
     </div>
   );
-  
+
   if (error) return (
     <div className="px-6 py-5">
       <p className="text-sm text-(--color-danger) text-center py-10 bg-(--color-danger-bg) rounded-[5px] border border-(--color-danger)">
@@ -128,8 +179,10 @@ export default function NewRecords() {
       <ul className="flex flex-col gap-3">
         {records.map((elem) => {
           const category = categories.find((cat) => cat.id === elem.recordCategories[0].categoryId);
+          const severityInfo = displaySeverityLevel(elem.severityLevel)
+          const SeverityIcon = severityInfo.icon
 
-          return(
+          return (
             <li key={elem.id} className="relative bg-white p-5 rounded-[10px] border border-transparent shadow-none duration-300 hover:border-(--color-primary) hover:shadow-[0px_10px_50px_0px_rgba(28,43,36,0.1)]">
               <div className="flex items-center gap-4 pb-4">
                 <p className="font-en text-sm font-medium">{formatDate(elem.recordAt)}</p>
@@ -143,14 +196,22 @@ export default function NewRecords() {
                   <p className="w-fit bg-(--color-bg) px-2 py-0.5 rounded-xl border border-(--color-primary) text-[10px] font-medium text-(--color-primary)">
                     {category?.name ?? "選択なし"}
                   </p>
-                  <div className="w-fit flex items-center gap-1 text-[10px] py-0.5 px-1.5 border rounded-xl text-(--color-danger) font-medium border-(--color-danger) bg-(--color-danger-bg)">
-                    <SevereIcon className="w-3" />
-                    <span className="">重度</span>
-                  </div>
-                  <ul className="flex flex-wrap gap-1.5">
-                    <li className="inline-block bg-(--color-bg) px-2 py-0.5 rounded-xl border border-(--color-primary) text-[10px] font-medium text-(--color-primary)">昼</li>
-                    <li className="inline-block bg-(--color-bg) px-2 py-0.5 rounded-xl border border-(--color-primary) text-[10px] font-medium text-(--color-primary)">夕</li>
-                  </ul>
+                  {elem.severityLevel !== null &&
+                    <div className={severityInfo.className}>
+                      {SeverityIcon && <SeverityIcon className="w-3" />}
+                      <span>{severityInfo.label}</span>
+                    </div>
+                  }
+                  {
+                    elem.recordTimeZones.length > 0 &&
+                    <ul className="flex flex-wrap gap-1.5">
+                      {
+                        elem.recordTimeZones.map((tz) => (
+                          <li key={tz.id} className="inline-block bg-(--color-bg) px-2 py-0.5 rounded-xl border border-(--color-primary) text-[10px] font-medium text-(--color-primary)">{convertTimeZone(tz.timeZone)}</li>
+                        ))
+                      }
+                    </ul>
+                  }
                 </div>
                 <div className="flex flex-col gap-3 py-2.5 pl-2.5 pr-10">
                   <p className="text-sm font-medium">{elem.content}</p>
