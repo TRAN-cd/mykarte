@@ -185,7 +185,7 @@ export const GET = async (request: Request) => {
     if (!dbUser)
       return NextResponse.json(
         { message: "ユーザー情報がありません" },
-        { status: 400 }
+        { status: 404 }
       );
     const userId = dbUser.id;
 
