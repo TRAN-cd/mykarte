@@ -13,6 +13,7 @@ import { RecordResponse } from "@/app/api/records/route";
 import { RecordType, TimeZone } from "@/generated/prisma/enums";
 import { MildIcon } from "@/app/_components/icons/MildIcon";
 import { ModerateIcon } from "@/app/_components/icons/ModerateIcon";
+import { HospitalIcon } from "@/app/_components/icons/HospitalIcon";
 
 const formatDate = (dateString: string | Date) => {
   const date = new Date(dateString);
@@ -25,12 +26,12 @@ const formatDate = (dateString: string | Date) => {
   }).format(date);
 };
 
-const convertRecordType = (type: RecordType) => {
+const displayRecordType = (type: RecordType) => {
   switch (type) {
     case "DAILY":
-      return "日常の記録";
+      return {icon: RecordIcon, label: "日常の記録"};
     case "MEDICAL":
-      return "診療の内容";
+      return {icon: HospitalIcon, label: "診療の内容"};
     default:
       throw new Error("不正なrecordTypeの値です。");
   }
@@ -96,7 +97,6 @@ export default function NewRecords() {
 
   const { data: recordsData, error, isLoading } = useFetch<RecordResponse>("/api/records");
   const records = recordsData?.records || []
-  console.log(records);
 
   const handleDeleteConfirm = () => {
     const isConfirmed = confirm("削除しますか？")
@@ -179,6 +179,8 @@ export default function NewRecords() {
       <ul className="flex flex-col gap-3">
         {records.map((elem) => {
           const category = categories.find((cat) => cat.id === elem.recordCategories[0].categoryId);
+          const recordTypeInfo = displayRecordType(elem.recordType)
+          const RecordTypeIcon = recordTypeInfo.icon
           const severityInfo = displaySeverityLevel(elem.severityLevel)
           const SeverityIcon = severityInfo.icon
 
@@ -187,8 +189,8 @@ export default function NewRecords() {
               <div className="flex items-center gap-4 pb-4">
                 <p className="font-en text-sm font-medium">{formatDate(elem.recordAt)}</p>
                 <div className="flex items-center gap-1.5">
-                  <RecordIcon className="transition-colors w-3.5 text-(--color-primary) -mb-0.75" />
-                  <p className="text-xs font-medium">{convertRecordType(elem.recordType)}</p>
+                  <RecordTypeIcon className="transition-colors w-3.5 text-(--color-primary) -mb-0.75" />
+                  <p className="text-xs font-medium">{recordTypeInfo.label}</p>
                 </div>
               </div>
               <div className="flex">
