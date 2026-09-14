@@ -239,7 +239,7 @@ export default function NewRecords() {
                       <DeleteIcon className="text-(--color-text) w-3 h-3 duration-300 group-hover:text-(--color-danger)" />
                     </div>
                   </button>
-                  <Link href="/mykarte/records/1" className="block w-7 h-7 bg-(--color-primary) border border-transparent rounded-[50%] duration-300 hover:bg-white hover:border-(--color-primary) group">
+                  <Link href={`/mykarte/records/${elem.id}`} className="block w-7 h-7 bg-(--color-primary) border border-transparent rounded-[50%] duration-300 hover:bg-white hover:border-(--color-primary) group">
                     <div className="h-full flex justify-center items-center">
                       <ArrowIcon className="text-white w-2 h-2.75 -mr-0.5 duration-300 group-hover:text-(--color-primary)" />
                     </div>
