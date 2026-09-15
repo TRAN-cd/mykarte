@@ -7,6 +7,7 @@ import {
   SeverityLevel,
   TimeZoneType,
 } from "@/app/_type/RecordTypes";
+import { convertRecordType, convertSeverityLevel } from "@/app/_libs/recordApiConverters";
 
 export type CreateRecordRequestBody = {
   recordAt: string;
@@ -76,39 +77,9 @@ export const POST = async (request: Request) => {
       );
 
     // recordTypeの変換
-    const convertRecordType = (type: RecordCategoryType): RecordType => {
-      switch (type) {
-        case "daily":
-          return "DAILY";
-        case "medical":
-          return "MEDICAL";
-        default:
-          throw new Error("不正なrecordTypeの値です。");
-      }
-    };
     const recordTypeConverted = convertRecordType(recordType);
 
     // severityLevel（強さ・程度）の変換処理（string→number）
-    const convertSeverityLevel = (
-      level: SeverityLevel | undefined
-    ): number | null => {
-      switch (level) {
-        case "mild":
-          return 1;
-        case "moderate":
-          return 2;
-        case "severe":
-          return 3;
-        case "na":
-          return 0;
-        case null:
-          return null;
-        case undefined:
-          return null;
-        default:
-          throw new Error("不正なseverityLevelの値です。");
-      }
-    };
     const severityLevelNumber = convertSeverityLevel(severityLevel);
 
     const newRecord = await prisma.record.create({
@@ -184,7 +155,7 @@ export const GET = async (request: Request) => {
     });
     if (!dbUser)
       return NextResponse.json(
-        { message: "ユーザー情報がありません" },
+        { message: "ユーザー情報がありません。" },
         { status: 404 }
       );
     const userId = dbUser.id;
