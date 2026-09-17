@@ -1,22 +1,39 @@
 'use client'
 
 import { RecordForm } from "@/app/_components/records/RecordForm"
-import { useParams } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { CreateRecordRequestBody } from "@/app/api/records/route";
 import { RecordFormInputs } from "@/app/_components/records/RecordForm";
 import { useFetch } from "@/app/_hooks/useFetch";
 import { RecordDetailResponse } from "@/app/api/records/[id]/route";
 import { toFormRecordType, toFormSeverityLevel, toFormTimeZone } from "@/app/_libs/recordFormConverters";
+import { handleApiError } from "@/app/_libs/handleApiError";
+import { apiFetch } from "@/app/_libs/apiFetch";
+import { useSWRConfig } from "swr";
+import { useSupabaseSession } from "@/app/_hooks/useSupabaseSession";
 
 export default function EditRecords() {
+  const router = useRouter();
   const { id } = useParams<{ id: string }>();
-
+  const { mutate } = useSWRConfig();
+  const { token } = useSupabaseSession();
   const { data, error, isLoading } = useFetch<RecordDetailResponse>(`/api/records/${id}`);
   const record = data?.record;
 
-  const handleTest = async (data: CreateRecordRequestBody) => {
-    console.log("データの編集を保存しました。");
-    return true
+  const handleUpdateRecord = async (data: CreateRecordRequestBody) => {
+    try {
+      await apiFetch.put(`/api/records/${id}`, data)
+      router.push("/mykarte/records/")
+      // useFetchはSWRのキーを[url, token]の配列で管理しているため、
+      // mutate()も同じ形（キーにtokenを含める）で呼ばないと、
+      // 一覧ページ(records/page.tsx)のキャッシュが更新されない
+      mutate(["/api/records", token])
+      router.refresh()
+      return true
+    } catch (error) {
+      handleApiError(error, "記録の編集に失敗しました。")
+      return false
+    }
   }
 
   if (isLoading) return (
@@ -50,7 +67,7 @@ export default function EditRecords() {
     <RecordForm
       mode="edit"
       defaultValues={defaultValues}
-      onSubmit={handleTest}
+      onSubmit={handleUpdateRecord}
     />
   )
 }
