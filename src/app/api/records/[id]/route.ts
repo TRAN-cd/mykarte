@@ -3,7 +3,10 @@ import { supabase } from "@/app/_libs/supabase";
 import { NextRequest, NextResponse } from "next/server";
 import { RecordType, TimeZone } from "@/generated/prisma/enums";
 import { CreateRecordRequestBody } from "../route";
-import { convertRecordType, convertSeverityLevel } from "@/app/_libs/recordApiConverters";
+import {
+  convertRecordType,
+  convertSeverityLevel,
+} from "@/app/_libs/recordApiConverters";
 
 export type RecordDetailResponse = {
   record: {
@@ -193,7 +196,7 @@ export const PUT = async (
       },
       include: {
         recordCategories: true,
-        recordTimeZones: true
+        recordTimeZones: true,
       },
     });
 
@@ -201,6 +204,63 @@ export const PUT = async (
       { record: updatedRecord },
       { status: 200 }
     );
+  } catch (error) {
+    if (error instanceof Error)
+      return NextResponse.json({ message: error.message }, { status: 400 });
+  }
+};
+
+// 記録情報の削除
+///////////////////
+export const DELETE = async (
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) => {
+  const token = request.headers.get("Authorization") ?? "";
+  const { data, error } = await supabase.auth.getUser(token);
+  if (error)
+    return NextResponse.json({ status: error.message }, { status: 401 });
+
+  const { id } = await params;
+
+  try {
+    // ユーザー特定
+    const dbUser = await prisma.user.findUnique({
+      where: {
+        supabaseUserId: data.user.id,
+      },
+    });
+    if (!dbUser)
+      return NextResponse.json(
+        { message: "ユーザー情報がありません。" },
+        { status: 404 }
+      );
+    const userId = dbUser.id;
+
+    // 記録データ取得
+    const getRecord = await prisma.record.findFirst({
+      where: {
+        userId,
+        id: parseInt(id),
+      },
+      include: {
+        recordCategories: true,
+        recordTimeZones: true,
+      },
+    });
+    if (!getRecord)
+      return NextResponse.json(
+        { message: "該当の記録がありません" },
+        { status: 404 }
+      );
+
+    await prisma.record.delete({
+      where: {
+        id: parseInt(id),
+      },
+    });
+
+    return NextResponse.json({ message: "記録を削除しました。" }, { status: 200 });
   } catch (error) {
     if (error instanceof Error)
       return NextResponse.json({ message: error.message }, { status: 400 });
