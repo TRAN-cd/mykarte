@@ -14,6 +14,9 @@ import { RecordType, TimeZone } from "@/generated/prisma/enums";
 import { MildIcon } from "@/app/_components/icons/MildIcon";
 import { ModerateIcon } from "@/app/_components/icons/ModerateIcon";
 import { HospitalIcon } from "@/app/_components/icons/HospitalIcon";
+import { handleApiError } from "@/app/_libs/handleApiError";
+import { apiFetch } from "@/app/_libs/apiFetch";
+import { mutate } from "swr";
 
 const formatDate = (dateString: string | Date) => {
   const date = new Date(dateString);
@@ -95,16 +98,20 @@ export default function NewRecords() {
   const { data: categoriesData } = useFetch<GetCategoryResponse>("/api/categories/")
   const categories = categoriesData?.categories || []
 
-  const { data: recordsData, error, isLoading } = useFetch<RecordResponse>("/api/records");
+  const { data: recordsData, error, isLoading, mutate } = useFetch<RecordResponse>("/api/records");
   const records = recordsData?.records || []
 
-  const handleDeleteConfirm = () => {
-    const isConfirmed = confirm("削除しますか？")
-    if (!isConfirmed) {
-      return false
-    } else {
-      console.log("削除が実行されました。");
-      return true
+  const handleDelete = async (id: number) => {
+    try {
+      const isConfirmed = confirm("削除しますか？")
+      if (!isConfirmed) {
+        return false
+      } else {
+        await apiFetch.del(`/api/records/${id}`)
+        mutate()
+      }
+    } catch (error) {
+      handleApiError(error, "記録の削除に失敗しました。")
     }
   }
 
@@ -234,7 +241,9 @@ export default function NewRecords() {
 
               <div className="absolute right-5 bottom-5">
                 <div className="flex gap-2">
-                  <button onClick={handleDeleteConfirm} className="block w-7 h-7 bg-white rounded-[50%] border border-(--color-text)/20 duration-300 hover:border-(--color-danger) hover:bg-(--color-danger-bg) group cursor-pointer">
+                  <button 
+                    onClick={() => handleDelete(elem.id)}
+                    className="block w-7 h-7 bg-white rounded-[50%] border border-(--color-text)/20 duration-300 hover:border-(--color-danger) hover:bg-(--color-danger-bg) group cursor-pointer">
                     <div className="h-full flex justify-center items-center">
                       <DeleteIcon className="text-(--color-text) w-3 h-3 duration-300 group-hover:text-(--color-danger)" />
                     </div>
