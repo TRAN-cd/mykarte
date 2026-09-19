@@ -16,7 +16,6 @@ import { ModerateIcon } from "@/app/_components/icons/ModerateIcon";
 import { HospitalIcon } from "@/app/_components/icons/HospitalIcon";
 import { handleApiError } from "@/app/_libs/handleApiError";
 import { apiFetch } from "@/app/_libs/apiFetch";
-import { mutate } from "swr";
 
 const formatDate = (dateString: string | Date) => {
   const date = new Date(dateString);

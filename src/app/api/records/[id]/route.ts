@@ -172,6 +172,7 @@ export const PUT = async (
 
     const updatedRecord = await prisma.record.update({
       where: {
+        userId,
         id: parseInt(id),
       },
       data: {
@@ -256,6 +257,7 @@ export const DELETE = async (
 
     await prisma.record.delete({
       where: {
+        userId,
         id: parseInt(id),
       },
     });
