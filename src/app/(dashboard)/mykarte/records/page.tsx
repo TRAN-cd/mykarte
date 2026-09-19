@@ -9,20 +9,124 @@ import { SevereIcon } from "@/app/_components/icons/SevereIcon";
 import { ArrowIcon } from "@/app/_components/icons/ArrowIcon";
 import Link from "next/link";
 import { DeleteIcon } from "@/app/_components/icons/DeleteIcon";
+import { RecordResponse } from "@/app/api/records/route";
+import { RecordType, TimeZone } from "@/generated/prisma/enums";
+import { MildIcon } from "@/app/_components/icons/MildIcon";
+import { ModerateIcon } from "@/app/_components/icons/ModerateIcon";
+import { HospitalIcon } from "@/app/_components/icons/HospitalIcon";
+import { handleApiError } from "@/app/_libs/handleApiError";
+import { apiFetch } from "@/app/_libs/apiFetch";
+
+const formatDate = (dateString: string | Date) => {
+  const date = new Date(dateString);
+
+  return new Intl.DateTimeFormat('ja-JP', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    weekday: 'short'
+  }).format(date);
+};
+
+const displayRecordType = (type: RecordType) => {
+  switch (type) {
+    case "DAILY":
+      return {icon: RecordIcon, label: "日常の記録"};
+    case "MEDICAL":
+      return {icon: HospitalIcon, label: "診療の内容"};
+    default:
+      throw new Error("不正なrecordTypeの値です。");
+  }
+}
+
+const displaySeverityLevel = (level: number | null) => {
+  switch (level) {
+    case 1:
+      return {
+        label: "軽度",
+        icon: MildIcon,
+        className: "w-fit flex items-center gap-1 text-xs py-0.5 px-1.5 border rounded-xl text-(--color-primary) font-medium border-(--color-primary) bg-(--color-bg)"
+      };
+    case 2:
+      return {
+        label: "中等度",
+        icon: ModerateIcon,
+        className: "w-fit flex items-center gap-1 text-xs py-0.5 px-1.5 border rounded-xl text-[#D97706] font-medium border-[#D97706] bg-[#FFF4E5]"
+      };
+    case 3:
+      return {
+        label: "重度",
+        icon: SevereIcon,
+        className: "w-fit flex items-center gap-1 text-xs py-0.5 px-1.5 border rounded-xl text-(--color-danger) font-medium border-(--color-danger) bg-(--color-danger-bg)"
+      };
+    case 0:
+      return {
+        label: "該当なし",
+        icon: null,
+        className: "w-fit flex items-center gap-1 text-xs py-0.5 px-1.5 border rounded-xl text-(--color-primary)  font-medium border-(--color-primary)  bg-(--color-bg)"
+      };
+    case null:
+      return {
+        label: "",
+        icon: null,
+        className: ""
+      };
+    default:
+      throw new Error("不正なseverityLevelの値です。");
+  }
+}
+
+const convertTimeZone = (tz: TimeZone) => {
+  switch (tz) {
+    case "MORNING":
+      return "朝";
+    case "AFTERNOON":
+      return "昼";
+    case "EVENING":
+      return "夕";
+    case "NIGHT":
+      return "夜";
+    case "ALL_DAY":
+      return "終日";
+    default:
+      throw new Error("不正なTimeZoneの値です。");
+  }
+}
 
 export default function NewRecords() {
-  const { data } = useFetch<GetCategoryResponse>("/api/categories/")
-  const categories = data?.categories || []
+  const { data: categoriesData } = useFetch<GetCategoryResponse>("/api/categories/")
+  const categories = categoriesData?.categories || []
 
-  const handleDeleteConfirm = () => {
-    const isConfirmed = confirm("削除しますか？")
-    if (!isConfirmed) {
-      return false
-    } else {
-      console.log("削除が実行されました。");
-      return true
+  const { data: recordsData, error, isLoading, mutate } = useFetch<RecordResponse>("/api/records");
+  const records = recordsData?.records || []
+
+  const handleDelete = async (id: number) => {
+    try {
+      const isConfirmed = confirm("削除しますか？")
+      if (!isConfirmed) {
+        return false
+      } else {
+        await apiFetch.del(`/api/records/${id}`)
+        mutate()
+      }
+    } catch (error) {
+      handleApiError(error, "記録の削除に失敗しました。")
     }
   }
+
+  if (isLoading) return (
+    <div className="px-6 py-5">
+      <p className="text-sm text-(--color-sub) text-center py-10">読み込み中...</p>
+    </div>
+  );
+
+  if (error) return (
+    <div className="px-6 py-5">
+      <p className="text-sm text-(--color-danger) text-center py-10 bg-(--color-danger-bg) rounded-[5px] border border-(--color-danger)">
+        記録の取得に失敗しました。
+      </p>
+    </div>
+  );
 
   return (
     <div className="px-6 py-5 w-full">
@@ -79,56 +183,80 @@ export default function NewRecords() {
       </div>
 
       <ul className="flex flex-col gap-3">
-        <li className="relative bg-white p-5 rounded-[10px] border border-transparent shadow-none duration-300 hover:border-(--color-primary) hover:shadow-[0px_10px_50px_0px_rgba(28,43,36,0.1)]">
-          <div className="flex items-center gap-4 pb-4">
-            <p className="font-en text-sm font-medium ">2026月5月30日(土)</p>
-            <div className="flex items-center gap-1.5">
-              <RecordIcon className="transition-colors w-3.5 text-(--color-primary) -mb-0.75" />
-              <p className="text-xs font-medium">日常の記録</p>
-            </div>
-          </div>
-          <div className="flex">
-            <div className="flex flex-col gap-2.5 max-w-22.5 w-full py-2.5 pr-2.5 border-r border-(--color-sub)/20">
-              <p className="w-fit bg-(--color-bg) px-2 py-0.5 rounded-xl border border-(--color-primary) text-[10px] font-medium text-(--color-primary)">皮膚科</p>
-              <div className="w-fit flex items-center gap-1 text-[10px] py-0.5 px-1.5 border rounded-xl text-(--color-danger) font-medium border-(--color-danger) bg-(--color-danger-bg)">
-                <SevereIcon className="w-3" />
-                <span className="">重度</span>
-              </div>
-              <ul className="flex flex-wrap gap-1.5">
-                <li className="inline-block bg-(--color-bg) px-2 py-0.5 rounded-xl border border-(--color-primary) text-[10px] font-medium text-(--color-primary)">昼</li>
-                <li className="inline-block bg-(--color-bg) px-2 py-0.5 rounded-xl border border-(--color-primary) text-[10px] font-medium text-(--color-primary)">夕</li>
-              </ul>
-            </div>
-            <div className="flex flex-col gap-3 py-2.5 pl-2.5 pr-10">
-              <p className="text-sm font-medium">ダミーテキストダミーテキストダミーテキストダミーテキストダミーテキストダミーテキストダミーテキストダミーテキストダミーテキストダミーテキストダ</p>
-              <div className="w-fit flex flex-col gap-1.5 bg-(--color-card-bg) px-4 py-2.5 rounded-[10px]">
-                <dl className="flex gap-1.5 text-[10px] font-medium">
-                  <dt className="text-(--color-sub) whitespace-nowrap">対処</dt>
-                  <dd>もらった軟膏を塗った。</dd>
-                </dl>
-                <dl className="flex gap-1.5 text-[10px] font-medium">
-                  <dt className="text-(--color-sub)">次回受診日</dt>
-                  <dd className="font-en">2026年6月20日</dd>
-                </dl>
-              </div>
-            </div>
-          </div>
+        {records.map((elem) => {
+          const category = categories.find((cat) => cat.id === elem.recordCategories[0].categoryId);
+          const recordTypeInfo = displayRecordType(elem.recordType)
+          const RecordTypeIcon = recordTypeInfo.icon
+          const severityInfo = displaySeverityLevel(elem.severityLevel)
+          const SeverityIcon = severityInfo.icon
 
-          <div className="absolute right-5 bottom-5">
-            <div className="flex gap-2">
-              <button onClick={handleDeleteConfirm} className="block w-7 h-7 bg-white rounded-[50%] border border-(--color-text)/20 duration-300 hover:border-(--color-danger) hover:bg-(--color-danger-bg) group cursor-pointer">
-                <div className="h-full flex justify-center items-center">
-                  <DeleteIcon className="text-(--color-text) w-3 h-3 duration-300 group-hover:text-(--color-danger)" />
+          return (
+            <li key={elem.id} className="relative bg-white p-5 rounded-[10px] border border-transparent shadow-none duration-300 hover:border-(--color-primary) hover:shadow-[0px_10px_50px_0px_rgba(28,43,36,0.1)]">
+              <div className="flex items-center gap-4 pb-4">
+                <p className="font-en text-sm font-medium">{formatDate(elem.recordAt)}</p>
+                <div className="flex items-center gap-1.5">
+                  <RecordTypeIcon className="transition-colors w-3.5 text-(--color-primary) -mb-0.75" />
+                  <p className="text-xs font-medium">{recordTypeInfo.label}</p>
                 </div>
-              </button>
-              <Link href="/mykarte/records/1" className="block w-7 h-7 bg-(--color-primary) border border-transparent rounded-[50%] duration-300 hover:bg-white hover:border-(--color-primary) group">
-                <div className="h-full flex justify-center items-center">
-                  <ArrowIcon className="text-white w-2 h-2.75 -mr-0.5 duration-300 group-hover:text-(--color-primary)" />
+              </div>
+              <div className="flex">
+                <div className="flex flex-col gap-2.5 max-w-22.5 w-full py-2.5 pr-2.5 border-r border-(--color-sub)/20">
+                  <p className="w-fit bg-(--color-bg) px-2 py-0.5 rounded-xl border border-(--color-primary) text-[10px] font-medium text-(--color-primary)">
+                    {category?.name ?? "選択なし"}
+                  </p>
+                  {elem.severityLevel !== null &&
+                    <div className={severityInfo.className}>
+                      {SeverityIcon && <SeverityIcon className="w-3" />}
+                      <span>{severityInfo.label}</span>
+                    </div>
+                  }
+                  {
+                    elem.recordTimeZones.length > 0 &&
+                    <ul className="flex flex-wrap gap-1.5">
+                      {
+                        elem.recordTimeZones.map((tz) => (
+                          <li key={tz.id} className="inline-block bg-(--color-bg) px-2 py-0.5 rounded-xl border border-(--color-primary) text-[10px] font-medium text-(--color-primary)">{convertTimeZone(tz.timeZone)}</li>
+                        ))
+                      }
+                    </ul>
+                  }
                 </div>
-              </Link>
-            </div>
-          </div>
-        </li>
+                <div className="flex flex-col gap-3 py-2.5 pl-2.5 pr-10">
+                  <p className="text-sm font-medium">{elem.content}</p>
+                  <div className="w-fit flex flex-col gap-1.5 bg-(--color-card-bg) px-4 py-2.5 rounded-[10px]">
+                    <dl className="flex gap-1.5 text-[10px] font-medium">
+                      <dt className="text-(--color-sub) whitespace-nowrap">対処</dt>
+                      <dd>{elem.treatment ? elem.treatment : "-"}</dd>
+                    </dl>
+                    <dl className="flex gap-1.5 text-[10px] font-medium">
+                      <dt className="text-(--color-sub)">次回受診日</dt>
+                      <dd className="font-en">
+                        {elem.nextVisit ? formatDate(elem.nextVisit) : "-"}
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+
+              <div className="absolute right-5 bottom-5">
+                <div className="flex gap-2">
+                  <button 
+                    onClick={() => handleDelete(elem.id)}
+                    className="block w-7 h-7 bg-white rounded-[50%] border border-(--color-text)/20 duration-300 hover:border-(--color-danger) hover:bg-(--color-danger-bg) group cursor-pointer">
+                    <div className="h-full flex justify-center items-center">
+                      <DeleteIcon className="text-(--color-text) w-3 h-3 duration-300 group-hover:text-(--color-danger)" />
+                    </div>
+                  </button>
+                  <Link href={`/mykarte/records/${elem.id}`} className="block w-7 h-7 bg-(--color-primary) border border-transparent rounded-[50%] duration-300 hover:bg-white hover:border-(--color-primary) group">
+                    <div className="h-full flex justify-center items-center">
+                      <ArrowIcon className="text-white w-2 h-2.75 -mr-0.5 duration-300 group-hover:text-(--color-primary)" />
+                    </div>
+                  </Link>
+                </div>
+              </div>
+            </li>
+          )
+        })}
 
       </ul>
     </div>
