@@ -8,6 +8,7 @@ import {
   TimeZoneType,
 } from "@/app/_type/RecordTypes";
 import { convertRecordType, convertSeverityLevel } from "@/app/_libs/recordApiConverters";
+import { Prisma } from "@/generated/prisma/client";
 
 export type CreateRecordRequestBody = {
   recordAt: string;
@@ -138,13 +139,20 @@ export type RecordResponse = {
   }[]
 }
 
-// 記録情報取得
+// 記録（一覧）情報取得
 ///////////////////
 export const GET = async (request: Request) => {
   const token = request.headers.get("Authorization") ?? "";
   const { data, error } = await supabase.auth.getUser(token);
   if (error)
     return NextResponse.json({ status: error.message }, { status: 401 });
+
+  // 絞り込み機能
+  const url = new URL(request.url);
+  const category = url.searchParams.get("category");
+  const type = url.searchParams.get("type");
+  const period = url.searchParams.get("period");
+
 
   try {
     // ユーザー特定
@@ -160,11 +168,14 @@ export const GET = async (request: Request) => {
       );
     const userId = dbUser.id;
 
+    const where: Prisma.RecordWhereInput = { userId }
+    if (category) {
+      where.recordCategories = { some: {categoryId: Number(category)}}
+    }
+
     // 記録データ取得
     const getRecords = await prisma.record.findMany({
-      where: {
-        userId
-      },
+      where,
       include: {
         recordCategories: true,
         recordTimeZones: true
