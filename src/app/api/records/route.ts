@@ -168,6 +168,7 @@ export const GET = async (request: Request) => {
       );
     const userId = dbUser.id;
 
+    // 絞り込み機能
     const where: Prisma.RecordWhereInput = { userId }
     if (category) {
       where.recordCategories = { some: {categoryId: Number(category)}}

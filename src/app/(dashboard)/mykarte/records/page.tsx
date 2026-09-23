@@ -16,6 +16,7 @@ import { ModerateIcon } from "@/app/_components/icons/ModerateIcon";
 import { HospitalIcon } from "@/app/_components/icons/HospitalIcon";
 import { handleApiError } from "@/app/_libs/handleApiError";
 import { apiFetch } from "@/app/_libs/apiFetch";
+import { useState } from "react";
 
 const formatDate = (dateString: string | Date) => {
   const date = new Date(dateString);
@@ -96,8 +97,23 @@ const convertTimeZone = (tz: TimeZone) => {
 export default function NewRecords() {
   const { data: categoriesData } = useFetch<GetCategoryResponse>("/api/categories/")
   const categories = categoriesData?.categories || []
+  const [paramCategory, setParamCategory] = useState("allCategories")
+  const [paramRecordType, setParamRecordType] = useState("allRecordType")
+  const [paramPeriod, setParamPeriod] = useState("allPeriod")
 
-  const { data: recordsData, error, isLoading, mutate } = useFetch<RecordResponse>("/api/records");
+  const params = new URLSearchParams()
+  if(paramCategory !== "allCategories") {
+    params.set("category", paramCategory)
+  }
+  if(paramRecordType !== "allRecordType") {
+    params.set("type", paramRecordType)
+  }
+  if(paramPeriod !== "allPeriod") {
+    params.set("period", paramPeriod)
+  }
+  const urlParams = params.toString()
+
+  const { data: recordsData, error, isLoading, mutate } = useFetch<RecordResponse>(`/api/records${ urlParams ? "?"+urlParams : ""}`);
   const records = recordsData?.records || []
 
   const handleDelete = async (id: number) => {
@@ -140,11 +156,13 @@ export default function NewRecords() {
           <select
             name="categories"
             id="category-select"
+            value={paramCategory}
+            onChange={(e) => {setParamCategory(e.target.value)}}
             className="w-full bg-(--color-card-bg) border border-(--color-sub) rounded-[10px] px-3 py-2 text-[10px] appearance-none"
           >
-            <option value="全てのカテゴリー">全てのカテゴリー</option>
+            <option value="allCategories">全てのカテゴリー</option>
             {categories.map((cat) => (
-              <option key={cat.id} value={cat.name}>{cat.name}</option>
+              <option key={cat.id} value={cat.id}>{cat.name}</option>
             ))}
           </select>
         </div>
@@ -155,11 +173,13 @@ export default function NewRecords() {
           <select
             name="recordType"
             id="recordType-select"
+            value={paramRecordType}
+            onChange={(e) => {setParamRecordType(e.target.value)}}
             className="w-full bg-(--color-card-bg) border border-(--color-sub) rounded-[10px] px-3 py-2 text-[10px] appearance-none"
           >
-            <option value="すべての記録タイプ">すべての記録タイプ</option>
-            <option value="日常の記録">日常の記録</option>
-            <option value="診療の内容">診療の内容</option>
+            <option value="allRecordType">すべての記録タイプ</option>
+            <option value="daily">日常の記録</option>
+            <option value="medical">診療の内容</option>
           </select>
         </div>
 
@@ -169,15 +189,17 @@ export default function NewRecords() {
           <select
             name="period"
             id="period-select"
+            value={paramPeriod}
+            onChange={(e) => {setParamPeriod(e.target.value)}}
             className="w-full bg-(--color-card-bg) border border-(--color-sub) rounded-[10px] px-3 py-2 text-[10px] appearance-none"
           >
-            <option value="直近1ヶ月">直近1ヶ月</option>
-            <option value="直近2週間">直近2週間</option>
-            <option value="直近2ヶ月">直近2ヶ月</option>
-            <option value="直近3ヶ月">直近3ヶ月</option>
-            <option value="今年(2026年)">今年(2026年)</option>
-            <option value="昨年(2025年)">昨年(2025年)</option>
-            <option value="全期間">全期間</option>
+            <option value="allPeriod">全期間</option>
+            <option value="2weeks">直近2週間</option>
+            <option value="1month">直近1ヶ月</option>
+            <option value="2months">直近2ヶ月</option>
+            <option value="3months">直近3ヶ月</option>
+            <option value="thisYear">今年</option>
+            <option value="lastYear">昨年</option>
           </select>
         </div>
       </div>
