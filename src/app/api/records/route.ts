@@ -9,6 +9,7 @@ import {
 } from "@/app/_type/RecordTypes";
 import { convertRecordType, convertSeverityLevel } from "@/app/_libs/recordApiConverters";
 import { Prisma } from "@/generated/prisma/client";
+import { subMonths, subWeeks, subYears, startOfYear, endOfYear } from "date-fns";
 
 export type CreateRecordRequestBody = {
   recordAt: string;
@@ -153,7 +154,6 @@ export const GET = async (request: Request) => {
   const type = url.searchParams.get("type");
   const period = url.searchParams.get("period");
 
-
   try {
     // ユーザー特定
     const dbUser = await prisma.user.findUnique({
@@ -171,6 +171,30 @@ export const GET = async (request: Request) => {
     const where: Prisma.RecordWhereInput = { userId }
     if (category) {
       where.recordCategories = { some: {categoryId: Number(category)}}
+    }
+    if (type) {
+      where.recordType = convertRecordType(type as RecordCategoryType)
+    }
+    if (period === "1month") {
+      where.recordAt = { gte: subMonths(new Date(), 1) }
+    }
+    if (period === "2weeks") {
+      where.recordAt = { gte: subWeeks(new Date(), 2) }
+    }
+    if (period === "2months") {
+      where.recordAt = { gte: subMonths(new Date(), 2) }
+    }
+    if (period === "3months") {
+      where.recordAt = { gte: subMonths(new Date(), 3) }
+    }
+    if (period === "thisYear") {
+      where.recordAt = { gte: startOfYear(new Date()) }
+    }
+    if (period === "lastYear") {
+      where.recordAt = { 
+        gte: startOfYear(subYears(new Date(), 1)),
+        lte: endOfYear(subYears(new Date(), 1))
+      }
     }
 
     // 記録データ取得
