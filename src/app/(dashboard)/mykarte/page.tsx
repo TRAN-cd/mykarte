@@ -4,8 +4,27 @@ import { PageHeader } from "@/app/_components/PageHeader";
 import { ArrowIcon02 } from "@/app/_components/icons/ArrowIcon02";
 import Link from "next/link";
 import Image from "next/image";
+import { useFetch } from "@/app/_hooks/useFetch";
+import { DashboardResponse } from "@/app/api/dashboard/route";
 
 export default function HomePage() {
+
+  const { data, isLoading, error } = useFetch<DashboardResponse>("/api/dashboard")
+  const summaryData = data || { thisMonthCount: 0, lastMonthCount: 0, visitCount: 0 }
+
+  if (isLoading) return (
+    <div className="px-6 py-5">
+      <p className="text-sm text-(--color-sub) text-center py-10">読み込み中...</p>
+    </div>
+  );
+  
+  if (error) return (
+    <div className="px-6 py-5">
+      <p className="text-sm text-(--color-danger) text-center py-10 bg-(--color-danger-bg) rounded-[5px] border border-(--color-danger)">
+        データの取得に失敗しました。
+      </p>
+    </div>
+  );
 
   return (
     <div className="px-6 py-5 w-full">
@@ -14,15 +33,15 @@ export default function HomePage() {
       <div className="flex flex-col gap-3">
         <ul className="flex gap-3 w-full">
           <li className="bg-white rounded-[20px] px-5 py-3 flex justify-between items-baseline border border-(--color-bg) flex-1 min-w-0">
-            <p className="font-en text-4xl leading-none font-bold text-(--color-primary)">5</p>
+            <p className="font-en text-4xl leading-none font-bold text-(--color-primary)">{summaryData.thisMonthCount}</p>
             <p className="text-[10px] text-(--color-sub)">今月の記録数</p>
           </li>
           <li className="bg-white rounded-[20px] px-5 py-3 flex justify-between items-baseline border border-(--color-bg) flex-1 min-w-0">
-            <p className="font-en text-4xl leading-none font-bold text-(--color-primary)">3</p>
+            <p className="font-en text-4xl leading-none font-bold text-(--color-primary)">{summaryData.lastMonthCount}</p>
             <p className="text-[10px] text-(--color-sub)">先月の記録数</p>
           </li>
           <li className="bg-white rounded-[20px] px-5 py-3 flex justify-between items-baseline border border-(--color-bg) flex-1 min-w-0">
-            <p className="font-en text-4xl leading-none font-bold text-(--color-primary)">1</p>
+            <p className="font-en text-4xl leading-none font-bold text-(--color-primary)">{summaryData.visitCount}</p>
             <p className="text-[10px] text-(--color-sub)">今月の受診回数</p>
           </li>
         </ul>

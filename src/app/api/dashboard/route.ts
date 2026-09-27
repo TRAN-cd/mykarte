@@ -3,6 +3,12 @@ import { supabase } from "@/app/_libs/supabase";
 import { NextResponse } from "next/server";
 import { startOfMonth, endOfMonth, subMonths } from "date-fns";
 
+export type DashboardResponse = {
+  thisMonthCount: number,
+  lastMonthCount: number,
+  visitCount: number
+}
+
 // 今月のサマリー取得
 ///////////////////
 export const GET = async (request: Request) => {
@@ -28,14 +34,14 @@ export const GET = async (request: Request) => {
     // テーブルの範囲設定
     const thisMonthWhere = {
       userId,
-      recordedAt: {
+      recordAt: {
         gte: startOfMonth(new Date()),
         lte: endOfMonth(new Date()),
       },
     };
     const lastMonthWhere = {
       userId,
-      recordedAt: {
+      recordAt: {
         gte: startOfMonth(subMonths(new Date(), 1)),
         lte: endOfMonth(subMonths(new Date(), 1)),
       },
@@ -49,7 +55,7 @@ export const GET = async (request: Request) => {
       }),
     ]);
 
-    return NextResponse.json(
+    return NextResponse.json<DashboardResponse>(
       { thisMonthCount, lastMonthCount, visitCount },
       { status: 200 }
     );
