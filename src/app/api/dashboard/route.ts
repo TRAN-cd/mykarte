@@ -6,11 +6,23 @@ import { startOfMonth, endOfMonth, subMonths } from "date-fns";
 export type DashboardResponse = {
   thisMonthCount: number,
   lastMonthCount: number,
-  visitCount: number
+  visitCount: number,
+  records: {
+    id: number,
+    recordAt: Date,
+    content: string,
+    recordCategories: {
+      id: number,
+      categoryId: number,
+      categories: {
+        id: number,
+        name: string
+      };
+    }[];
+  }[]
 }
 
-// 今月のサマリー取得
-///////////////////
+
 export const GET = async (request: Request) => {
   const token = request.headers.get("Authorization") ?? "";
   const { data, error } = await supabase.auth.getUser(token);
@@ -47,6 +59,7 @@ export const GET = async (request: Request) => {
       },
     };
 
+    // 今月のサマリー
     const [thisMonthCount, lastMonthCount, visitCount] = await Promise.all([
       prisma.record.count({ where: thisMonthWhere }),
       prisma.record.count({ where: lastMonthWhere }),
@@ -55,8 +68,22 @@ export const GET = async (request: Request) => {
       }),
     ]);
 
+    // 最近の記録取得
+    const recentRecords = await prisma.record.findMany({
+      where: {userId},
+      include: {
+        recordCategories: {
+          include: { categories: true }
+        }
+      },
+      orderBy: {
+        recordAt: "desc"
+      },
+      take: 5,
+    })
+
     return NextResponse.json<DashboardResponse>(
-      { thisMonthCount, lastMonthCount, visitCount },
+      { thisMonthCount, lastMonthCount, visitCount, records: recentRecords },
       { status: 200 }
     );
   } catch (error) {

@@ -6,18 +6,22 @@ import Link from "next/link";
 import Image from "next/image";
 import { useFetch } from "@/app/_hooks/useFetch";
 import { DashboardResponse } from "@/app/api/dashboard/route";
+import { formatDate } from "@/app/_libs/formatDate";
 
 export default function HomePage() {
 
   const { data, isLoading, error } = useFetch<DashboardResponse>("/api/dashboard")
-  const summaryData = data || { thisMonthCount: 0, lastMonthCount: 0, visitCount: 0 }
+  const summaryData = data || {
+    thisMonthCount: 0, lastMonthCount: 0, visitCount: 0,
+    records: []
+  }
 
   if (isLoading) return (
     <div className="px-6 py-5">
       <p className="text-sm text-(--color-sub) text-center py-10">読み込み中...</p>
     </div>
   );
-  
+
   if (error) return (
     <div className="px-6 py-5">
       <p className="text-sm text-(--color-danger) text-center py-10 bg-(--color-danger-bg) rounded-[5px] border border-(--color-danger)">
@@ -55,56 +59,29 @@ export default function HomePage() {
             </Link>
           </div>
           <ul className="px-3 divide-y divide-(--color-sub)/20">
-            <li className="flex items-start gap-2 py-3">
-              <div className="w-2.5 h-2.5 shrink-0 rounded-full bg-(--color-primary) mt-1.5"></div>
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-2">
-                  <p className="text-[10px] text-(--color-primary) font-medium bg-(--color-bg) px-2 py-0.5 border border-(--color-primary) rounded-[10px]">カテゴリー名</p>
-                  <p className="text-[10px] text-(--color-sub)">記録日</p>
-                </div>
-                <p className="text-sm">ダミーテキストダミーテキストダミーテキストダミーテキスト</p>
-              </div>
-            </li>
-            <li className="flex items-start gap-2 py-3">
-              <div className="w-2.5 h-2.5 shrink-0 rounded-full bg-(--color-primary) mt-1.5"></div>
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-2">
-                  <p className="text-[10px] text-(--color-primary) font-medium bg-(--color-bg) px-2 py-0.5 border border-(--color-primary) rounded-[10px]">カテゴリー名</p>
-                  <p className="text-[10px] text-(--color-sub)">記録日</p>
-                </div>
-                <p className="text-sm">ダミーテキストダミーテキストダミーテキストダミーテキスト</p>
-              </div>
-            </li>
-            <li className="flex items-start gap-2 py-3">
-              <div className="w-2.5 h-2.5 shrink-0 rounded-full bg-(--color-primary) mt-1.5"></div>
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-2">
-                  <p className="text-[10px] text-(--color-primary) font-medium bg-(--color-bg) px-2 py-0.5 border border-(--color-primary) rounded-[10px]">カテゴリー名</p>
-                  <p className="text-[10px] text-(--color-sub)">記録日</p>
-                </div>
-                <p className="text-sm">ダミーテキストダミーテキストダミーテキストダミーテキスト</p>
-              </div>
-            </li>
-            <li className="flex items-start gap-2 py-3">
-              <div className="w-2.5 h-2.5 shrink-0 rounded-full bg-(--color-primary) mt-1.5"></div>
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-2">
-                  <p className="text-[10px] text-(--color-primary) font-medium bg-(--color-bg) px-2 py-0.5 border border-(--color-primary) rounded-[10px]">カテゴリー名</p>
-                  <p className="text-[10px] text-(--color-sub)">記録日</p>
-                </div>
-                <p className="text-sm">ダミーテキストダミーテキストダミーテキストダミーテキスト</p>
-              </div>
-            </li>
-            <li className="flex items-start gap-2 py-3">
-              <div className="w-2.5 h-2.5 shrink-0 rounded-full bg-(--color-primary) mt-1.5"></div>
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-2">
-                  <p className="text-[10px] text-(--color-primary) font-medium bg-(--color-bg) px-2 py-0.5 border border-(--color-primary) rounded-[10px]">カテゴリー名</p>
-                  <p className="text-[10px] text-(--color-sub)">記録日</p>
-                </div>
-                <p className="text-sm">ダミーテキストダミーテキストダミーテキストダミーテキスト</p>
-              </div>
-            </li>
+            {summaryData.records.length === 0 ? (
+              <li className="flex flex-col items-center">
+                <p className="text-sm text-(--color-sub) text-center py-10">
+                  最初の記録をつけてみましょう。
+                </p>
+                <Image src="/images/avatar/happy.png" alt="" width="100" height="100" />
+              </li>
+            ) : (
+              summaryData.records.map((elem) => {
+                return (
+                  <li key={elem.id} className="flex items-start gap-2 py-3">
+                    <div className="w-2.5 h-2.5 shrink-0 rounded-full bg-(--color-primary) mt-1.5"></div>
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center gap-2">
+                        <p className="text-[10px] text-(--color-primary) font-medium bg-(--color-bg) px-2 py-0.5 border border-(--color-primary) rounded-[10px]">{elem.recordCategories[0]?.categories.name ?? "選択なし"}</p>
+                        <p className="text-[10px] text-(--color-sub)">{formatDate(elem.recordAt)}</p>
+                      </div>
+                      <p className="text-sm">{elem.content}</p>
+                    </div>
+                  </li>
+                )
+              })
+            )}
           </ul>
         </div>
 
