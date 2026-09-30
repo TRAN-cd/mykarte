@@ -13,7 +13,8 @@ export default function HomePage() {
   const { data, isLoading, error } = useFetch<DashboardResponse>("/api/dashboard")
   const summaryData = data || {
     thisMonthCount: 0, lastMonthCount: 0, visitCount: 0,
-    records: []
+    records: [],
+    analysisData: []
   }
 
   if (isLoading) return (
@@ -94,72 +95,36 @@ export default function HomePage() {
             </Link>
           </div>
           <ul className="flex flex-col gap-1.5 px-3">
-            <li className="w-full flex justify-between items-center gap-3 bg-white border border-(--color-bg) rounded-[10px] px-2.5 py-3">
-              <div className="flex flex-col gap-2 max-w-[80%] w-full">
-                <div className="flex justify-between">
-                  <div className="flex items-center gap-2">
-                    <p className="text-[10px] text-(--color-primary) font-medium bg-(--color-bg) px-2 py-0.5 border border-(--color-primary) rounded-[10px]">カテゴリー名</p>
-                    <p className="text-[10px]">件数</p>
-                    <div className="text-[10px] text-(--color-sub) flex items-center gap-0.5">
-                      <Image src="/images/shared/icon_up.svg" alt="" width={12} height={12} />
-                      <p>先月比<span>+2</span></p>
+            {
+              summaryData.analysisData.map((elem) => {
+                return (
+                  <li key={elem.categoryId} className="w-full flex justify-between items-center gap-3 bg-white border border-(--color-bg) rounded-[10px] px-2.5 py-3">
+                    <div className="flex flex-col gap-2 max-w-[80%] w-full">
+                      <div className="flex justify-between">
+                        <div className="flex items-center gap-2">
+                          <p className="text-[10px] text-(--color-primary) font-medium bg-(--color-bg) px-2 py-0.5 border border-(--color-primary) rounded-[10px]">{elem.name}</p>
+                          <p className="text-[10px]">{elem._count}件</p>
+                          <div className="text-[10px] text-(--color-sub) flex items-center gap-0.5">
+                            <Image src="/images/shared/icon_up.svg" alt="" width={12} height={12} />
+                            <p>先月比<span>{elem.diffFromLastMonth}</span></p>
+                          </div>
+                        </div>
+                        <Link href={`/mykarte/records?category=${elem.categoryId}`} className="flex items-center gap-1 text-(--color-sub) duration-300 hover:text-(--color-primary) hover:font-bold">
+                          <p className="text-xs">記録を見る</p>
+                          <ArrowIcon02 className="w-3.5" />
+                        </Link>
+                      </div>
+                      <div className="w-full h-2 rounded-full bg-(--color-bg) overflow-hidden">
+                        <div
+                          className="h-full rounded-full bg-(--color-primary)"
+                          style={{ width: `${elem.percentage}%` }} />
+                      </div>
                     </div>
-                  </div>
-                  <Link href="/mykarte/records/" className="flex items-center gap-1 text-(--color-sub) duration-300 hover:text-(--color-primary) hover:font-bold">
-                    <p className="text-xs">記録を見る</p>
-                    <ArrowIcon02 className="w-3.5" />
-                  </Link>
-                </div>
-                <div className="w-full h-2 rounded-full bg-(--color-bg) overflow-hidden">
-                  <div className="h-full rounded-full bg-(--color-primary) w-[60%]" />
-                </div>
-              </div>
-              <p className="font-en text-(--color-primary) font-bold pr-2"><span className="text-2xl">60</span><span className="text-base">%</span></p>
-            </li>
-            <li className="w-full flex justify-between items-center gap-3 bg-white border border-(--color-bg) rounded-[10px] px-2.5 py-3">
-              <div className="flex flex-col gap-2 max-w-[80%] w-full">
-                <div className="flex justify-between">
-                  <div className="flex items-center gap-2">
-                    <p className="text-[10px] text-(--color-primary) font-medium bg-(--color-bg) px-2 py-0.5 border border-(--color-primary) rounded-[10px]">カテゴリー名</p>
-                    <p className="text-[10px]">件数</p>
-                    <div className="text-[10px] text-(--color-sub) flex items-center gap-0.5">
-                      <Image src="/images/shared/icon_up.svg" alt="" width={12} height={12} />
-                      <p>先月比<span>+2</span></p>
-                    </div>
-                  </div>
-                  <Link href="/mykarte/records/" className="flex items-center gap-1 text-(--color-sub) duration-300 hover:text-(--color-primary) hover:font-bold">
-                    <p className="text-xs">記録を見る</p>
-                    <ArrowIcon02 className="w-3.5" />
-                  </Link>
-                </div>
-                <div className="w-full h-2 rounded-full bg-(--color-bg) overflow-hidden">
-                  <div className="h-full rounded-full bg-(--color-primary) w-[30%]" />
-                </div>
-              </div>
-              <p className="font-en text-(--color-primary) font-bold pr-2"><span className="text-2xl">30</span><span className="text-base">%</span></p>
-            </li>
-            <li className="w-full flex justify-between items-center gap-3 bg-white border border-(--color-bg) rounded-[10px] px-2.5 py-3">
-              <div className="flex flex-col gap-2 max-w-[80%] w-full">
-                <div className="flex justify-between">
-                  <div className="flex items-center gap-2">
-                    <p className="text-[10px] text-(--color-primary) font-medium bg-(--color-bg) px-2 py-0.5 border border-(--color-primary) rounded-[10px]">カテゴリー名</p>
-                    <p className="text-[10px]">件数</p>
-                    <div className="text-[10px] text-(--color-sub) flex items-center gap-0.5">
-                      <Image src="/images/shared/icon_up.svg" alt="" width={12} height={12} />
-                      <p>先月比<span>+2</span></p>
-                    </div>
-                  </div>
-                  <Link href="/mykarte/records/" className="flex items-center gap-1 text-(--color-sub) duration-300 hover:text-(--color-primary) hover:font-bold">
-                    <p className="text-xs">記録を見る</p>
-                    <ArrowIcon02 className="w-3.5" />
-                  </Link>
-                </div>
-                <div className="w-full h-2 rounded-full bg-(--color-bg) overflow-hidden">
-                  <div className="h-full rounded-full bg-(--color-primary) w-[5%]" />
-                </div>
-              </div>
-              <p className="font-en text-(--color-primary) font-bold pr-2"><span className="text-2xl">5</span><span className="text-base">%</span></p>
-            </li>
+                    <p className="font-en text-(--color-primary) font-bold pr-2"><span className="text-2xl">{elem.percentage}</span><span className="text-base">%</span></p>
+                  </li>
+                )
+              })
+            }
           </ul>
         </div>
       </div>
