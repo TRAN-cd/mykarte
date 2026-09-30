@@ -17,17 +17,7 @@ import { HospitalIcon } from "@/app/_components/icons/HospitalIcon";
 import { handleApiError } from "@/app/_libs/handleApiError";
 import { apiFetch } from "@/app/_libs/apiFetch";
 import { useSearchParams, useRouter } from "next/navigation";
-
-const formatDate = (dateString: string | Date) => {
-  const date = new Date(dateString);
-
-  return new Intl.DateTimeFormat('ja-JP', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    weekday: 'short'
-  }).format(date);
-};
+import { formatDate } from "@/app/_libs/formatDate";
 
 const displayRecordType = (type: RecordType) => {
   switch (type) {
@@ -216,13 +206,12 @@ export default function NewRecords() {
 
       <ul className="flex flex-col gap-3">
         {records.length === 0 ? (
-          <div className="flex flex-col items-center">
+          <li className="flex flex-col items-center">
             <p className="text-sm text-(--color-sub) text-center py-10">
               該当する記録がありません。
             </p>
             <Image src="/images/avatar/thinking.png" alt="" width="100" height="100" />
-          </div>
-
+          </li>
         ) : (
           records.map((elem) => {
             const category = categories.find((cat) => cat.id === elem.recordCategories[0].categoryId);
