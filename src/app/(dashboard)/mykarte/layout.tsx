@@ -12,6 +12,7 @@ import { UserInfoCard } from "@/app/_components/UserInfoCard";
 import { RecordButtonCard } from "@/app/_components/RecordButtonCard";
 import { AiSummaryCard } from "@/app/_components/AiSummaryCard";
 import { WeekCalendar } from "@/app/_components/WeekCalendar";
+import { SidebarLink } from "@/app/_components/SidebarLink";
 
 export default function DashboardLayout({
   children,
@@ -38,38 +39,13 @@ export default function DashboardLayout({
                 </div>
                 <div className="">
                   <ul className="ml-1.25 mr-5 border-b border-(--color-sub)">
-                    <li className="rounded-[10px] mb-3.75 duration-300 hover:bg-white/80 group">
-                      <Link href="/mykarte" className="flex items-center gap-2.5 p-2.5 max-lg:justify-center duration-300">
-                        <HomeIcon className="text-(--color-muted) group-hover:text-(--color-primary) transition-colors w-6" />
-                        <p className="font-medium max-lg:hidden duration-300">ホーム</p>
-                      </Link>
-                    </li>
-                    <li className="rounded-[10px] mb-3.75 duration-300 hover:bg-white/80 group">
-                      <Link href="/mykarte/records/new" className="flex items-center gap-2.5 p-2.5 max-lg:justify-center duration-300">
-                        <RecordIcon className="text-(--color-muted) group-hover:text-(--color-primary) transition-colors w-6" />
-                        <p className="font-medium max-lg:hidden duration-300">新規記録</p>
-                      </Link>
-                    </li>
-                    <li className="rounded-[10px] mb-3.75 duration-300 hover:bg-white/80 group">
-                      <Link href="/mykarte/records" className="flex items-center gap-2.5 p-2.5 max-lg:justify-center duration-300">
-                        <RecordsIcon className="text-(--color-muted) group-hover:text-(--color-primary) transition-colors w-6" />
-                        <p className="font-medium max-lg:hidden duration-300">記録一覧</p>
-                      </Link>
-                    </li>
-                    <li className="rounded-[10px] mb-3.75 duration-300 hover:bg-white/80 group">
-                      <Link href="/mykarte/categories" className="flex items-center gap-2.5 p-2.5 max-lg:justify-center duration-300">
-                        <CategoryIcon className="text-(--color-muted) group-hover:text-(--color-primary) transition-colors w-6" />
-                        <p className="font-medium max-lg:hidden duration-300">カテゴリー</p>
-                      </Link>
-                    </li>
+                    <SidebarLink href="/mykarte" icon={HomeIcon} label="ホーム" />
+                    <SidebarLink href="/mykarte/records/new" icon={RecordIcon} label="新規記録" />
+                    <SidebarLink href="/mykarte/records" icon={RecordsIcon} label="記録一覧" />
+                    <SidebarLink href="/mykarte/categories" icon={CategoryIcon} label="カテゴリー" />
                   </ul>
                   <ul className="ml-1.25 mr-5 mt-6">
-                    <li className="rounded-[10px] mb-3.75 duration-300 hover:bg-white/80 group">
-                      <Link href="/mykarte/setting" className="flex items-center gap-2.5 p-2.5 max-lg:justify-center duration-300">
-                        <SettingIcon className="text-(--color-muted) group-hover:text-(--color-primary) transition-colors w-6" />
-                        <p className="font-medium max-lg:hidden duration-300">設定</p>
-                      </Link>
-                    </li>
+                    <SidebarLink href="/mykarte/setting" icon={SettingIcon} label="設定" />
                   </ul>
                 </div>
               </div>
