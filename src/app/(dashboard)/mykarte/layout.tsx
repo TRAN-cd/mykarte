@@ -1,7 +1,6 @@
 'use client'
 
 import Image from "next/image";
-import Link from "next/link";
 import { useRouteGuard } from "@/app/_hooks/useRouteGuard";
 import { HomeIcon } from "@/app/_components/icons/HomeIcon";
 import { RecordIcon } from "@/app/_components/icons/RecordIcon";
