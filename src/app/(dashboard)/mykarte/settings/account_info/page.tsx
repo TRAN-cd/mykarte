@@ -3,7 +3,7 @@
 import { PageHeader } from "@/app/_components/PageHeader"
 import { useAuthForm } from "@/app/_hooks/useAuthForm";
 import { useSupabaseSession } from "@/app/_hooks/useSupabaseSession"
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Input } from "@/app/_components/Input"
 
 type EmailFormValues = {
@@ -49,12 +49,23 @@ export default function AccountInfo() {
       errors: errorsPw
     },
     reset: resetPw,
-    watch: watchPw
+    watch: watchPw,
+    trigger: triggerPw
   } = useAuthForm<PasswordFormValues>({
     currentPassword: "",
     newPassword: "",
     confirmPassword: ""
   })
+
+  const isFirstRender = useRef(true);
+  const newPasswordValue = watchPw("newPassword");
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return
+    }
+    triggerPw("confirmPassword")
+  }, [newPasswordValue])
 
   if (isLoading) return (
     <div className="px-6 py-5">
@@ -101,7 +112,8 @@ export default function AccountInfo() {
 
               <button
                 type="button"
-                className="bg-(--color-primary) text-white text-sm font-medium rounded-[8px] px-4 py-2 hover:opacity-90 duration-300"
+                className="bg-(--color-primary) text-white text-sm font-medium rounded-[8px] px-4 py-2 hover:opacity-90 duration-300 disabled:opacity-50 cursor-pointer"
+                disabled={!isDirty || !isValid || isSubmitting}
               >
                 メールアドレスを変更
               </button>
@@ -205,7 +217,8 @@ export default function AccountInfo() {
 
               <button
                 type="button"
-                className="bg-(--color-primary) text-white text-sm font-medium rounded-[8px] px-4 py-2 hover:opacity-90 duration-300"
+                className="bg-(--color-primary) text-white text-sm font-medium rounded-[8px] px-4 py-2 hover:opacity-90 duration-300 disabled:opacity-50 cursor-pointer"
+                disabled={!isDirtyPw || !isValidPw || isSubmittingPw}
               >
                 パスワードを変更
               </button>
