@@ -5,6 +5,7 @@ import { useAuthForm } from "@/app/_hooks/useAuthForm";
 import { useSupabaseSession } from "@/app/_hooks/useSupabaseSession"
 import { useEffect, useState, useRef } from "react";
 import { Input } from "@/app/_components/Input"
+import { supabase } from "@/app/_libs/supabase";
 
 type EmailFormValues = {
   email: string;
@@ -38,6 +39,20 @@ export default function AccountInfo() {
     }
   }, [isLoading, currentEmail])
 
+  const onSubmitEmail = async (data: EmailFormValues) => {
+    const { error} = await supabase.auth.updateUser({
+      email: data.email
+    })
+
+    if (error) {
+      setError("root.serverError", {
+        type: "manual",
+        message: "新しいメールアドレスに確認メールを送信しました。メール内のリンクを選択して、変更を完了してください。"
+      })
+      return
+    }
+  }
+
   const {
     register: registerPw,
     handleSubmit: handleSubmitPw,
@@ -67,11 +82,40 @@ export default function AccountInfo() {
     triggerPw("confirmPassword")
   }, [newPasswordValue])
 
+  const onSubmitPassword = async (data: PasswordFormValues) => {
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: currentEmail ?? "",
+      password: data.currentPassword
+    })
+
+    if (signInError) {
+      setErrorPw("root.serverError", {
+        type: "manual",
+        message: "現在のパスワードが正しくありません。"
+      })
+      return
+    }
+
+    const { error: updateError } = await supabase.auth.updateUser({
+      password: data.newPassword
+    })
+    if (updateError) {
+      setErrorPw("root.serverError", {
+        type: "manual",
+        message: "パスワードの変更に失敗しました。"
+      })
+      return
+    }
+
+    resetPw()
+  }
+
   if (isLoading) return (
     <div className="px-6 py-5">
       <p className="text-sm text-(--color-sub) text-center py-10">読み込み中...</p>
     </div>
   );
+
 
   return (
     <div className="px-6 py-5 w-full">
@@ -87,7 +131,14 @@ export default function AccountInfo() {
         ) : (
           <div className="flex flex-col gap-8 max-w-121 w-full">
             {/* メールアドレス変更 */}
-            <div className="bg-white border border-(--color-sub)/20 rounded-[10px] p-5">
+            {errors.root?.serverError && (
+              <p className="text-(--color-danger) text-xs border border-(--color-danger) bg-(--color-danger-bg) max-w-115 w-full text-center p-3 rounded-[10px]">
+                {errors.root.serverError.message}
+              </p>
+            )}
+            <form 
+              onSubmit={handleSubmit(onSubmitEmail)}
+              className="bg-white border border-(--color-sub)/20 rounded-[10px] p-5">
               <h3 className="text-[16px] font-bold text-(--color-text) pb-3 border-b border-(--color-sub)/20 mb-3">メールアドレス変更</h3>
 
               <div className="flex flex-col gap-1.5 pb-4">
@@ -117,10 +168,18 @@ export default function AccountInfo() {
               >
                 メールアドレスを変更
               </button>
-            </div>
+            </form>
 
             {/* パスワード変更 */}
-            <div className="bg-white border border-(--color-sub)/20 rounded-[10px] p-5">
+            {errorsPw.root?.serverError && (
+              <p className="text-(--color-danger) text-xs border border-(--color-danger) bg-(--color-danger-bg) max-w-115 w-full text-center p-3 rounded-[10px]">
+                {errorsPw.root.serverError.message}
+              </p>
+            )}
+            <form
+              onSubmit={handleSubmitPw(onSubmitPassword)}
+              className="bg-white border border-(--color-sub)/20 rounded-[10px] p-5"
+            >
               <h3 className="text-[16px] font-bold text-(--color-text) pb-3 border-b border-(--color-sub)/20 mb-3">パスワード変更</h3>
 
               <div className="flex flex-col gap-3 pb-4">
@@ -216,16 +275,16 @@ export default function AccountInfo() {
               </div>
 
               <button
-                type="button"
+                type="submit"
                 className="bg-(--color-primary) text-white text-sm font-medium rounded-[8px] px-4 py-2 hover:opacity-90 duration-300 disabled:opacity-50 cursor-pointer"
                 disabled={!isDirtyPw || !isValidPw || isSubmittingPw}
               >
                 パスワードを変更
               </button>
-            </div>
+            </form>
           </div>
         )
       }
-    </div>
+    </div >
   )
 }
