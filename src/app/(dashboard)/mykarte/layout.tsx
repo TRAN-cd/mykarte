@@ -44,7 +44,7 @@ export default function DashboardLayout({
                     <SidebarLink href="/mykarte/categories" icon={CategoryIcon} label="カテゴリー" />
                   </ul>
                   <ul className="ml-1.25 mr-5 mt-6">
-                    <SidebarLink href="/mykarte/setting" icon={SettingIcon} label="設定" />
+                    <SidebarLink href="/mykarte/settings" icon={SettingIcon} label="設定" />
                   </ul>
                 </div>
               </div>
