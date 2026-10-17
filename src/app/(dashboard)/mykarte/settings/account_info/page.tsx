@@ -6,6 +6,7 @@ import { useSupabaseSession } from "@/app/_hooks/useSupabaseSession"
 import { useEffect, useState, useRef } from "react";
 import { Input } from "@/app/_components/Input"
 import { supabase } from "@/app/_libs/supabase";
+import { PasswordInput } from "@/app/_components/settings/PasswordInput";
 
 type EmailFormValues = {
   email: string;
@@ -22,9 +23,6 @@ export default function AccountInfo() {
   const loginMethod = session?.user.app_metadata.provider;
   const [emailSubmitSuccess, setEmailSubmitSuccess] = useState(false)
   const currentEmail = session?.user.email;
-  const [visibleCurrentPassword, setVisibleCurrentPassword] = useState(false)
-  const [visibleNewPassword, setVisibleNewPassword] = useState(false)
-  const [visibleConfirmPassword, setVisibleConfirmPassword] = useState(false)
   const [passwordSubmitSuccess, setPasswordSubmitSuccess] = useState(false)
 
   const {
@@ -41,7 +39,7 @@ export default function AccountInfo() {
       reset({ email: currentEmail })
     }
   }, [isLoading, currentEmail])
-  
+
   const emailValue = watch("email")
   useEffect(() => {
     setEmailSubmitSuccess(false)
@@ -198,97 +196,37 @@ export default function AccountInfo() {
             >
               <h3 className="text-[16px] font-bold text-(--color-text) pb-3 border-b border-(--color-sub)/20 mb-3">パスワード変更</h3>
 
-              <div className="flex flex-col gap-3 pb-4">
-                <div className="flex flex-col gap-1.5">
-                  <Input
-                    htmlFor="current-password"
-                    title="現在のパスワード"
-                    type={visibleCurrentPassword ? 'text' : 'password'}
-                    id="current-password"
-                    placeholder="••••••••"
-                    registerProps={registerPw("currentPassword", {
-                      required: "パスワードが入力されていません。",
-                    })}
-                  />
-                  {errorsPw.currentPassword &&
-                    <span className="text-(--color-danger) text-xs">{errorsPw.currentPassword.message}</span>
-                  }
-                </div>
-                <div className="flex justify-end items-center gap-2">
-                  <input
-                    type="checkbox"
-                    name="checkbox"
-                    id="current-password-visible"
-                    checked={visibleCurrentPassword}
-                    onChange={(e) => setVisibleCurrentPassword(e.target.checked)}
-                    className="border-(--color-primary)"
-                  />
-                  <label htmlFor="current-password-visible" className="text-[10px]">パスワードを表示</label>
-                </div>
-              </div>
+              <PasswordInput
+                htmlFor="current-password"
+                title="現在のパスワード"
+                registerProps={registerPw("currentPassword", {
+                  required: "パスワードが入力されていません。",
+                })}
+                errorMessage={errorsPw.currentPassword?.message}
+              />
 
-              <div className="flex flex-col gap-3 pb-4">
-                <div className="flex flex-col gap-1.5">
-                  <Input
-                    htmlFor="new-password"
-                    title="新しいパスワード"
-                    type={visibleNewPassword ? 'text' : 'password'}
-                    id="new-password"
-                    placeholder="••••••••"
-                    registerProps={registerPw("newPassword", {
-                      required: "パスワードが入力されていません。",
-                      pattern: {
-                        value: /^[a-zA-Z0-9!-/:-@[-`{-~]{8,}$/,
-                        message: "半角英数字・記号のみ 8字以上で入力してください。"
-                      }
-                    })}
-                  />
-                  {errorsPw.newPassword &&
-                    <span className="text-(--color-danger) text-xs">{errorsPw.newPassword.message}</span>
+              <PasswordInput
+                htmlFor="new-password"
+                title="新しいパスワード"
+                registerProps={registerPw("newPassword", {
+                  required: "パスワードが入力されていません。",
+                  pattern: {
+                    value: /^[a-zA-Z0-9!-/:-@[-`{-~]{8,}$/,
+                    message: "半角英数字・記号のみ 8字以上で入力してください。"
                   }
-                </div>
-                <div className="flex justify-end items-center gap-2">
-                  <input
-                    type="checkbox"
-                    name="checkbox"
-                    id="new-password-visible"
-                    checked={visibleNewPassword}
-                    onChange={(e) => setVisibleNewPassword(e.target.checked)}
-                    className="border-(--color-primary)"
-                  />
-                  <label htmlFor="new-password-visible" className="text-[10px]">パスワードを表示</label>
-                </div>
-              </div>
+                })}
+                errorMessage={errorsPw.newPassword?.message}
+              />
 
-              <div className="flex flex-col gap-3 pb-4">
-                <div className="flex flex-col gap-1.5">
-                  <Input
-                    htmlFor="confirm-password"
-                    title="確認用パスワード"
-                    type={visibleConfirmPassword ? 'text' : 'password'}
-                    id="confirm-password"
-                    placeholder="••••••••"
-                    registerProps={registerPw("confirmPassword", {
-                      required: "パスワードが入力されていません。",
-                      validate: (value) => value === watchPw("newPassword") || "パスワードが一致しません。"
-                    })}
-                  />
-                  {errorsPw.confirmPassword && !passwordSubmitSuccess &&
-                    <span className="text-(--color-danger) text-xs">{errorsPw.confirmPassword.message}</span>
-                  }
-                </div>
-                <div className="flex justify-end items-center gap-2">
-                  <input
-                    type="checkbox"
-                    name="checkbox"
-                    id="confirm-password-visible"
-                    checked={visibleConfirmPassword}
-                    onChange={(e) => setVisibleConfirmPassword(e.target.checked)}
-                    className="border-(--color-primary)"
-                  />
-                  <label htmlFor="confirm-password-visible" className="text-[10px]">パスワードを表示</label>
-                </div>
-              </div>
+              <PasswordInput
+                htmlFor="confirm-password"
+                title="確認用パスワード"
+                registerProps={registerPw("confirmPassword", {
+                  required: "パスワードが入力されていません。",
+                  validate: (value) => value === watchPw("newPassword") || "パスワードが一致しません。"
+                })}
+                errorMessage={!passwordSubmitSuccess ? errorsPw.confirmPassword?.message : undefined}
+              />
 
               <button
                 type="submit"
