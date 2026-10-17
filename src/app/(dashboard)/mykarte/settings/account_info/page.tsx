@@ -20,17 +20,20 @@ type PasswordFormValues = {
 export default function AccountInfo() {
   const { session, isLoading } = useSupabaseSession();
   const loginMethod = session?.user.app_metadata.provider;
+  const [emailSubmitSuccess, setEmailSubmitSuccess] = useState(false)
   const currentEmail = session?.user.email;
   const [visibleCurrentPassword, setVisibleCurrentPassword] = useState(false)
   const [visibleNewPassword, setVisibleNewPassword] = useState(false)
   const [visibleConfirmPassword, setVisibleConfirmPassword] = useState(false)
+  const [passwordSubmitSuccess, setPasswordSubmitSuccess] = useState(false)
 
   const {
     register,
     handleSubmit,
     setError,
     formState: { isDirty, isValid, isSubmitting, errors },
-    reset
+    reset,
+    watch
   } = useAuthForm<EmailFormValues>({ email: currentEmail })
 
   useEffect(() => {
@@ -38,19 +41,26 @@ export default function AccountInfo() {
       reset({ email: currentEmail })
     }
   }, [isLoading, currentEmail])
+  
+  const emailValue = watch("email")
+  useEffect(() => {
+    setEmailSubmitSuccess(false)
+  }, [emailValue])
 
   const onSubmitEmail = async (data: EmailFormValues) => {
-    const { error} = await supabase.auth.updateUser({
+    setEmailSubmitSuccess(false)
+    const { error } = await supabase.auth.updateUser({
       email: data.email
     })
 
     if (error) {
       setError("root.serverError", {
         type: "manual",
-        message: "新しいメールアドレスに確認メールを送信しました。メール内のリンクを選択して、変更を完了してください。"
+        message: "メールアドレスの変更に失敗しました。"
       })
       return
     }
+    setEmailSubmitSuccess(true)
   }
 
   const {
@@ -108,6 +118,7 @@ export default function AccountInfo() {
     }
 
     resetPw()
+    setPasswordSubmitSuccess(true)
   }
 
   if (isLoading) return (
@@ -136,7 +147,12 @@ export default function AccountInfo() {
                 {errors.root.serverError.message}
               </p>
             )}
-            <form 
+            {emailSubmitSuccess && (
+              <p className="text-(--color-primary) text-xs border border-(--color-primary) bg-(--color-bg) max-w-115 w-full text-center p-3 rounded-[10px]">
+                新しいメールアドレスに確認メールを送信しました。<br />メール内のリンクを選択して、変更を完了してください。
+              </p>
+            )}
+            <form
               onSubmit={handleSubmit(onSubmitEmail)}
               className="bg-white border border-(--color-sub)/20 rounded-[10px] p-5">
               <h3 className="text-[16px] font-bold text-(--color-text) pb-3 border-b border-(--color-sub)/20 mb-3">メールアドレス変更</h3>
@@ -162,7 +178,7 @@ export default function AccountInfo() {
               </div>
 
               <button
-                type="button"
+                type="submit"
                 className="bg-(--color-primary) text-white text-sm font-medium rounded-[8px] px-4 py-2 hover:opacity-90 duration-300 disabled:opacity-50 cursor-pointer"
                 disabled={!isDirty || !isValid || isSubmitting}
               >
@@ -257,7 +273,7 @@ export default function AccountInfo() {
                       validate: (value) => value === watchPw("newPassword") || "パスワードが一致しません。"
                     })}
                   />
-                  {errorsPw.confirmPassword &&
+                  {errorsPw.confirmPassword && !passwordSubmitSuccess &&
                     <span className="text-(--color-danger) text-xs">{errorsPw.confirmPassword.message}</span>
                   }
                 </div>
@@ -281,6 +297,11 @@ export default function AccountInfo() {
               >
                 パスワードを変更
               </button>
+              {passwordSubmitSuccess && (
+                <p className="text-(--color-primary) text-xs border border-(--color-primary) bg-(--color-bg) max-w-115 w-full text-center p-3 rounded-[10px] mt-3">
+                  パスワードを変更しました。
+                </p>
+              )}
             </form>
           </div>
         )
