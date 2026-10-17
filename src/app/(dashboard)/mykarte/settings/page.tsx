@@ -1,7 +1,7 @@
 'use client'
 
 import { PageHeader } from "@/app/_components/PageHeader"
-import { SettingCard } from "@/app/_components/setting/SettingCard";
+import { SettingCard } from "@/app/_components/settings/SettingCard";
 
 
 export default function Setting() {
