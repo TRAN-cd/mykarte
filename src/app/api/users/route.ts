@@ -1,7 +1,7 @@
 import { prisma } from "@/app/_libs/prisma";
 import { supabase } from "@/app/_libs/supabase";
 import { supabaseAdmin } from "@/app/_libs/supabaseAdmin";
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
 export type CreateNewUserResponse = {
   name: string;

@@ -1,13 +1,30 @@
 'use client'
 
 import { PageHeader } from "@/app/_components/PageHeader"
+import { apiFetch } from "@/app/_libs/apiFetch"
+import { handleApiError } from "@/app/_libs/handleApiError"
+import { supabase } from "@/app/_libs/supabase"
 import Image from "next/image"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 
 export default function Unsubscribe() {
   const [agreed, setAgreed] = useState(false)
+  const router = useRouter();
 
-  // const handleUnsubscribeAccount
+  const handleUnsubscribeAccount = async () => {
+    const isConfirmed = confirm("本当にアカウントを削除しますか？この操作は取り消せません。")
+    if(!isConfirmed) return
+
+    try {
+      await apiFetch.del("/api/users")
+      await supabase.auth.signOut()
+      router.replace("/login")
+    } catch (error) {
+      handleApiError(error, "アカウントの削除に失敗しました。")
+    }
+  }
 
   return (
     <div className="px-6 py-5 w-full">
@@ -43,16 +60,16 @@ export default function Unsubscribe() {
           </div>
         </div>
         <div className="flex gap-3">
-          <button 
+          <Link
+            href="/mykarte/settings"
             className="bg-white px-7 py-2 rounded-[5px] text-xs border border-(--color-text)/20 hover:opacity-70 duration-300 cursor-pointer"
-            type="button"
             >
             削除せずに戻る
-          </button>
+          </Link>
           <button 
             className="bg-(--color-danger-bg) px-7 py-2 rounded-[5px] text-xs text-(--color-danger) border border-(--color-danger) hover:opacity-70 duration-300 cursor-pointer disabled:opacity-40 disabled:cursor-default"
             type="button"
-            // onClick={handleUnsubscribeAccount}
+            onClick={handleUnsubscribeAccount}
             disabled={!agreed}
             >
             アカウントを削除する
