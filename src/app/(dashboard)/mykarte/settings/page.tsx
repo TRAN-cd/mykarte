@@ -20,6 +20,12 @@ export default function Setting() {
             label="アカウント情報変更"
             description="メールアドレス・パスワード変更"
           />
+          <SettingCard
+            href="/mykarte/settings/profile"
+            iconPath="/images/shared/icon_avatar.svg"
+            label="ユーザー名・アイコン変更"
+            description="表示名・プロフィール画像の変更"
+          />
         </div>
         <div className="bg-white border border-(--color-sub)/20 rounded-[10px] p-5 pb-2 max-w-121 w-full">
           <h3 className="text-[13px] font-medium pb-2.5">その他</h3>
