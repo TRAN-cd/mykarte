@@ -23,8 +23,8 @@ export default function Setting() {
           <SettingCard
             href="/mykarte/settings/profile"
             iconPath="/images/shared/icon_avatar.svg"
-            label="ユーザー名・アイコン変更"
-            description="表示名・プロフィール画像の変更"
+            label="プロフィール変更"
+            description="ユーザー名・アイコン画像の変更"
           />
         </div>
         <div className="bg-white border border-(--color-sub)/20 rounded-[10px] p-5 pb-2 max-w-121 w-full">
