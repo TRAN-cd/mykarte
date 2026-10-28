@@ -10,6 +10,8 @@ import Image from "next/image"
 import { ChangeEvent, useEffect, useState } from "react"
 import { v4 as uuidv4 } from 'uuid';
 import { UpdateUserRequestBody, UserResponse } from "@/app/api/users/route"
+import { mutate } from "swr"
+import { useSupabaseSession } from "@/app/_hooks/useSupabaseSession"
 
 type ProfileValues = {
   name: string;
@@ -17,6 +19,7 @@ type ProfileValues = {
 }
 
 export default function Profile() {
+  const { token } = useSupabaseSession();
   const { data, error, isLoading } = useFetch<UserResponse>("/api/users/");
   const userName = data?.name;
   const userIcon = data?.avatarKey ?? "";
@@ -93,6 +96,7 @@ export default function Profile() {
         name: data.name,
         avatarKey: data.avatarKey,
       })
+      mutate(["/api/users/", token])
       setSubmitSuccess(true)
     } catch (error) {
       setError("root.serverError", {
