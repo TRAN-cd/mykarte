@@ -1,5 +1,7 @@
 'use client'
 
+import { Input } from "@/app/_components/Input";
+import { Textarea } from "@/app/_components/Textarea";
 import { useState } from "react"
 
 export default function ContactPage() {
@@ -8,10 +10,10 @@ export default function ContactPage() {
   const currentIndex = steps.indexOf(step);
 
   return (
-    <div className="flex flex-col max-w-208 w-full mx-auto pt-25 px-5">
+    <div className="flex flex-col max-w-208 w-full mx-auto py-25 px-5">
       <h2 className="text-2xl font-bold pb-6">お問い合わせ</h2>
 
-      <ul className="flex gap-3 [&_li]:text-[10px] [&_li]:font-medium [&_li]:border [&_li]:border-(--color-primary) [&_li]:px-3 [&_li]:py-1.5 [&_li]:rounded-[20px]">
+      <ul className="flex gap-3 pb-6 [&_li]:text-[10px] [&_li]:font-medium [&_li]:border [&_li]:border-(--color-primary) [&_li]:px-3 [&_li]:py-1.5 [&_li]:rounded-[20px]">
         <li className={
           0 === currentIndex
             ? "bg-(--color-primary) text-white"
@@ -38,6 +40,51 @@ export default function ContactPage() {
           完了
         </li>
       </ul>
+
+      <div className="max-w-115 w-full">
+        <p>お問い合わせ内容を入力してください。</p>
+
+        <div className="flex flex-col gap-6 pt-9 pb-6">
+          <Input
+            htmlFor="name"
+            title="氏名"
+            isRequired={true}
+            type="text"
+            id="name"
+            placeholder="お名前"
+            className="bg-white"
+          // registerProps={}
+          />
+          <Input
+            htmlFor="email"
+            title="メールアドレス"
+            isRequired={true}
+            type="email"
+            id="email"
+            placeholder="example@mykarte.com"
+            className="bg-white"
+          // registerProps={}
+          />
+          <Textarea
+            htmlFor="content"
+            title="内容"
+            isRequired={true}
+            id="content"
+            placeholder="お問い合わせ内容"
+            className="bg-white"
+            rows={6}
+          // registerProps={}
+          />
+        </div>
+
+        <button
+          type="button"
+          className="bg-(--color-primary) text-white text-sm font-medium rounded-[5px] px-4 py-2 hover:opacity-90 duration-300 disabled:opacity-50 cursor-pointer mt-8"
+          // disabled={!isDirty || !isValid}
+        >
+          内容を確認する
+        </button>
+      </div>
     </div>
   )
 }
