@@ -7,6 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useAuthForm } from "@/app/_hooks/useAuthForm";
 import { useSupabaseSession } from "@/app/_hooks/useSupabaseSession";
+import { supabase } from "@/app/_libs/supabase";
 
 type ContactFormValues = {
   name: string;
@@ -23,15 +24,50 @@ export default function ContactPage() {
     register,
     handleSubmit,
     setError,
-    formState: { isDirty, isValid, isSubmitting, errors },
+    formState: { isDirty, isValid, errors },
     watch
   } = useAuthForm<ContactFormValues>({ name: "", email: "", content: "" })
 
+  const [isSending, setIsSending] = useState(false)
   const nameValue = watch("name");
   const emailValue = watch("email");
   const contentValue = watch("content");
 
   const { session } = useSupabaseSession();
+
+  const onSubmit = async () => {
+    setIsSending(true)
+    try {
+      const { data } = await supabase.auth.getSession()
+      const token = data.session?.access_token
+
+      const response = await fetch("/api/contact", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { Authorization: token })
+        },
+        body: JSON.stringify({
+          name: nameValue,
+          email: emailValue,
+          content: contentValue,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error("送信に失敗しました。")
+      }
+
+      setStep("complete")
+    } catch (error) {
+      setError("root.serverError", {
+        type: "manual",
+        message: "送信に失敗しました。時間をおいて再度お試しください。"
+      })
+    } finally {
+      setIsSending(false)
+    }
+  }
 
   return (
     <div className="flex flex-col max-w-208 w-full mx-auto py-25 px-5">
@@ -147,6 +183,12 @@ export default function ContactPage() {
           <p>内容をご確認ください</p>
           <p className="text-xs text-(--color-sub) pt-3">以下の内容で送信します。修正がある場合は【戻る】をクリックしてください。</p>
 
+          {errors.root?.serverError && (
+            <p className="text-(--color-danger) text-xs border border-(--color-danger) bg-(--color-danger-bg) text-center p-3 rounded-[10px] mt-9">
+              {errors.root.serverError.message}
+            </p>
+          )}
+
           <div className="bg-white border border-(--color-sub) rounded-[10px] flex flex-col gap-3 p-6 mt-9 mb-6">
             <div className="flex flex-col gap-1.5 pb-3 border-b border-(--color-sub)/20">
               <p className="text-xs text-(--color-sub)">氏名</p>
@@ -173,7 +215,8 @@ export default function ContactPage() {
             <button
               type="button"
               className="bg-(--color-primary) text-white border border-(--color-primary) text-sm font-medium rounded-[5px] px-4 py-2 hover:bg-white hover:text-(--color-primary) duration-300 disabled:opacity-50 cursor-pointer"
-              onClick={() => setStep("complete")}
+              onClick={onSubmit}
+              disabled={isSending}
             >
               この内容で送信する
             </button>
