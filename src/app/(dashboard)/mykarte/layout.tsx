@@ -25,10 +25,10 @@ export default function DashboardLayout({
 
   return (
     <div className="flex flex-col flex-1 bg-[url('/images/shared/bg.png')] bg-no-repeat bg-cover bg-fixed">
-      <main className="flex-1 pt-16">
-        <div className="flex px-5">
-          <div className="max-w-[1300px] w-full mx-auto bg-(--color-bg)/50 rounded-[30px] shadow-[0px_4px_30px_0px_rgba(26,153,96,0.04)] p-[15px]">
-            <div className="flex">
+      <main className="flex-1">
+        <div className="flex justify-center items-center px-5 h-screen">
+          <div className="max-w-[1300px] w-full mx-auto h-[90vh] bg-(--color-bg)/50 rounded-[30px] shadow-[0px_4px_30px_0px_rgba(26,153,96,0.04)] p-[15px]">
+            <div className="flex h-full">
               <div className="max-w-[224px] max-lg:max-w-[80px] w-full flex flex-col gap-10.5 duration-300">
                 <div className="flex justify-center pt-7.5 max-lg:hidden duration-300">
                   <Image src="/images/shared/logo.svg" alt="myカルテ" width="88" height="30" />
@@ -49,7 +49,7 @@ export default function DashboardLayout({
                 </div>
               </div>
               <div className="bg-white/50 w-full rounded-[15px] flex">
-                <div className="flex-1">
+                <div className="flex-1 overflow-y-auto">
                   {children}
                   {modal}
                 </div>
