@@ -12,6 +12,7 @@ import { RecordButtonCard } from "@/app/_components/RecordButtonCard";
 import { AiSummaryCard } from "@/app/_components/AiSummaryCard";
 import { WeekCalendar } from "@/app/_components/WeekCalendar";
 import { SidebarLink } from "@/app/_components/SidebarLink";
+import { LogoutButton } from "@/app/_components/LogoutButton";
 
 export default function DashboardLayout({
   children,
@@ -36,15 +37,20 @@ export default function DashboardLayout({
                 <div className="flex justify-center pt-7.5 lg:hidden ml-[-10px] duration-300">
                   <Image src="/images/shared/logo_mark.svg" alt="myカルテ" width="30" height="30" />
                 </div>
-                <div className="">
-                  <ul className="ml-1.25 mr-5 border-b border-(--color-sub)">
-                    <SidebarLink href="/mykarte" icon={HomeIcon} label="ホーム" />
-                    <SidebarLink href="/mykarte/records/new" icon={RecordIcon} label="新規記録" />
-                    <SidebarLink href="/mykarte/records" icon={RecordsIcon} label="記録一覧" />
-                    <SidebarLink href="/mykarte/categories" icon={CategoryIcon} label="カテゴリー" />
-                  </ul>
+                <div className="flex flex-col justify-between h-full">
+                  <div>
+                    <ul className="ml-1.25 mr-5 border-b border-(--color-sub)">
+                      <SidebarLink href="/mykarte" icon={HomeIcon} label="ホーム" />
+                      <SidebarLink href="/mykarte/records/new" icon={RecordIcon} label="新規記録" />
+                      <SidebarLink href="/mykarte/records" icon={RecordsIcon} label="記録一覧" />
+                      <SidebarLink href="/mykarte/categories" icon={CategoryIcon} label="カテゴリー" />
+                    </ul>
+                    <ul className="ml-1.25 mr-5 mt-6">
+                      <SidebarLink href="/mykarte/settings" icon={SettingIcon} label="設定" />
+                    </ul>
+                  </div>
                   <ul className="ml-1.25 mr-5 mt-6">
-                    <SidebarLink href="/mykarte/settings" icon={SettingIcon} label="設定" />
+                    <LogoutButton />
                   </ul>
                 </div>
               </div>
