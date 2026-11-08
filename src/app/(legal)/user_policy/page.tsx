@@ -10,7 +10,7 @@ export default function Page() {
       <section className="relative z-2">
         <div className="lead">
           <h2 className="text-2xl font-bold pb-3">利用規約</h2>
-          <p className="text-(--color-sub) text-[13px] pb-12">制定日：2026年6月5日</p>
+          <p className="text-(--color-sub) text-[13px] pb-12">制定日：2026年6月5日　最終改定日：2026年11月9日</p>
           <p className="text-sm pb-9 border-b border-(--color-sub)/20">myカルテ（以下「当社」といいます。）は、当社の提供するサービス「myカルテ」（以下「本サービス」といいます。）の利用条件を、以下のとおり定めます。</p>
         </div>
         <div className="index bg-white border border-(--color-sub) rounded-[10px] p-6 flex flex-col gap-4 mb-12">
@@ -24,11 +24,12 @@ export default function Page() {
             <Link href="#article-3">第3条　アカウントの管理</Link>
             <Link href="#article-4">第4条　禁止事項</Link>
             <Link href="#article-5">第5条　免責事項</Link>
-            <Link href="#article-6">第6条　サービスの変更・停止</Link>
-            <Link href="#article-7">第7条　退会</Link>
-            <Link href="#article-8">第8条　規約の変更</Link>
-            <Link href="#article-9">第9条　準拠法・裁判管轄</Link>
-            <Link href="#article-10">お問い合わせ窓口</Link>
+            <Link href="#article-6">第6条　AI要約機能</Link>
+            <Link href="#article-7">第7条　サービスの変更・停止</Link>
+            <Link href="#article-8">第8条　退会</Link>
+            <Link href="#article-9">第9条　規約の変更</Link>
+            <Link href="#article-10">第10条　準拠法・裁判管轄</Link>
+            <Link href="#article-11">お問い合わせ窓口</Link>
           </div>
         </div>
       </section>
@@ -50,12 +51,13 @@ export default function Page() {
           </div>
           <div className="pt-6 flex flex-col gap-3">
             <p className="leading-7 pl-[2em] indent-[-2em]">１．本サービスへの登録を希望する方は、本規約に同意の上、当社の定める方法によって利用登録を申請するものとします。</p>
-            <p className="leading-7 pl-[2em] indent-[-2em]"> ２．当社は、利用登録の申請者に以下の事由があると判断した場合、利用登録を拒否することがあります。</p>
+            <p className="leading-7 pl-[2em] indent-[-2em]">２．当社は、利用登録の申請者に以下の事由があると判断した場合、利用登録を拒否することがあります。</p>
             <ul className="flex flex-col gap-2 pl-4 leading-7">
               <li className="pl-[1em] indent-[-1em]">a. 虚偽の事項を届け出た場合</li>
               <li className="pl-[1em] indent-[-1em]">b. 本規約に違反したことがある者からの申請である場合</li>
               <li className="pl-[1em] indent-[-1em]">c. その他、当社が利用登録を相当でないと判断した場合</li>
             </ul>
+            <p className="leading-7 pl-[2em] indent-[-2em]">３．本サービスは、18歳以上の方を対象としています。18歳未満の方は、本サービスに利用登録することはできません。</p>
           </div>
         </section>
         <section id="article-3" className="pt-25 -mt-25">
@@ -99,42 +101,53 @@ export default function Page() {
         <section id="article-6" className="pt-25 -mt-25">
           <div className="flex items-center gap-3 pb-3 border-b border-(--color-primary)">
             <p className="font-en text-xs text-(--color-primary) bg-(--color-bg) w-6 h-6 flex justify-center items-center rounded-[50%]">6</p>
+            <h3>AI要約機能</h3>
+          </div>
+          <div className="pt-6 flex flex-col gap-3">
+            <p className="leading-7 pl-[2em] indent-[-2em]">１．本サービスは、ユーザーが記録した内容を外部のAIサービスを利用して要約する機能（以下「AI要約機能」といいます。）を提供します。AI要約機能の利用に伴うデータの取り扱いは、プライバシーポリシーに定めるとおりとします。</p>
+            <p className="leading-7 pl-[2em] indent-[-2em]">２．AI要約機能は、ユーザー自身による記録の振り返りや、医療機関への説明の準備を補助することを目的としたものです。診断、病状の判断、治療方法や医薬品の提案を行うものではありません。</p>
+            <p className="leading-7 pl-[2em] indent-[-2em]">３．AI要約機能による要約の内容は、正確性・完全性を保証するものではありません。ユーザーは、要約の内容を自らの責任において確認・利用するものとします。</p>
+            <p className="leading-7 pl-[2em] indent-[-2em]">４．当社は、AI要約機能の利用回数その他の利用条件を定めることができるものとし、必要に応じて変更（有料化を含みます。）することがあります。</p>
+          </div>
+        </section>
+        <section id="article-7" className="pt-25 -mt-25">
+          <div className="flex items-center gap-3 pb-3 border-b border-(--color-primary)">
+            <p className="font-en text-xs text-(--color-primary) bg-(--color-bg) w-6 h-6 flex justify-center items-center rounded-[50%]">7</p>
             <h3>サービスの変更・停止</h3>
           </div>
           <div className="flex flex-col gap-6 pt-6">
             <p className="leading-7">当社は、ユーザーへの事前通知なく、本サービスの内容を変更し、または提供を停止することができるものとします。これによってユーザーに生じた損害について、当社は一切の責任を負いません。</p>
           </div>
         </section>
-        <section id="article-7" className="pt-25 -mt-25">
+        <section id="article-8" className="pt-25 -mt-25">
           <div className="flex items-center gap-3 pb-3 border-b border-(--color-primary)">
-            <p className="font-en text-xs text-(--color-primary) bg-(--color-bg) w-6 h-6 flex justify-center items-center rounded-[50%]">7</p>
+            <p className="font-en text-xs text-(--color-primary) bg-(--color-bg) w-6 h-6 flex justify-center items-center rounded-[50%]">8</p>
             <h3>退会</h3>
           </div>
           <div className="flex flex-col gap-3 pt-6">
             <p className="leading-7 pl-[2em] indent-[-2em]">ユーザーは、当社の定める退会手続きにより、いつでも本サービスを退会できるものとします。</p>
           </div>
         </section>
-        <section id="article-8" className="pt-25 -mt-25">
+        <section id="article-9" className="pt-25 -mt-25">
           <div className="flex items-center gap-3 pb-3 border-b border-(--color-primary)">
-            <p className="font-en text-xs text-(--color-primary) bg-(--color-bg) w-6 h-6 flex justify-center items-center rounded-[50%]">8</p>
+            <p className="font-en text-xs text-(--color-primary) bg-(--color-bg) w-6 h-6 flex justify-center items-center rounded-[50%]">9</p>
             <h3>規約の変更</h3>
           </div>
           <div className="flex flex-col gap-3 pt-6">
             <p className="leading-7">当社は、必要と判断した場合には、ユーザーへの通知なく本規約を変更することができるものとします。変更後の規約は、本ウェブサイトに掲載した時点から効力を生じるものとします。</p>
           </div>
         </section>
-        <section id="article-9" className="pt-25 -mt-25">
+        <section id="article-10" className="pt-25 -mt-25">
           <div className="flex items-center gap-3 pb-3 border-b border-(--color-primary)">
-            <p className="font-en text-xs text-(--color-primary) bg-(--color-bg) w-6 h-6 flex justify-center items-center rounded-[50%]">9</p>
+            <p className="font-en text-xs text-(--color-primary) bg-(--color-bg) w-6 h-6 flex justify-center items-center rounded-[50%]">10</p>
             <h3>準拠法・裁判管轄</h3>
           </div>
           <div className="flex flex-col gap-3 pt-6">
             <p className="leading-7">本規約の解釈にあたっては、日本法を準拠法とします。本サービスに関して生じた紛争については、当社所在地を管轄する裁判所を専属的合意管轄とします。</p>
           </div>
         </section>
-        <section id="article-10" className="pt-25 -mt-25">
+        <section id="article-11" className="pt-25 -mt-25">
           <div className="flex items-center gap-3 pb-3 border-b border-(--color-primary)">
-            <p className="font-en text-xs text-(--color-primary) bg-(--color-bg) w-6 h-6 flex justify-center items-center rounded-[50%]">10</p>
             <h3>お問い合わせ窓口</h3>
           </div>
           <div className="flex flex-col gap-3 pt-6">
@@ -158,7 +171,7 @@ export default function Page() {
                   <Image src="/images/shared/icon_mail.svg" alt="" width={24} height={24} />
                   <p className="text-(--color-sub)">メールアドレス</p>
                 </dt>
-                <dd>champagne1120@gmail.com</dd>
+                <dd>mykartemogu@gmail.com</dd>
               </dl>
             </div>
           </div>

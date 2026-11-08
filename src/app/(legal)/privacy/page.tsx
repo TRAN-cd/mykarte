@@ -10,7 +10,7 @@ export default function Page() {
       <section className="relative z-2">
         <div className="lead">
           <h2 className="text-2xl font-bold pb-3">プライバシーポリシー</h2>
-          <p className="text-(--color-sub) text-[13px] pb-12">制定日：2026年6月5日</p>
+          <p className="text-(--color-sub) text-[13px] pb-12">制定日：2026年6月5日　最終改定日：2026年11月9日</p>
           <p className="text-sm pb-9 border-b border-(--color-sub)/20">myカルテ（以下「当社」といいます。）は、当社の提供するサービス（以下「本サービス」といいます。）における、ユーザーの個人情報の取扱いについて、以下のとおりプライバシーポリシー（以下「本ポリシー」といいます。）を定めます。</p>
         </div>
         <div className="index bg-white border border-(--color-sub) rounded-[10px] p-6 flex flex-col gap-4 mb-12">
@@ -50,13 +50,17 @@ export default function Page() {
             <h3>個人情報の収集方法</h3>
           </div>
           <div className="pt-6 flex flex-col gap-3">
-            <p className="leading-7">当社は、ユーザーが利用登録をする際にメールアドレスをお尋ねします。また、サービス利用中にユーザーが入力した健康記録データを収集します。</p>
+            <p className="leading-7">当社は、ユーザーが利用登録をする際にメールアドレスをお尋ねします。また、サービス利用中にユーザーが入力した健康記録データ、プロフィール情報およびお問い合わせ内容を収集します。</p>
             <p className="leading-7">当社が収集する主な個人情報は以下のとおりです。</p>
             <ul className="list-disc pl-6 leading-7">
               <li>メールアドレス</li>
+              <li>ユーザー名、プロフィール画像</li>
+              <li>お問い合わせ時に入力された氏名、メールアドレス、お問い合わせ内容</li>
               <li>端末情報（IPアドレス、Cookie情報、利用環境など）</li>
               <li>ユーザーが入力した健康記録（体調メモ、症状、診察内容、服薬情報など）</li>
+              <li>AI要約機能で生成された要約（ユーザーが保存しなかったものを含む）</li>
             </ul>
+            <p className="leading-7">AI要約機能で生成された要約は、ユーザーが保存しなかった場合も、利用回数の管理およびサービス改善のために保存します。保存した情報は、ユーザーが退会した時点で削除します。</p>
           </div>
         </section>
         <section id="article-3" className="pt-25 -mt-25">
@@ -69,6 +73,7 @@ export default function Page() {
             <ul className="list-decimal pl-6 leading-7">
               <li>本サービスの提供・運営のため</li>
               <li>お問い合わせへの対応のため（本人確認を含む）</li>
+              <li>AI要約機能の提供および利用回数の管理のため</li>
               <li>メンテナンス、重要なお知らせなど必要に応じたご連絡のため</li>
               <li>利用規約に違反したユーザーや、不正・不当な目的でサービスを利用しようとするユーザーの特定をし、ご利用をお断りするため</li>
               <li>サービスの改善、新サービスの開発等に役立てるため</li>
@@ -108,11 +113,11 @@ export default function Page() {
                 <div>
                   <dl className="flex">
                     <dt>委託内容：</dt>
-                    <dd>データベースの管理・認証機能の提供</dd>
+                    <dd>データベースの管理、認証機能および画像保存機能の提供</dd>
                   </dl>
                   <dl className="flex">
                     <dt>取り扱うデータ：</dt>
-                    <dd>メールアドレス、健康記録データ</dd>
+                    <dd>メールアドレス、ユーザー名、プロフィール画像、健康記録データ、AI要約、お問い合わせ内容</dd>
                   </dl>
                 </div>
               </div>
@@ -129,7 +134,34 @@ export default function Page() {
                   </dl>
                 </div>
               </div>
-              <p className="leading-7">なお、Google・Appleのソーシャルログインを利用する場合、各社のプライバシーポリシーに従いアカウント情報が連携されます。</p>
+              <div className="flex flex-col gap-3">
+                <p className="font-bold"><span className="font-en ">Resend, Inc.</span>（米国）</p>
+                <div>
+                  <dl className="flex">
+                    <dt>委託内容：</dt>
+                    <dd>お問い合わせ通知メールの送信</dd>
+                  </dl>
+                  <dl className="flex">
+                    <dt>取り扱うデータ：</dt>
+                    <dd>お問い合わせ時に入力された氏名、メールアドレス、お問い合わせ内容</dd>
+                  </dl>
+                </div>
+              </div>
+              <div className="flex flex-col gap-3">
+                <p className="font-bold">AIサービス事業者（AI要約機能の利用時のみ）</p>
+                <div>
+                  <dl className="flex">
+                    <dt>委託内容：</dt>
+                    <dd>記録の要約の生成</dd>
+                  </dl>
+                  <dl className="flex">
+                    <dt>取り扱うデータ：</dt>
+                    <dd>要約の対象期間の健康記録</dd>
+                  </dl>
+                </div>
+              </div>
+              <p className="leading-7">AI要約機能の利用時に外部のAIサービスへ送信する情報は、要約に必要な健康記録に限り、メールアドレスやユーザー名などの登録情報は含みません。また、送信した情報がAIモデルの学習に利用されない条件で本機能を提供します。</p>
+              <p className="leading-7">なお、Googleアカウントでログインする場合、Googleのプライバシーポリシーに従いアカウント情報が連携されます。</p>
             </div>
           </div>
         </section>
@@ -196,7 +228,6 @@ export default function Page() {
         </section>
         <section id="article-11" className="pt-25 -mt-25">
           <div className="flex items-center gap-3 pb-3 border-b border-(--color-primary)">
-            <p className="font-en text-xs text-(--color-primary) bg-(--color-bg) w-6 h-6 flex justify-center items-center rounded-[50%]">11</p>
             <h3>お問い合わせ窓口</h3>
           </div>
           <div className="flex flex-col gap-3 pt-6">
@@ -221,7 +252,7 @@ export default function Page() {
                   <Image src="/images/shared/icon_mail.svg" alt="" width={24} height={24}/>
                   <p className="text-(--color-sub)">メールアドレス</p>
                 </dt>
-                <dd>champagne1120@gmail.com</dd>
+                <dd>mykartemogu@gmail.com</dd>
               </dl>
             </div>
           </div>
