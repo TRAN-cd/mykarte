@@ -116,6 +116,9 @@ model AiSummary {
   startDate     DateTime   @map("start_date")
   endDate       DateTime   @map("end_date")
 
+  savedAt       DateTime?  @map("saved_at")
+  deletedAt     DateTime?  @map("deleted_at")
+
   userId        Int        @map("user_id")
   user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
