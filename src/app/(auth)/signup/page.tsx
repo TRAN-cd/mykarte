@@ -6,14 +6,12 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/app/_components/Input"
 import { AuthButton } from "@/app/_components/AuthButton";
 import Link from "next/link";
-import Image from "next/image";
 import { DividerLine } from "@/app/_components/DividerLine";
 import { Card } from "@/app/_components/Card";
 import { useAuthForm } from "@/app/_hooks/useAuthForm";
 import { getAuthErrorMessage } from "@/app/_libs/getAuthErrorMessage";
 import { GoogleAuthButton } from "@/app/_components/GoogleAuthButton";
-
-const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+import { useState } from "react";
 
 type Inputs = {
   email: string;
@@ -21,6 +19,7 @@ type Inputs = {
 
 export default function Page() {
   const router = useRouter()
+  const [consent, setConsent] = useState(false)
 
   const {
     register,
@@ -75,8 +74,19 @@ export default function Page() {
 
       <Card>
         <h2 className="text-center text-2xl font-bold">新規登録</h2>
-        <p className="text-center text-[15px] leading-relaxed"><a href="/user_policy" className="text-(--color-link) border-b hover:border-transparent hover:opacity-70 duration-300">利用規約</a>、<a href="/privacy" className="text-(--color-link) border-b hover:border-transparent hover:opacity-70 duration-300">プライバシーポリシー</a>について同意の上、<br />以下のいずれかの方法でご登録ください。</p>
-        <GoogleAuthButton label="Googleで登録"/>
+        <p className="text-center text-[15px] leading-relaxed"><a href="/user_policy" target="_blank" className="text-(--color-link) border-b hover:border-transparent hover:opacity-70 duration-300">利用規約</a>・<a href="/privacy" target="_blank" className="text-(--color-link) border-b hover:border-transparent hover:opacity-70 duration-300">プライバシーポリシー</a>について同意の上、<br />以下のいずれかの方法でご登録ください。</p>
+        <div className="flex justify-center items-center gap-2">
+          <input
+            type="checkbox"
+            name="checkbox"
+            id="consent"
+            checked={consent}
+            onChange={(e) => setConsent(e.target.checked)}
+            className="border-(--color-primary)"
+          />
+          <label htmlFor="consent" className="text-xs">18歳以上であり、上記に同意する</label>
+        </div>
+        <GoogleAuthButton label="Googleで登録" disabled={!consent} />
         <DividerLine text="またはメールアドレスで登録" />
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
@@ -100,7 +110,7 @@ export default function Page() {
 
           <AuthButton
             text="上記に同意して登録"
-            disabled={!isDirty || !isValid || isSubmitting}
+            disabled={!consent || !isDirty || !isValid || isSubmitting}
           />
         </form>
 

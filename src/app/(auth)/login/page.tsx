@@ -134,6 +134,7 @@ export default function Page() {
 
         <DividerLine text="他の方法でログインする" />
 
+        <p className="text-center text-xs leading-relaxed">初めてGoogleアカウントでご利用の方は、<br />18歳以上であり、<br /><a href="/user_policy" target="_blank" className="text-(--color-link) border-b hover:border-transparent hover:opacity-70 duration-300">利用規約</a>・<a href="/privacy" target="_blank" className="text-(--color-link) border-b hover:border-transparent hover:opacity-70 duration-300">プライバシーポリシー</a>に同意のうえご利用ください。</p>
         <GoogleAuthButton label="Googleでログイン"/>
 
         <Link href="/signup" className="text-center text-(--color-primary) text-xs hover:opacity-70 duration-300">
