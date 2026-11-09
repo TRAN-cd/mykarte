@@ -74,7 +74,7 @@ export default function Page() {
 
       <Card>
         <h2 className="text-center text-2xl font-bold">新規登録</h2>
-        <p className="text-center text-[15px] leading-relaxed"><a href="/user_policy" className="text-(--color-link) border-b hover:border-transparent hover:opacity-70 duration-300">利用規約</a>、<a href="/privacy" className="text-(--color-link) border-b hover:border-transparent hover:opacity-70 duration-300">プライバシーポリシー</a>について同意の上、<br />以下のいずれかの方法でご登録ください。</p>
+        <p className="text-center text-[15px] leading-relaxed"><a href="/user_policy" target="_blank" className="text-(--color-link) border-b hover:border-transparent hover:opacity-70 duration-300">利用規約</a>・<a href="/privacy" target="_blank" className="text-(--color-link) border-b hover:border-transparent hover:opacity-70 duration-300">プライバシーポリシー</a>について同意の上、<br />以下のいずれかの方法でご登録ください。</p>
         <div className="flex justify-center items-center gap-2">
           <input
             type="checkbox"
