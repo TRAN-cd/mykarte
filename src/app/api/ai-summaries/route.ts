@@ -184,7 +184,59 @@ export const POST = async (request: Request) => {
       },
     });
     return NextResponse.json({ aiSummary }, { status: 201 });
-    
+  } catch (error) {
+    if (error instanceof Error)
+      return NextResponse.json({ message: error.message }, { status: 500 });
+  }
+};
+
+export type GetAiSummariesResponse = {
+  aiSummaries: {
+    id: number;
+    content: string;
+    createdAt: Date;
+    startDate: Date;
+    endDate: Date;
+    savedAt: Date | null
+  }[]
+};
+
+// 保存されたAI要約の取得
+///////////////////
+export const GET = async (request: Request) => {
+  const token = request.headers.get("Authorization") ?? "";
+  const { data, error } = await supabase.auth.getUser(token);
+  if (error)
+    return NextResponse.json({ status: error.message }, { status: 401 });
+
+  try {
+    // ユーザー特定
+    const dbUser = await prisma.user.findUnique({
+      where: {
+        supabaseUserId: data.user.id,
+      },
+    });
+    if (!dbUser)
+      return NextResponse.json(
+        { message: "ユーザー情報がありません。" },
+        { status: 404 }
+      );
+    const userId = dbUser.id;
+
+    const aiSummaries = await prisma.aiSummary.findMany({
+      where: {
+        userId,
+        savedAt: { not: null },
+      },
+      orderBy: {
+        savedAt: "desc",
+      },
+    });
+
+    return NextResponse.json<GetAiSummariesResponse>(
+      { aiSummaries },
+      { status: 200 }
+    );
   } catch (error) {
     if (error instanceof Error)
       return NextResponse.json({ message: error.message }, { status: 500 });
