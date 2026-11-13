@@ -173,7 +173,18 @@ export const POST = async (request: Request) => {
         },
       },
     });
-    return NextResponse.json({ text }, { status: 200 });
+
+    // 生成された要約を自動保存
+    const aiSummary = await prisma.aiSummary.create({
+      data: {
+        userId,
+        content: text,
+        startDate: start,
+        endDate: end,
+      },
+    });
+    return NextResponse.json({ aiSummary }, { status: 201 });
+    
   } catch (error) {
     if (error instanceof Error)
       return NextResponse.json({ message: error.message }, { status: 500 });
