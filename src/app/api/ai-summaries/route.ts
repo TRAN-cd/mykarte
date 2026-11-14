@@ -13,6 +13,9 @@ export type AiSummaryRequestBody = {
 // ひと月のAI要約生成回数の上限
 const AI_SUMMARY_MONTHLY_LIMIT = 20;
 
+// AI要約に使用するモデル
+const AI_SUMMARY_MODEL = "google/gemini-3.8-flash";
+
 const RECORD_TYPE_LABEL: Record<RecordType, string> = {
   DAILY: "日常",
   MEDICAL: "受診",
@@ -163,7 +166,7 @@ export const POST = async (request: Request) => {
 
     // AI要約生成
     const { text } = await generateText({
-      model: "google/gemini-3.8-flash",
+      model: AI_SUMMARY_MODEL,
       system: AI_SUMMARY_SYSTEM_PROMPT,
       prompt: recordsText,
       reasoning: "low",
