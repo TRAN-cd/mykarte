@@ -5,6 +5,7 @@ import { StarIcon } from "./icons/StarIcon"
 import Image from "next/image"
 import { subMonths, format } from "date-fns";
 import { apiFetch } from "../_libs/apiFetch";
+import { CheckIcon } from "./icons/CheckIcon";
 
 export interface AiSummaryPeriods {
   startDate: string;
@@ -22,6 +23,7 @@ export const AiSummaryCard = () => {
   const [isGenerating, setIsGenerating] = useState(false)
   const [aiSummary, setAiSummary] = useState<AiSummaryContents["aiSummary"] | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [isUpdating, setIsUpdating] = useState(false)
 
   const handleGenerate = async () => {
     setIsGenerating(true)
@@ -43,6 +45,22 @@ export const AiSummaryCard = () => {
     }
   }
 
+  const handleAction = async (action: "save" | "cancel") => {
+    if (!aiSummary) return
+
+    setIsUpdating(true)
+    setErrorMessage(null)
+    try {
+      await apiFetch.put(`/api/ai-summaries/${aiSummary.id}`, { action })
+      setAiSummary(null)
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : "保存またはキャンセルに失敗しました。"
+      )
+    } finally {
+      setIsUpdating(false)
+    }
+  }
 
 
   return (
@@ -65,6 +83,30 @@ export const AiSummaryCard = () => {
         {isGenerating && <p className="pt-3 text-sm font-medium">要約を生成中…</p>}
         {errorMessage && <p className="pt-3 text-sm font-medium text-(--color-danger)">{errorMessage}</p>}
         {aiSummary && <p className="pt-3 text-sm font-medium whitespace-pre-wrap">{aiSummary.content}</p>}
+
+        {aiSummary && (
+          <div className="pt-3 auto w-full flex justify-center gap-3">
+            <button
+              type="button"
+              onClick={() => handleAction("cancel")}
+              disabled={isUpdating}
+              className="text-[13px] flex justify-center items-center text-(--color-primary) bg-white py-2.5 px-5 border border-(--color-sub) rounded-[5px] duration-300 hover:opacity-70 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              キャンセル
+            </button>
+            <button
+              type="button"
+              onClick={() => handleAction("save")}
+              disabled={isUpdating}
+              className="text-[13px] flex justify-center items-center gap-1 text-white bg-(--color-primary) py-2.5 px-5 border border-(--color-primary) rounded-[5px] duration-300 hover:opacity-70 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed "
+            >
+              <CheckIcon className="w-3 duration-300" />
+              <span className="text-[13px] font-medium leading-0 duration-300">
+                保存する
+              </span>
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="flex justify-end items-center gap-4 py-3 border-b border-(--color-sub)/20">
