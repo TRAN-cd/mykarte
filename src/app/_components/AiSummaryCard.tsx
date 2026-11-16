@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { StarIcon } from "./icons/StarIcon"
 import Image from "next/image"
-import { subMonths, format } from "date-fns";
+import { subMonths, format, subWeeks, subYears } from "date-fns";
 import { apiFetch } from "../_libs/apiFetch";
 import { CheckIcon } from "./icons/CheckIcon";
 
@@ -19,21 +19,33 @@ export interface AiSummaryContents {
   }
 }
 
+const PERIOD_PRESETS = [
+  { label: "1週間", getStartDate: (today: Date) => subWeeks(today, 1)},
+  { label: "2週間", getStartDate: (today: Date) => subWeeks(today, 2) },
+  { label: "1ヶ月", getStartDate: (today: Date) => subMonths(today, 1) },
+  { label: "3ヶ月", getStartDate: (today: Date) => subMonths(today, 3) },
+  { label: "1年", getStartDate: (today: Date) => subYears(today, 1) },
+]
+
 export const AiSummaryCard = () => {
   const [isGenerating, setIsGenerating] = useState(false)
   const [aiSummary, setAiSummary] = useState<AiSummaryContents["aiSummary"] | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [isUpdating, setIsUpdating] = useState(false)
+  const [startDate, setStartDate] = useState<Date>(subMonths(new Date(), 1))
+  const [endDate, setEndDate] = useState<Date>(new Date())
+  const [isPeriodOpen, setIsPeriodOpen] = useState(false)
+  const [selectedPreset, setSelectedPreset] = useState<string | null>("1ヶ月")
 
   const handleGenerate = async () => {
     setIsGenerating(true)
     setErrorMessage(null)
 
-    const startDate = format(subMonths(new Date(), 1), 'yyyy-MM-dd')
-    const endDate = format(new Date(), 'yyyy-MM-dd')
-
     try {
-      const response = await apiFetch.post<AiSummaryPeriods, AiSummaryContents>("/api/ai-summaries", { startDate, endDate })
+      const response = await apiFetch.post<AiSummaryPeriods, AiSummaryContents>("/api/ai-summaries", {
+        startDate: format(startDate, "yyyy-MM-dd"),
+        endDate: format(endDate, "yyyy-MM-dd")
+      })
       if (response)
         setAiSummary(response.aiSummary)
     } catch (error) {
@@ -62,6 +74,17 @@ export const AiSummaryCard = () => {
     }
   }
 
+  const handleSelectPreset = (preset: (typeof PERIOD_PRESETS)[number]) => {
+    const today = new Date()
+    setEndDate(today)
+    setStartDate(preset.getStartDate(today))
+    setSelectedPreset(preset.label)
+  }
+
+  const isSameYear = startDate.getFullYear() === endDate.getFullYear();
+  const dateFormat = isSameYear ? "M/d" : "yyyy/M/d";
+
+
 
   return (
     <div>
@@ -76,7 +99,9 @@ export const AiSummaryCard = () => {
           <StarIcon className="text-(--color-primary) transition-colors max-w-10" />
           <div className="text-(--color-primary) flex flex-col gap-1">
             <p className="text-xl font-bold">AI要約する</p>
-            <p className="text-xs">今の体調を記録する</p>
+            <p className="text-xs">
+              {format(startDate, dateFormat)}〜{format(endDate, dateFormat)}の体調を要約します
+            </p>
           </div>
         </button>
 
@@ -85,7 +110,7 @@ export const AiSummaryCard = () => {
         {aiSummary && <p className="pt-3 text-sm font-medium whitespace-pre-wrap">{aiSummary.content}</p>}
 
         {aiSummary && (
-          <div className="pt-3 auto w-full flex justify-center gap-3">
+          <div className="pt-3 w-full flex justify-center gap-3">
             <button
               type="button"
               onClick={() => handleAction("cancel")}
@@ -109,14 +134,41 @@ export const AiSummaryCard = () => {
         )}
       </div>
 
-      <div className="flex justify-end items-center gap-4 py-3 border-b border-(--color-sub)/20">
-        <div className="flex items-center gap-1">
-          <p className="text-xs font-medium text-(--color-primary)">指定する期間を変更</p>
+      <div className="flex justify-end items-center gap-4 py-3">
+        <button
+          type="button"
+          onClick={() => setIsPeriodOpen(!isPeriodOpen)}
+          aria-expanded={isPeriodOpen}
+          className="flex items-center gap-1 duration-300 cursor-pointer hover:opacity-70"
+        >
+          <span className="text-xs font-medium text-(--color-primary)">指定する期間を変更</span>
           <Image src="/images/shared/icon_sort.svg" alt="" width="18" height="18" />
-        </div>
+        </button>
         <div><Image src="/images/shared/icon_help.svg" alt="" width="24" height="24" /></div>
       </div>
-      <div className="flex justify-center items-center gap-1 pt-3">
+      {isPeriodOpen && (
+        <div className="mb-3 p-4 bg-white rounded-[15px] border border-(--color-sub)/30 flex flex-col gap-4">
+          <div className="flex flex-wrap gap-2">
+            {PERIOD_PRESETS.map((preset) => (
+              <button
+                key={preset.label}
+                type="button"
+                onClick={() => handleSelectPreset(preset)}
+                className={`text-xs font-medium py-1 px-1.5 rounded-full border duration-300 cursor-pointer ${
+                  selectedPreset === preset.label
+                    ? "bg-(--color-primary) border-(--color-primary) text-white"
+                    : "bg-white border-(--color-sub) text-(--color-primary) hover:bg-(--color-bg)"
+                }`}
+              >
+                {preset.label}
+              </button>
+            ))}
+          </div>
+          {/* ステップ4：日付の入力 */}
+        </div>
+      )}
+
+      <div className="flex justify-center items-center gap-1 pt-3 border-t border-(--color-sub)/20">
         <Image src="/images/shared/icon_past.svg" alt="" width="16" height="16" />
         <p className="text-xs font-medium text-(--color-primary)">過去のAI要約を確認する</p>
         <Image src="/images/shared/icon_arrow01.svg" alt="" width="14" height="14" />

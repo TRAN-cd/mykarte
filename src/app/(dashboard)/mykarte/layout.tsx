@@ -59,7 +59,7 @@ export default function DashboardLayout({
                   {children}
                   {modal}
                 </div>
-                <div className="bg-(--color-bg) rounded-[0_15px_15px_0] max-w-[304px] w-full p-[20px_12px]">
+                <div className="bg-(--color-bg) rounded-[0_15px_15px_0] max-w-[314px] w-full p-[20px_12px]">
                   <UserInfoCard />
                   <div className="pt-9 flex flex-col gap-5">
                     <RecordButtonCard />
