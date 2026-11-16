@@ -80,7 +80,7 @@ export const AiSummaryCard = () => {
           </div>
         </button>
 
-        {isGenerating && <p className="pt-3 text-sm font-medium">要約を生成中…</p>}
+        {isGenerating && <p className="pt-3 text-sm font-medium motion-safe:animate-pulse">要約を生成中…</p>}
         {errorMessage && <p className="pt-3 text-sm font-medium text-(--color-danger)">{errorMessage}</p>}
         {aiSummary && <p className="pt-3 text-sm font-medium whitespace-pre-wrap">{aiSummary.content}</p>}
 
