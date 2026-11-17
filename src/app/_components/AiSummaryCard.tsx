@@ -118,28 +118,28 @@ export const AiSummaryCard = () => {
             <p className="pt-3 text-sm font-medium whitespace-pre-wrap">{aiSummary.content}</p>
             <p className="pt-2 text-[10px] text-(--color-sub)">※AIによる要約です。医療アドバイスや診断ではありません。</p>
             <div className="pt-3 w-full flex justify-center gap-3">
-            <button
-              type="button"
-              onClick={() => handleAction("cancel")}
-              disabled={isUpdating}
-              className="text-[13px] flex justify-center items-center text-(--color-primary) bg-white py-2.5 px-5 border border-(--color-sub) rounded-[5px] duration-300 hover:opacity-70 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              キャンセル
-            </button>
-            <button
-              type="button"
-              onClick={() => handleAction("save")}
-              disabled={isUpdating}
-              className="text-[13px] flex justify-center items-center gap-1 text-white bg-(--color-primary) py-2.5 px-5 border border-(--color-primary) rounded-[5px] duration-300 hover:opacity-70 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed "
-            >
-              <CheckIcon className="w-3 duration-300" />
-              <span className="text-[13px] font-medium leading-0 duration-300">
-                保存する
-              </span>
-            </button>
+              <button
+                type="button"
+                onClick={() => handleAction("cancel")}
+                disabled={isUpdating}
+                className="text-[13px] flex justify-center items-center text-(--color-primary) bg-white py-2.5 px-5 border border-(--color-sub) rounded-[5px] duration-300 hover:opacity-70 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                キャンセル
+              </button>
+              <button
+                type="button"
+                onClick={() => handleAction("save")}
+                disabled={isUpdating}
+                className="text-[13px] flex justify-center items-center gap-1 text-white bg-(--color-primary) py-2.5 px-5 border border-(--color-primary) rounded-[5px] duration-300 hover:opacity-70 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed "
+              >
+                <CheckIcon className="w-3 duration-300" />
+                <span className="text-[13px] font-medium leading-0 duration-300">
+                  保存する
+                </span>
+              </button>
+            </div>
           </div>
-          </div>
-          
+
         )}
       </div>
 
@@ -163,75 +163,85 @@ export const AiSummaryCard = () => {
           <Image src="/images/shared/icon_help.svg" alt="" width="24" height="24" />
         </button>
       </div>
-      {isHelpOpen && (
-        <div className="mb-3 p-4 bg-white rounded-[15px] border border-(--color-sub)/30">
-          <p className="text-xs text-(--color-primary)">AI要約は、記録した内容をもとにAIがまとめたものです。医療アドバイスや診断ではありません。体調の異変については、医療機関にご相談ください。<br />要約の作成は月20回までです。</p>
+
+      <div
+        inert={!isHelpOpen}
+        className={`bg-white rounded-[15px] overflow-hidden transition-all duration-300 ${isHelpOpen
+          ? "max-h-40 opacity-100 mb-3 p-4 border border-(--color-sub)/30"
+          : "max-h-0 opacity-0"
+          }`}
+      >
+        <p className="text-xs text-(--color-primary)">AI要約は、記録した内容をもとにAIがまとめたものです。医療アドバイスや診断ではありません。体調の異変については、医療機関にご相談ください。<br />要約の作成は月20回までです。</p>
+      </div>
+
+      <div
+        inert={!isPeriodOpen}
+        className={`bg-white rounded-[15px] flex flex-col gap-4 overflow-hidden transition-all duration-300 ${isPeriodOpen
+          ? "max-h-96 opacity-100 mb-3 p-4 border border-(--color-sub)/30"
+          : "max-h-0 opacity-0"
+          }`}
+      >
+        <p className="text-xs text-(--color-primary)">要約したい期間を選択してください</p>
+        <div className="flex flex-wrap gap-2">
+          {PERIOD_PRESETS.map((preset) => (
+            <button
+              key={preset.label}
+              type="button"
+              onClick={() => handleSelectPreset(preset)}
+              className={`text-xs font-medium py-1 px-1.5 rounded-full border duration-300 cursor-pointer ${selectedPreset === preset.label
+                ? "bg-(--color-primary) border-(--color-primary) text-white"
+                : "bg-white border-(--color-sub) text-(--color-primary) hover:bg-(--color-bg)"
+                }`}
+              disabled={isGenerating || aiSummary !== null}
+            >
+              {preset.label}
+            </button>
+          ))}
         </div>
-      )}
-      {isPeriodOpen && (
-        <div className="mb-3 p-4 bg-white rounded-[15px] border border-(--color-sub)/30 flex flex-col gap-4">
-          <p className="text-xs text-(--color-primary)">要約したい期間を選択してください</p>
-          <div className="flex flex-wrap gap-2">
-            {PERIOD_PRESETS.map((preset) => (
-              <button
-                key={preset.label}
-                type="button"
-                onClick={() => handleSelectPreset(preset)}
-                className={`text-xs font-medium py-1 px-1.5 rounded-full border duration-300 cursor-pointer ${selectedPreset === preset.label
-                  ? "bg-(--color-primary) border-(--color-primary) text-white"
-                  : "bg-white border-(--color-sub) text-(--color-primary) hover:bg-(--color-bg)"
-                  }`}
-                disabled={isGenerating || aiSummary !== null}
-              >
-                {preset.label}
-              </button>
-            ))}
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2 text-xs text-(--color-primary)">
+            <span className="mt-3">開始日</span>
+            <DatePicker
+              selected={startDate}
+              onChange={(date: Date | null) => {
+                if (!date) return
+                setStartDate(date)
+                setSelectedPreset(null)
+                setErrorMessage(null)
+              }}
+              selectsStart
+              startDate={startDate}
+              endDate={endDate}
+              maxDate={endDate}
+              customInput={<CustomDateInput />}
+              locale={ja}
+              dateFormat="yyyy/MM/dd"
+              disabled={isGenerating || aiSummary !== null}
+            />
           </div>
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2 text-xs text-(--color-primary)">
-              <span className="mt-3">開始日</span>
-              <DatePicker
-                selected={startDate}
-                onChange={(date: Date | null) => {
-                  if (!date) return
-                  setStartDate(date)
-                  setSelectedPreset(null)
-                  setErrorMessage(null)
-                }}
-                selectsStart
-                startDate={startDate}
-                endDate={endDate}
-                maxDate={endDate}
-                customInput={<CustomDateInput />}
-                locale={ja}
-                dateFormat="yyyy/MM/dd"
-                disabled={isGenerating || aiSummary !== null}
-              />
-            </div>
-            <div className="flex items-center gap-2 text-xs text-(--color-primary)">
-              <span className="mt-3">終了日</span>
-              <DatePicker
-                selected={endDate}
-                onChange={(date: Date | null) => {
-                  if (!date) return
-                  setEndDate(date)
-                  setSelectedPreset(null)
-                  setErrorMessage(null)
-                }}
-                selectsEnd
-                startDate={startDate}
-                endDate={endDate}
-                minDate={startDate}
-                maxDate={new Date()}
-                customInput={<CustomDateInput />}
-                locale={ja}
-                dateFormat="yyyy/MM/dd"
-                disabled={isGenerating || aiSummary !== null}
-              />
-            </div>
+          <div className="flex items-center gap-2 text-xs text-(--color-primary)">
+            <span className="mt-3">終了日</span>
+            <DatePicker
+              selected={endDate}
+              onChange={(date: Date | null) => {
+                if (!date) return
+                setEndDate(date)
+                setSelectedPreset(null)
+                setErrorMessage(null)
+              }}
+              selectsEnd
+              startDate={startDate}
+              endDate={endDate}
+              minDate={startDate}
+              maxDate={new Date()}
+              customInput={<CustomDateInput />}
+              locale={ja}
+              dateFormat="yyyy/MM/dd"
+              disabled={isGenerating || aiSummary !== null}
+            />
           </div>
         </div>
-      )}
+      </div>
 
       <div className="flex justify-center items-center gap-1 pt-3 border-t border-(--color-sub)/20">
         <Image src="/images/shared/icon_past.svg" alt="" width="16" height="16" />
