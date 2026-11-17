@@ -40,6 +40,7 @@ export const AiSummaryCard = () => {
   const [endDate, setEndDate] = useState<Date>(new Date())
   const [isPeriodOpen, setIsPeriodOpen] = useState(false)
   const [selectedPreset, setSelectedPreset] = useState<string | null>("1ヶ月")
+  const [isHelpOpen, setIsHelpOpen] = useState(false)
 
   const handleGenerate = async () => {
     setIsGenerating(true)
@@ -112,10 +113,11 @@ export const AiSummaryCard = () => {
 
         {isGenerating && <p className="pt-3 text-sm font-medium motion-safe:animate-pulse">要約を生成中…</p>}
         {errorMessage && <p className="pt-3 text-sm font-medium text-(--color-danger)">{errorMessage}</p>}
-        {aiSummary && <p className="pt-3 text-sm font-medium whitespace-pre-wrap">{aiSummary.content}</p>}
-
         {aiSummary && (
-          <div className="pt-3 w-full flex justify-center gap-3">
+          <div>
+            <p className="pt-3 text-sm font-medium whitespace-pre-wrap">{aiSummary.content}</p>
+            <p className="pt-2 text-[10px] text-(--color-sub)">※AIによる要約です。医療アドバイスや診断ではありません。</p>
+            <div className="pt-3 w-full flex justify-center gap-3">
             <button
               type="button"
               onClick={() => handleAction("cancel")}
@@ -136,6 +138,8 @@ export const AiSummaryCard = () => {
               </span>
             </button>
           </div>
+          </div>
+          
         )}
       </div>
 
@@ -149,11 +153,24 @@ export const AiSummaryCard = () => {
           <span className="text-xs font-medium text-(--color-primary)">指定する期間を変更</span>
           <Image src="/images/shared/icon_sort.svg" alt="" width="18" height="18" />
         </button>
-        <div><Image src="/images/shared/icon_help.svg" alt="" width="24" height="24" /></div>
+        <button
+          type="button"
+          onClick={() => setIsHelpOpen(!isHelpOpen)}
+          aria-label="AI要約についての説明"
+          aria-expanded={isHelpOpen}
+          className="cursor-pointer duration-300 hover:opacity-70"
+        >
+          <Image src="/images/shared/icon_help.svg" alt="" width="24" height="24" />
+        </button>
       </div>
+      {isHelpOpen && (
+        <div className="mb-3 p-4 bg-white rounded-[15px] border border-(--color-sub)/30">
+          <p className="text-xs text-(--color-primary)">AI要約は、記録した内容をもとにAIがまとめたものです。医療アドバイスや診断ではありません。体調の異変については、医療機関にご相談ください。<br />要約の作成は月20回までです。</p>
+        </div>
+      )}
       {isPeriodOpen && (
         <div className="mb-3 p-4 bg-white rounded-[15px] border border-(--color-sub)/30 flex flex-col gap-4">
-            <p className="text-xs text-(--color-primary)">要約したい期間を選択してください</p>
+          <p className="text-xs text-(--color-primary)">要約したい期間を選択してください</p>
           <div className="flex flex-wrap gap-2">
             {PERIOD_PRESETS.map((preset) => (
               <button
