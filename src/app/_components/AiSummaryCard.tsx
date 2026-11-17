@@ -6,6 +6,10 @@ import Image from "next/image"
 import { subMonths, format, subWeeks, subYears } from "date-fns";
 import { apiFetch } from "../_libs/apiFetch";
 import { CheckIcon } from "./icons/CheckIcon";
+import DatePicker from "react-datepicker"
+import "react-datepicker/dist/react-datepicker.css"
+import { ja } from "date-fns/locale";
+import { CustomDateInput } from "@/app/_components/CustomDateInput";
 
 export interface AiSummaryPeriods {
   startDate: string;
@@ -20,7 +24,7 @@ export interface AiSummaryContents {
 }
 
 const PERIOD_PRESETS = [
-  { label: "1週間", getStartDate: (today: Date) => subWeeks(today, 1)},
+  { label: "1週間", getStartDate: (today: Date) => subWeeks(today, 1) },
   { label: "2週間", getStartDate: (today: Date) => subWeeks(today, 2) },
   { label: "1ヶ月", getStartDate: (today: Date) => subMonths(today, 1) },
   { label: "3ヶ月", getStartDate: (today: Date) => subMonths(today, 3) },
@@ -79,6 +83,7 @@ export const AiSummaryCard = () => {
     setEndDate(today)
     setStartDate(preset.getStartDate(today))
     setSelectedPreset(preset.label)
+    setErrorMessage(null)
   }
 
   const isSameYear = startDate.getFullYear() === endDate.getFullYear();
@@ -148,23 +153,66 @@ export const AiSummaryCard = () => {
       </div>
       {isPeriodOpen && (
         <div className="mb-3 p-4 bg-white rounded-[15px] border border-(--color-sub)/30 flex flex-col gap-4">
+            <p className="text-xs text-(--color-primary)">要約したい期間を選択してください</p>
           <div className="flex flex-wrap gap-2">
             {PERIOD_PRESETS.map((preset) => (
               <button
                 key={preset.label}
                 type="button"
                 onClick={() => handleSelectPreset(preset)}
-                className={`text-xs font-medium py-1 px-1.5 rounded-full border duration-300 cursor-pointer ${
-                  selectedPreset === preset.label
-                    ? "bg-(--color-primary) border-(--color-primary) text-white"
-                    : "bg-white border-(--color-sub) text-(--color-primary) hover:bg-(--color-bg)"
-                }`}
+                className={`text-xs font-medium py-1 px-1.5 rounded-full border duration-300 cursor-pointer ${selectedPreset === preset.label
+                  ? "bg-(--color-primary) border-(--color-primary) text-white"
+                  : "bg-white border-(--color-sub) text-(--color-primary) hover:bg-(--color-bg)"
+                  }`}
+                disabled={isGenerating || aiSummary !== null}
               >
                 {preset.label}
               </button>
             ))}
           </div>
-          {/* ステップ4：日付の入力 */}
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2 text-xs text-(--color-primary)">
+              <span className="mt-3">開始日</span>
+              <DatePicker
+                selected={startDate}
+                onChange={(date: Date | null) => {
+                  if (!date) return
+                  setStartDate(date)
+                  setSelectedPreset(null)
+                  setErrorMessage(null)
+                }}
+                selectsStart
+                startDate={startDate}
+                endDate={endDate}
+                maxDate={endDate}
+                customInput={<CustomDateInput />}
+                locale={ja}
+                dateFormat="yyyy/MM/dd"
+                disabled={isGenerating || aiSummary !== null}
+              />
+            </div>
+            <div className="flex items-center gap-2 text-xs text-(--color-primary)">
+              <span className="mt-3">終了日</span>
+              <DatePicker
+                selected={endDate}
+                onChange={(date: Date | null) => {
+                  if (!date) return
+                  setEndDate(date)
+                  setSelectedPreset(null)
+                  setErrorMessage(null)
+                }}
+                selectsEnd
+                startDate={startDate}
+                endDate={endDate}
+                minDate={startDate}
+                maxDate={new Date()}
+                customInput={<CustomDateInput />}
+                locale={ja}
+                dateFormat="yyyy/MM/dd"
+                disabled={isGenerating || aiSummary !== null}
+              />
+            </div>
+          </div>
         </div>
       )}
 
