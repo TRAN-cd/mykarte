@@ -7,12 +7,9 @@ import { RecordIcon } from "@/app/_components/icons/RecordIcon";
 import { RecordsIcon } from "@/app/_components/icons/RecordsIcon";
 import { CategoryIcon } from "@/app/_components/icons/CategoryIcon";
 import { SettingIcon } from "@/app/_components/icons/SettingIcon";
-import { UserInfoCard } from "@/app/_components/UserInfoCard";
-import { RecordButtonCard } from "@/app/_components/RecordButtonCard";
-import { AiSummaryCard } from "@/app/_components/AiSummaryCard";
-import { WeekCalendar } from "@/app/_components/WeekCalendar";
 import { SidebarLink } from "@/app/_components/SidebarLink";
 import { LogoutButton } from "@/app/_components/LogoutButton";
+import { SidePanel } from "@/app/_components/SidePanel";
 
 export default function DashboardLayout({
   children,
@@ -59,14 +56,7 @@ export default function DashboardLayout({
                   {children}
                   {modal}
                 </div>
-                <div className="bg-(--color-bg) rounded-[0_15px_15px_0] max-w-[314px] w-full p-[20px_12px] overflow-y-auto">
-                  <UserInfoCard />
-                  <div className="pt-9 flex flex-col gap-5">
-                    <RecordButtonCard />
-                    <AiSummaryCard />
-                  </div>
-                  <WeekCalendar />
-                </div>
+                <SidePanel />
               </div>
             </div>
           </div>

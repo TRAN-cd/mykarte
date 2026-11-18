@@ -23,6 +23,10 @@ export interface AiSummaryContents {
   }
 }
 
+interface Props {
+  onOpenHistory: () => void
+}
+
 const PERIOD_PRESETS = [
   { label: "1週間", getStartDate: (today: Date) => subWeeks(today, 1) },
   { label: "2週間", getStartDate: (today: Date) => subWeeks(today, 2) },
@@ -31,7 +35,7 @@ const PERIOD_PRESETS = [
   { label: "1年", getStartDate: (today: Date) => subYears(today, 1) },
 ]
 
-export const AiSummaryCard = () => {
+export const AiSummaryCard = ({ onOpenHistory }: Props) => {
   const [isGenerating, setIsGenerating] = useState(false)
   const [aiSummary, setAiSummary] = useState<AiSummaryContents["aiSummary"] | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -243,11 +247,14 @@ export const AiSummaryCard = () => {
         </div>
       </div>
 
-      <div className="flex justify-center items-center gap-1 pt-3 border-t border-(--color-sub)/20">
+      <button
+        type="button"
+        onClick={onOpenHistory}
+        className="w-full flex justify-center items-center gap-1 pt-3 border-t border-(--color-sub)/20 duration-300 cursor-pointer hover:opacity-70">
         <Image src="/images/shared/icon_past.svg" alt="" width="16" height="16" />
-        <p className="text-xs font-medium text-(--color-primary)">過去のAI要約を確認する</p>
+        <span className="text-xs font-medium text-(--color-primary)">過去のAI要約を確認する</span>
         <Image src="/images/shared/icon_arrow01.svg" alt="" width="14" height="14" />
-      </div>
+      </button>
     </div>
   )
 }
