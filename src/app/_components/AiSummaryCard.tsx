@@ -10,6 +10,8 @@ import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 import { ja } from "date-fns/locale";
 import { CustomDateInput } from "@/app/_components/CustomDateInput";
+import type { GetAiSummariesResponse } from "../api/ai-summaries/route"
+import { useFetch } from "../_hooks/useFetch";
 
 export interface AiSummaryPeriods {
   startDate: string;
@@ -45,6 +47,8 @@ export const AiSummaryCard = ({ onOpenHistory }: Props) => {
   const [isPeriodOpen, setIsPeriodOpen] = useState(false)
   const [selectedPreset, setSelectedPreset] = useState<string | null>("1ヶ月")
   const [isHelpOpen, setIsHelpOpen] = useState(false)
+  const { mutate } = useFetch<GetAiSummariesResponse>("/api/ai-summaries")
+
 
   const handleGenerate = async () => {
     setIsGenerating(true)
@@ -74,6 +78,7 @@ export const AiSummaryCard = ({ onOpenHistory }: Props) => {
     try {
       await apiFetch.put(`/api/ai-summaries/${aiSummary.id}`, { action })
       setAiSummary(null)
+      if (action === "save") mutate()
     } catch (error) {
       setErrorMessage(
         error instanceof Error ? error.message : "保存またはキャンセルに失敗しました。"
@@ -93,7 +98,6 @@ export const AiSummaryCard = ({ onOpenHistory }: Props) => {
 
   const isSameYear = startDate.getFullYear() === endDate.getFullYear();
   const dateFormat = isSameYear ? "M/d" : "yyyy/M/d";
-
 
 
   return (
