@@ -336,9 +336,9 @@ export const RecordForm = ({
                 disabled={!isDirty || !isValid || isSubmitting}
               >
                 <CheckIcon className="w-3 duration-300 group-hover:text-(--color-primary) group-disabled:group-hover:text-white" />
-                <p className="text-[13px] font-medium leading-0 duration-300 group-hover:text-(--color-primary) group-disabled:group-hover:text-white">
+                <span className="text-[13px] font-medium leading-0 duration-300 group-hover:text-(--color-primary) group-disabled:group-hover:text-white">
                   保存する
-                </p>
+                </span>
               </button>
             </div>
           </div>
