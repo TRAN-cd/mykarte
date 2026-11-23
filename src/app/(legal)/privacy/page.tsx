@@ -10,7 +10,7 @@ export default function Page() {
       <section className="relative z-2">
         <div className="lead">
           <h2 className="text-2xl font-bold pb-3">プライバシーポリシー</h2>
-          <p className="text-(--color-sub) text-[13px] pb-12">制定日：2026年6月5日　最終改定日：2026年11月9日</p>
+          <p className="text-(--color-sub) text-[13px] pb-12">制定日：2026年6月5日　最終改定日：2026年11月23日</p>
           <p className="text-sm pb-9 border-b border-(--color-sub)/20">myカルテ（以下「当社」といいます。）は、当社の提供するサービス（以下「本サービス」といいます。）における、ユーザーの個人情報の取扱いについて、以下のとおりプライバシーポリシー（以下「本ポリシー」といいます。）を定めます。</p>
         </div>
         <div className="index bg-white border border-(--color-sub) rounded-[10px] p-6 flex flex-col gap-4 mb-12">
@@ -109,54 +109,41 @@ export default function Page() {
             <p className="leading-7 pl-[2em] indent-[-2em]">２．前項の定めにかかわらず、当社は、サービスの運営・提供のため、以下の事業者に個人情報の取扱いを委託します。委託先に対しては、適切な監督を行います。</p>
             <div className="flex flex-col gap-6 bg-(--color-bg) p-6 rounded-[0_5px_5px_0] border-l-4 border-(--color-primary)">
               <div className="flex flex-col gap-3">
-                <p className="font-bold"><span className="font-en ">Supabase, Inc.</span>（米国）</p>
+                <p className="font-bold"><span className="font-en">Supabase, Inc.</span>（米国）</p>
                 <div>
                   <dl className="flex">
-                    <dt>委託内容：</dt>
+                    <dt className="whitespace-nowrap">委託内容：</dt>
                     <dd>データベースの管理、認証機能および画像保存機能の提供</dd>
                   </dl>
                   <dl className="flex">
-                    <dt>取り扱うデータ：</dt>
+                    <dt className="whitespace-nowrap">取り扱うデータ：</dt>
                     <dd>メールアドレス、ユーザー名、プロフィール画像、健康記録データ、AI要約、お問い合わせ内容</dd>
                   </dl>
                 </div>
               </div>
               <div className="flex flex-col gap-3">
-                <p className="font-bold"><span className="font-en ">Vercel Inc.</span>（米国）</p>
+                <p className="font-bold"><span className="font-en">Vercel Inc.</span>（米国）</p>
                 <div>
                   <dl className="flex">
-                    <dt>委託内容：</dt>
-                    <dd>Webアプリケーションのホスティング</dd>
+                    <dt className="whitespace-nowrap">委託内容：</dt>
+                    <dd>Webアプリケーションのホスティング、AI要約の生成（Vercel AI Gatewayを経由し、Google LLCのAIサービスを利用）</dd>
                   </dl>
                   <dl className="flex">
-                    <dt>取り扱うデータ：</dt>
-                    <dd>アクセスログ</dd>
+                    <dt className="whitespace-nowrap">取り扱うデータ：</dt>
+                    <dd>アクセスログ、要約の対象期間の健康記録</dd>
                   </dl>
                 </div>
               </div>
               <div className="flex flex-col gap-3">
-                <p className="font-bold"><span className="font-en ">Resend, Inc.</span>（米国）</p>
+                <p className="font-bold"><span className="font-en">Resend, Inc.</span>（米国）</p>
                 <div>
                   <dl className="flex">
-                    <dt>委託内容：</dt>
+                    <dt className="whitespace-nowrap">委託内容：</dt>
                     <dd>お問い合わせ通知メールの送信</dd>
                   </dl>
                   <dl className="flex">
-                    <dt>取り扱うデータ：</dt>
+                    <dt className="whitespace-nowrap">取り扱うデータ：</dt>
                     <dd>お問い合わせ時に入力された氏名、メールアドレス、お問い合わせ内容</dd>
-                  </dl>
-                </div>
-              </div>
-              <div className="flex flex-col gap-3">
-                <p className="font-bold">AIサービス事業者（AI要約機能の利用時のみ）</p>
-                <div>
-                  <dl className="flex">
-                    <dt>委託内容：</dt>
-                    <dd>記録の要約の生成</dd>
-                  </dl>
-                  <dl className="flex">
-                    <dt>取り扱うデータ：</dt>
-                    <dd>要約の対象期間の健康記録</dd>
                   </dl>
                 </div>
               </div>
