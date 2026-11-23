@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 
 export const POST = async () => {
+  // 環境変数を読み込む
   const guestEmail = process.env.GUEST_EMAIL;
   const guestPassword = process.env.GUEST_PASSWORD;
   const guestUserId = process.env.GUEST_USER_ID;
@@ -14,19 +15,23 @@ export const POST = async () => {
     );
   }
 
-  const { error } = await supabaseAdmin.auth.admin.updateUserById(guestUserId, {
-    email: guestEmail,
-    password: guestPassword,
-    email_confirm: true,
-  });
-
-  if (error) {
+  // メールアドレスとパスワードを設定し直す
+  const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
+    guestUserId,
+    {
+      email: guestEmail,
+      password: guestPassword,
+      email_confirm: true,
+    }
+  );
+  if (updateError) {
     return NextResponse.json(
       { message: "ゲストログインに失敗しました。" },
       { status: 500 }
     );
   }
 
+  // このAPI専用のクライアントで、ゲストとしてログインする
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -44,6 +49,7 @@ export const POST = async () => {
     );
   }
 
+  // トークンを返す
   return NextResponse.json(
     {
       accessToken: data.session.access_token,
