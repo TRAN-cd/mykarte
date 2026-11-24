@@ -12,6 +12,7 @@ import { ja } from "date-fns/locale";
 import { CustomDateInput } from "@/app/_components/CustomDateInput";
 import type { GetAiSummariesResponse } from "../api/ai-summaries/route"
 import { useFetch } from "../_hooks/useFetch";
+import { useIsGuest } from "../_hooks/useIsGuest";
 
 export interface AiSummaryPeriods {
   startDate: string;
@@ -48,7 +49,7 @@ export const AiSummaryCard = ({ onOpenHistory }: Props) => {
   const [selectedPreset, setSelectedPreset] = useState<string | null>("1ヶ月")
   const [isHelpOpen, setIsHelpOpen] = useState(false)
   const { mutate } = useFetch<GetAiSummariesResponse>("/api/ai-summaries")
-
+  const { isGuest } = useIsGuest()
 
   const handleGenerate = async () => {
     setIsGenerating(true)
@@ -179,7 +180,12 @@ export const AiSummaryCard = ({ onOpenHistory }: Props) => {
           : "max-h-0 opacity-0"
           }`}
       >
-        <p className="text-xs text-(--color-primary)">AI要約は、記録した内容をもとにAIがまとめたものです。医療アドバイスや診断ではありません。体調の異変については、医療機関にご相談ください。<br />要約の作成は月20回までです。</p>
+        <p className="text-xs text-(--color-primary)">AI要約は、記録した内容をもとにAIがまとめたものです。医療アドバイスや診断ではありません。体調の異変については、医療機関にご相談ください。<br />
+        {isGuest
+          ? "ゲストアカウントでの要約の作成は、ゲスト全体で1日5回までです。"
+          : "要約の作成は月20回までです。"
+        }
+        </p>
       </div>
 
       <div
