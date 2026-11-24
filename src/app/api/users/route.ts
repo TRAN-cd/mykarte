@@ -1,3 +1,4 @@
+import { isGuestUser } from "@/app/_libs/isGuestUser";
 import { prisma } from "@/app/_libs/prisma";
 import { supabase } from "@/app/_libs/supabase";
 import { supabaseAdmin } from "@/app/_libs/supabaseAdmin";
@@ -56,6 +57,14 @@ export const DELETE = async (request: Request) => {
   const { data, error } = await supabase.auth.getUser(token);
   if (error)
     return NextResponse.json({ status: error.message }, { status: 401 });
+
+  // ゲストユーザーはアカウント削除できない
+  if (isGuestUser(data.user.email)) {
+    return NextResponse.json(
+      { message: "ゲストアカウントでは、この操作はできません。" },
+      { status: 403 }
+    );
+  }
 
   try {
     // ユーザー特定
@@ -141,6 +150,14 @@ export const PUT = async (request: Request) => {
   if (error)
     return NextResponse.json({ status: error.message }, { status: 401 });
 
+  // ゲストユーザーはユーザー情報の変更できない
+  if (isGuestUser(data.user.email)) {
+    return NextResponse.json(
+      { message: "ゲストアカウントでは、この操作はできません。" },
+      { status: 403 }
+    );
+  }
+
   try {
     const body = await request.json();
     const { name, avatarKey }: UpdateUserRequestBody = body;
@@ -165,18 +182,19 @@ export const PUT = async (request: Request) => {
       },
       data: {
         name,
-        avatarKey
-      }
-    })
+        avatarKey,
+      },
+    });
 
     return NextResponse.json<UserResponse>(
-      { 
+      {
         name: updateUserInfo.name,
-        avatarKey: updateUserInfo.avatarKey
-      }, { 
-        status: 200 
+        avatarKey: updateUserInfo.avatarKey,
+      },
+      {
+        status: 200,
       }
-    )
+    );
   } catch (error) {
     if (error instanceof Error)
       return NextResponse.json({ message: error.message }, { status: 400 });

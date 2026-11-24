@@ -10,6 +10,7 @@ import { SettingIcon } from "@/app/_components/icons/SettingIcon";
 import { SidebarLink } from "@/app/_components/SidebarLink";
 import { LogoutButton } from "@/app/_components/LogoutButton";
 import { SidePanel } from "@/app/_components/SidePanel";
+import { useIsGuest } from "@/app/_hooks/useIsGuest";
 
 export default function DashboardLayout({
   children,
@@ -20,6 +21,8 @@ export default function DashboardLayout({
 }>) {
 
   useRouteGuard()
+
+  const { isGuest, isLoading } = useIsGuest()
 
   return (
     <div className="flex flex-col flex-1 bg-[url('/images/shared/bg.png')] bg-no-repeat bg-cover bg-fixed">
@@ -36,15 +39,17 @@ export default function DashboardLayout({
                 </div>
                 <div className="flex flex-col justify-between h-full">
                   <div>
-                    <ul className="ml-1.25 mr-5 border-b border-(--color-sub)">
+                    <ul className="ml-1.25 mr-5">
                       <SidebarLink href="/mykarte" icon={HomeIcon} label="ホーム" />
                       <SidebarLink href="/mykarte/records/new" icon={RecordIcon} label="新規記録" />
                       <SidebarLink href="/mykarte/records" icon={RecordsIcon} label="記録一覧" />
                       <SidebarLink href="/mykarte/categories" icon={CategoryIcon} label="カテゴリー" />
                     </ul>
-                    <ul className="ml-1.25 mr-5 mt-6">
-                      <SidebarLink href="/mykarte/settings" icon={SettingIcon} label="設定" />
-                    </ul>
+                    {!isGuest && !isLoading && (
+                      <ul className="ml-1.25 mr-5 mt-6 pt-6 border-t border-(--color-sub)">
+                        <SidebarLink href="/mykarte/settings" icon={SettingIcon} label="設定" />
+                      </ul>
+                    )}
                   </div>
                   <ul className="ml-1.25 mr-5 mt-6">
                     <LogoutButton />
